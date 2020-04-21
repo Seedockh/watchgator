@@ -174,6 +174,8 @@ class Scraper {
 
 	/** * WRITE DATABASE HEADERS * **/
 	private async insertDatabaseHeaders(type = 'movies', level = 'sample'): void {
+		if (!fs.existsSync('src/database')) fs.mkdirSync('src/database')
+
 		fs.openSync(`src/database/imdb_${type}_${level}.json`, 'w')
 		fs.writeFile(
 			`src/database/imdb_${type}_${level}.json`,
