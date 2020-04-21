@@ -8,7 +8,7 @@ const envPathName = path.join(process.cwd(), '.env')
 
 // Define here every variable needed in your .env
 // so that you never forget it 👀
-const neededValues = ['PORT']
+const neededValues = ['PORT', 'SECRET', 'DB_URL', 'DB_SSL']
 
 if (existsSync(envPathName)) {
 	config()
