@@ -26,6 +26,22 @@ import * as bcrypt from 'bcryptjs'
  *           nickname: Luc
  *           email: luc@gmail.com
  *           password: luc1
+ *      UserToSignIn:
+ *        type: object
+ *        required:
+ *          - nickname
+ *          - password
+ *        properties:
+ *          nickname:
+ *            type: string
+ *            description: needs to be unique
+ *          password:
+ *            type: string
+ *            format: min. 4 characters
+ *        example:
+ *           nickname: Luc
+ *           email: luc@gmail.com
+ *           password: luc1
  *      ResponseUserRegistered:
  *        example:
  *           data:

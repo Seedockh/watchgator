@@ -32,25 +32,25 @@ passport.use(
 	),
 )
 
-// passport.use(
-// 	new GraphQLLocalStrategy(async (nickname, password, next) => {
-// 		try {
-// 			const userRepository: Repository<User> = getRepository(User)
-// 			const user: User | undefined = await userRepository.findOne({
-// 				nickname,
-// 			})
+passport.use(
+	new GraphQLLocalStrategy(async (username, password, next) => {
+		try {
+			const userRepository: Repository<User> = getRepository(User)
 
-// 			if (!user) return next(null, false)
+			const user: User | undefined = await userRepository.findOne({
+				nickname: username,
+			})
 
-// 			if (!user.checkIfUnencryptedPasswordIsValid(password))
-// 				return next(null, false)
+			if (!user) return next(null, false)
+			if (!user.checkIfUnencryptedPasswordIsValid(password))
+				return next(null, false)
 
-// 			return next(false, user)
-// 		} catch (err) {
-// 			return next(err.message)
-// 		}
-// 	}),
-// )
+			return next(false, user)
+		} catch (err) {
+			return next(err.message)
+		}
+	}),
+)
 
 passport.use(
 	new JwtStrategy(

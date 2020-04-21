@@ -1,5 +1,8 @@
 import { Request, Response } from 'express'
-import { signupService, signinService } from '../../services/userAuthServices'
+import {
+	signupService,
+	signinServiceRest,
+} from '../../services/userAuthServices'
 
 class AuthController {
 	/**
@@ -48,7 +51,7 @@ class AuthController {
 	 *        content:
 	 *          application/json:
 	 *            schema:
-	 *              $ref: '#/components/schemas/User'
+	 *              $ref: '#/components/schemas/UserToSignIn'
 	 *      responses:
 	 *        "200":
 	 *          description: User logged
@@ -66,7 +69,7 @@ class AuthController {
 		res: Response,
 	): Promise<Response | void> => {
 		try {
-			const result = await signinService(req, res)
+			const result = await signinServiceRest(req, res)
 			return res.status(result.status).json(result)
 		} catch (error) {
 			return res.status(error.status).send(error.err)

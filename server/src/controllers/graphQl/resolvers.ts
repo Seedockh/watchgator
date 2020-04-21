@@ -3,9 +3,10 @@ import {
 	signupService,
 	SuccesResult,
 	ErrorResult,
-	signinService,
+	signinServiceGql,
 } from '../../services/userAuthServices'
 import { User } from '../../entities/User'
+import { Context } from 'graphql-passport/lib/buildContext'
 
 // TODO: voir pour utiliser type user du shared package à la place ?
 interface UserToRegister {
@@ -19,24 +20,25 @@ interface UserToRegister {
 export const resolvers = {
 	Query: {
 		hello: () => 'Hello world!',
-		// signin: async (_: any, args: User): Promise<User | undefined> => {
-		// 	const { nickname, password, email } = args
-		// 	try {
-		// 		const result = await signinService()
-		// 		return (result as SuccesResult).data.user
-		// 	} catch (error) {
-		// 		throw new AuthenticationError((error as ErrorResult).err)
-		// 	}
-		// },
 	},
 	Mutation: {
-		signUp: async (
-			parent: any,
-			args: UserToRegister,
-		): Promise<User | undefined> => {
+		signUp: async (_: any, args: UserToRegister): Promise<User | undefined> => {
 			const { nickname, password, email } = args
 			try {
 				const result = await signupService(nickname, password, email)
+				return (result as SuccesResult).data.user
+			} catch (error) {
+				throw new AuthenticationError((error as ErrorResult).err)
+			}
+		},
+		signIn: async (
+			_: any,
+			args: UserToRegister,
+			context: Context<User>,
+		): Promise<User | undefined> => {
+			const { nickname, password } = args
+			try {
+				const result = await signinServiceGql(nickname, password, context)
 				return (result as SuccesResult).data.user
 			} catch (error) {
 				throw new AuthenticationError((error as ErrorResult).err)

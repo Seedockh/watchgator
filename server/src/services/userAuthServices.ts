@@ -8,6 +8,7 @@ import passport from 'passport'
 import { validate, ValidationError } from 'class-validator'
 import { User } from '../entities/User'
 import { addUserRepository } from '../repositories/userRepository'
+import { Context } from 'graphql-passport/lib/buildContext'
 
 interface BaseResult {
 	status: number
@@ -82,7 +83,25 @@ export const signupService = async (
 	)
 }
 
-export const signinService = async (
+export const signinServiceGql = async (
+	nickname: string,
+	password: string,
+	context: Context<User>,
+): Promise<Result | undefined> => {
+	const { user } = await context.authenticate('graphql-local', {
+		username: nickname,
+		password,
+	})
+
+	if (user == undefined) {
+		console.log('ERROR')
+		return
+	}
+	const token = setToken(user)
+	return { status: 201, data: { user }, meta: { token } }
+}
+
+export const signinServiceRest = async (
 	req: Request,
 	res: Response,
 ): Promise<Result> => {

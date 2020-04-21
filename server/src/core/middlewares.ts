@@ -6,7 +6,8 @@ import cors from 'cors'
 
 // Passport import
 import './passportMiddleware'
-import { GraphQLLocalStrategy, buildContext } from 'graphql-passport'
+import { buildContext } from 'graphql-passport'
+import { User } from '../entities/User'
 
 // Swagger imports
 import swaggerJsdoc from 'swagger-jsdoc'
@@ -16,6 +17,7 @@ import swaggerUi from 'swagger-ui-express'
 import { ApolloServer } from 'apollo-server-express'
 import { typeDefs } from '../controllers/graphQl/typeDefs'
 import { resolvers } from '../controllers/graphQl/resolvers'
+import passport from 'passport'
 
 export const Middlewares = (app: Application): void => {
 	app.use(
@@ -54,9 +56,12 @@ export const Middlewares = (app: Application): void => {
 	)
 
 	// GraphQL startup
+	app.use(passport.initialize())
+
 	const server = new ApolloServer({
 		typeDefs,
 		resolvers,
+		context: ({ req, res }) => buildContext({ req, res, User }),
 	})
 	server.applyMiddleware({ app })
 }
