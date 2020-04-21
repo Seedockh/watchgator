@@ -78,68 +78,70 @@ class Scraper {
 			const data = await this.page.evaluate(sampleItemsPerPage => {
 				const medias = []
 
-					Array.from(document.querySelectorAll('.lister-item'), (item, index) => {
-						if (index < sampleItemsPerPage) {
-							const casting = []
-							Array.from(
-								item.querySelectorAll(
-									'div.ratings-bar + p.text-muted + p > .ghost ~ a',
-								),
-								actor => casting.push(actor ? actor.innerText : null),
-							)
+				Array.from(document.querySelectorAll('.lister-item'), (item, index) => {
+					if (index < sampleItemsPerPage) {
+						const casting = []
+						Array.from(
+							item.querySelectorAll(
+								'div.ratings-bar + p.text-muted + p > .ghost ~ a',
+							),
+							actor => casting.push(actor ? actor.innerText : null),
+						)
 
-							const title = item.querySelector('h3 .lister-item-index + a')
-							const year = item.querySelector('h3 span.lister-item-year')
-							const rating = item.querySelector(
-								'div.ratings-bar > .ratings-imdb-rating strong',
-							)
-							const nbRatings = item.querySelector(
-								'p.sort-num_votes-visible > span.text-muted + span[name="nv"]',
-							)
-							const metaScore = item.querySelector(
-								'div.ratings-bar > .ratings-metascore .metascore',
-							)
-							const certificate = item.querySelector(
-								'p.text-muted > span.certificate',
-							)
-							const runtime = item.querySelector('p.text-muted > span.runtime')
-							const genre = item.querySelector('p.text-muted > span.genre')
-							const description = item.querySelector(
-								'div.ratings-bar + p.text-muted',
-							)
-							const picture = item.querySelector(
-								'.lister-item-image a img[class="loadlate"]',
-							)
-							const director = item.querySelector(
-								'div.ratings-bar + p.text-muted + p > a',
-							)
-							const gross = item.querySelector(
-								'p.sort-num_votes-visible span.ghost + span.text-muted + span[name="nv"]',
-							)
+						const title = item.querySelector('h3 .lister-item-index + a')
+						const year = item.querySelector('h3 span.lister-item-year')
+						const rating = item.querySelector(
+							'div.ratings-bar > .ratings-imdb-rating strong',
+						)
+						const nbRatings = item.querySelector(
+							'p.sort-num_votes-visible > span.text-muted + span[name="nv"]',
+						)
+						const metaScore = item.querySelector(
+							'div.ratings-bar > .ratings-metascore .metascore',
+						)
+						const certificate = item.querySelector(
+							'p.text-muted > span.certificate',
+						)
+						const runtime = item.querySelector('p.text-muted > span.runtime')
+						const genre = item.querySelector('p.text-muted > span.genre')
+						const description = item.querySelector(
+							'div.ratings-bar + p.text-muted',
+						)
+						const picture = item.querySelector(
+							'.lister-item-image a img[class="loadlate"]',
+						)
+						const director = item.querySelector(
+							'div.ratings-bar + p.text-muted + p > a',
+						)
+						const gross = item.querySelector(
+							'p.sort-num_votes-visible span.ghost + span.text-muted + span[name="nv"]',
+						)
 
-							return medias.push({
-								title: title ? title.innerText : null,
-								year: year ? year.innerText.replace(/\(|\)/g, '') : null,
-								rating: rating ? rating.innerText : null,
-								nbRatings: nbRatings ? nbRatings.innerText : null,
-								metaScore: metaScore ? metaScore.innerText : null,
-								certificate: certificate ? certificate.innerText : null,
-								runtime: runtime ? runtime.innerText : null,
-								genre: genre ? genre.innerText : null,
-								description: description ? description.innerText : null,
-								picture: picture ? picture.src.replace(/\@\..*\./g, '@.') : null,
-								director: director ? director.innerText : null,
-								casting: casting,
-								gross: gross ? gross.innerText : null,
-							})
-						}
-					})
-					return { medias }
+						return medias.push({
+							title: title ? title.innerText : null,
+							year: year ? year.innerText.replace(/\(|\)/g, '') : null,
+							rating: rating ? rating.innerText : null,
+							nbRatings: nbRatings ? nbRatings.innerText : null,
+							metaScore: metaScore ? metaScore.innerText : null,
+							certificate: certificate ? certificate.innerText : null,
+							runtime: runtime ? runtime.innerText : null,
+							genre: genre ? genre.innerText : null,
+							description: description ? description.innerText : null,
+							picture: picture ? picture.src.replace(/\@\..*\./g, '@.') : null,
+							director: director ? director.innerText : null,
+							casting: casting,
+							gross: gross ? gross.innerText : null,
+						})
+					}
+				})
+				return { medias }
 			}, this.sampleItemsPerPage)
 
 			return JSON.stringify(data)
-		} catch(e) {
-			this.spinner.fail(`Error when attempting to browse ${nextPage ?? this[type + 'Endpoint']}
+		} catch (e) {
+			this.spinner.fail(`Error when attempting to browse ${
+				nextPage ?? this[type + 'Endpoint']
+			}
 ${e}`)
 			return {}
 		}

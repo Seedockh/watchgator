@@ -28,6 +28,6 @@ import Scraper from './core/Scraper'
     */
 	} catch (e) {
 		console.log(`${'\n'}❌Error while scrapping : ${e}`)
-    return e
+		return e
 	}
 })()
