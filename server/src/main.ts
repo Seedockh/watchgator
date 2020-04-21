@@ -2,7 +2,7 @@ import './prelude'
 import './postlude'
 import ExpressServer from './core/ExpressServer'
 import Scraper from './core/Scraper'
-;(async () => {
+;(async (): void => {
 	await ExpressServer.run()
 
 	try {
@@ -10,10 +10,8 @@ import Scraper from './core/Scraper'
 		// 2nd param : the size of data requested ("sample" for 100, "live" for 5000)
 		await Scraper.scrape('movies', 'sample')
 		await Scraper.scrape('series', 'sample')
-    return
 	} catch (e) {
 		console.log('Error while scrapping')
 		console.log(e)
-    return e
 	}
 })()
