@@ -153,7 +153,7 @@ class Scraper {
 	}
 
 	/** * SCROLLING ALL PAGE TO PREVENT LAZYLOAD PLACEHOLDERS * **/
-	private async autoScroll(page) {
+	private async autoScroll(page): void {
 		// Using querystrings to prevent Babel from interpreting async/await
 		await page.evaluate(`(async () => {
       await new Promise((resolve, reject) => {
@@ -174,7 +174,7 @@ class Scraper {
 	}
 
 	/** * WRITE DATABASE HEADERS * **/
-	private async insertDatabaseHeaders(type = 'movies', level = 'dev') {
+	private async insertDatabaseHeaders(type = 'movies', level = 'dev'): void {
 		fs.openSync(`src/database/imdb_${type}_${level}.json`, 'w')
 		fs.writeFile(
 			`src/database/imdb_${type}_${level}.json`,
@@ -188,7 +188,7 @@ class Scraper {
 	}
 
 	/** * WRITE CURRENT SCRAPED PAGE INTO DATABASE * **/
-	private async insertPageIntoDatabase(data, type = 'movies', level = 'dev') {
+	private async insertPageIntoDatabase(data, type = 'movies', level = 'dev'): void {
 		const parsedData = JSON.parse(data)
 		let dataString = ''
 		parsedData.medias.map(
@@ -210,7 +210,7 @@ class Scraper {
 	}
 
 	/** * WRITE DATABASE FOOTERS * **/
-	private async insertDatabaseFooters(type = 'movies', level = 'dev') {
+	private async insertDatabaseFooters(type = 'movies', level = 'dev'): void {
 		await fs.appendFile(
 			`src/database/imdb_${type}_${level}.json`,
 			']}',
