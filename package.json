@@ -1,0 +1,13 @@
+{
+  "name": "watchgator",
+  "version": "1.0.0",
+  "repository": "https://github.com/Seedockh/watchgator.git",
+  "author": "<pierre.herisse@gmail.com>",
+  "private": true,
+  "scripts": {
+    "pserv": "heroku git:remote -a watchgator-server && git subtree push --prefix server heroku master",
+    "pcli": "heroku git:remote -a watchgator-client && git subtree push --prefix client heroku master",
+    "pheroku": "npm run pserv && npm run pcli"
+  },
+  "license": "MIT"
+}

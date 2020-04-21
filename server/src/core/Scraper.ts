@@ -2,39 +2,50 @@ import puppeteer from 'puppeteer'
 import fs from 'fs'
 import ora from 'ora'
 
-class Scraper {
-  private sampleMoviesPerPage = 5
-  private totalMovies = null
-  private nbMoviesWritten = 0
-  private browser
-  private page
-  private spinner = ora('').start()
+/**************************************/
 
-  private async initScraper() {
+
+class Scraper {
+  private moviesEndpoint = 'https://www.imdb.com/search/title/?title_type=feature,tv_movie'
+  private seriesEndpoint = 'https://www.imdb.com/search/title/?title_type=tv_series'
+  private sampleItemsPerPage = 50
+  private samplePagesToScrape = 2
+  private liveItemsPerPage = 5
+  private livePagesToScrape = 2
+  private totalItems = null
+  private totalPages = null
+  private nbItemsWritten = 0
+  private browser = null
+  private page = null
+  private spinner
+
+  private async initScraper(type) {
     this.browser = await puppeteer.launch()
     this.page = await this.browser.newPage()
-    console.log('IMDB scraper started')
+    this.spinner = ora(``).start()
   }
 
-  /** * SCRAPE SAMPLE DATASET WITH FEW MOVIES * **/
-	public async scrapeSample(): void {
-    await this.initScraper()
-    await this.insertDatabaseHeaders()
-    this.spinner.text = `Building your dataset ...`
+  /** * SCRAPE SAMPLE DATASET WITH FEW MEDIAS * **/
+	public async scrapeSample(type): void {
+    await this.initScraper(type)
+    await this.insertDatabaseHeaders(type)
+    this.spinner.text = `Building ${type} sample dataset ...`
     this.spinner.indent++
     let nextPage = null
+    let currentPage = 0
     let pagination = true
 
-    while (pagination) {
-      const currentPageData = await this.scrapePageMovies(nextPage)
-      await this.insertPageIntoDatabase(currentPageData)
+    while (pagination && currentPage < this.samplePagesToScrape) {
+      currentPage++
+      const currentPageData = await this.scrapePageMedias(type, nextPage)
+      await this.insertPageIntoDatabase(currentPageData, type)
       const findNextPage = await this.scrapeNextPage()
       this.spinner.text = `√ Progress done : ${findNextPage.totalText}`
 
-      if (this.totalMovies === null) {
-        const totalSearchMovies = findNextPage.totalText.replace(/^.* of /, '').replace(' titles.', '')
-        const nbPages = Math.ceil(parseInt(totalSearchMovies) / 50)
-        this.totalMovies = nbPages * this.sampleMoviesPerPage
+      if (this.totalItems === null) {
+        // const totalSearchItems = findNextPage.totalText.replace(/^.* of /, '').replace(' titles.', '')
+        // const nbPages = Math.ceil(parseInt(totalSearchItems) / 50)
+        this.totalItems = this.sampleItemsPerPage * this.samplePagesToScrape
       }
 
       if (findNextPage.nextLink === null) pagination = false
@@ -44,25 +55,26 @@ class Scraper {
 
     this.spinner.indent--
     console.log(`
-  ${this.nbMoviesWritten} / ${this.totalMovies} movies written.`)
-    this.spinner.succeed('Sample Scraping complete.')
+  ${this.nbItemsWritten} / ${this.totalItems} ${type} written.`)
+    this.spinner.succeed(`Sample ${type} Scraping complete.`)
 
-    await this.insertDatabaseFooters()
+    await this.insertDatabaseFooters(type)
+    this.totalItems = null
+    this.totalPages = null
+    this.nbItemsWritten = 0
     await this.browser.close()
   }
 
-  /** * SCRAPING ONE PAGE MOVIES * **/
-  private async scrapePageMovies(nextPage = null) {
-    const firstSearchUrl = 'https://www.imdb.com/search/title/?title=the+godfather'
-
-    await this.page.goto(nextPage ?? firstSearchUrl, { waitUntil: 'networkidle2' })
+  /** * SCRAPING ONE PAGE MEDIAS * **/
+  private async scrapePageMedias(type, nextPage = null) {
+    await this.page.goto(nextPage ?? this[type + 'Endpoint'], { waitUntil: 'networkidle2' })
     await this.page.setViewport({ width: 1200, height: 800 })
     await this.autoScroll(this.page)
 
-    const data = await this.page.evaluate(sampleMoviesPerPage => {
-      let movies = []
+    const data = await this.page.evaluate(sampleItemsPerPage => {
+      let medias = []
       const nodesList = Array.from(document.querySelectorAll('.lister-item'), (item, index) => {
-        if (index < sampleMoviesPerPage) {
+        if (index < sampleItemsPerPage) {
           let casting = []
           Array.from(item.querySelectorAll('div.ratings-bar + p.text-muted + p > .ghost ~ a'), actor => casting.push(actor.innerText))
 
@@ -79,7 +91,7 @@ class Scraper {
           const director = item.querySelector('div.ratings-bar + p.text-muted + p > a')
           const gross = item.querySelector('p.sort-num_votes-visible span.ghost + span.text-muted + span[name="nv"]')
 
-          return movies.push({
+          return medias.push({
             title: title ? title.innerText : null,
             year: year ? year.innerText.replace(/\(|\)/g,'') : null,
             rating: rating ? rating.innerText : null,
@@ -96,8 +108,8 @@ class Scraper {
           })
         }
       })
-      return { movies }
-    }, this.sampleMoviesPerPage)
+      return { medias }
+    }, this.sampleItemsPerPage)
     return JSON.stringify(data)
   }
 
@@ -133,30 +145,31 @@ class Scraper {
   }
 
   /** * WRITE DATABASE HEADERS * **/
-  private async insertDatabaseHeaders(level = 'sample') {
-    await fs.writeFile(`src/database/imdb${level === 'sample' ? '_sample' : ''}.json`, '{\n"movies": \n[', 'utf8', err => {
+  private async insertDatabaseHeaders(type = 'movies', level = 'dev') {
+    fs.openSync(`src/database/imdb_${type}_${level}.json`, 'w')
+    fs.writeFile(`src/database/imdb_${type}_${level}.json`, '{\n"data": \n[', 'utf8', err => {
       if (err) return this.spinner.info('Error while writing database headers')
     })
   }
 
   /** * WRITE CURRENT SCRAPED PAGE INTO DATABASE * **/
-  private async insertPageIntoDatabase(data, level = 'sample') {
+  private async insertPageIntoDatabase(data, type = 'movies', level = 'dev') {
     let parsedData = JSON.parse(data)
     let dataString = ""
-    parsedData.movies.map((movie, index) => dataString += JSON.stringify(movie, null, 4) + ",\n")
+    parsedData.medias.map((media, index) => dataString += JSON.stringify(media, null, 4) + ",\n")
 
-    await fs.appendFile(`src/database/imdb${level === 'sample' ? '_sample' : ''}.json`, dataString, 'utf8', err => {
+    await fs.appendFile(`src/database/imdb_${type}_${level}.json`, dataString, 'utf8', err => {
       if (err) {
         this.spinner.fail('Error while writing to database')
         return console.log(err)
       }
-      this.nbMoviesWritten += parsedData.movies.length
+      this.nbItemsWritten += parsedData.medias.length
     })
   }
 
   /** * WRITE DATABASE FOOTERS * **/
-  private async insertDatabaseFooters(level = 'sample') {
-    await fs.appendFile(`src/database/imdb${level === 'sample' ? '_sample' : ''}.json`, "]}", 'utf8', err => {
+  private async insertDatabaseFooters(type = 'movies', level = 'dev') {
+    await fs.appendFile(`src/database/imdb_${type}_${level}.json`, "]}", 'utf8', err => {
       if (err) return this.spinner.info('Error while writing database footers')
     })
   }
