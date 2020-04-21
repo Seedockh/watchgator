@@ -18,10 +18,9 @@ import Scraper from './core/Scraper'
 		if (!fs.existsSync('src/database/imdb_series_sample.json'))
 			await Scraper.scrape('series', 'sample')
 
-
-    // Scraping live data :
-    // °°°°°°°°°°°°°°°°°°°°
-    /*if (!fs.existsSync('src/database/imdb_movies_live.json'))
+		// Scraping live data :
+		// °°°°°°°°°°°°°°°°°°°°
+		/*if (!fs.existsSync('src/database/imdb_movies_live.json'))
        await Scraper.scrape('movies', 'live')
 
     if (!fs.existsSync('src/database/imdb_series_live.json'))
