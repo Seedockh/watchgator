@@ -51,11 +51,8 @@ export const signupService = async (
 			reject: (result: ErrorResult) => void,
 		) => {
 			// User data validation
-			console.log('VALIDATION')
 			const errors: ValidationError[] = await validate(user)
 			if (errors.length > 0) {
-				console.log('UNVALID')
-				console.log(errors)
 				reject({
 					status: 400,
 					err: errors,
@@ -103,7 +100,7 @@ export const signinServiceGql = async (
 		return
 	}
 	const token = setToken(user)
-	return { status: 201, data: { user }, meta: { token } }
+	return { status: 200, data: { user }, meta: { token } }
 }
 
 export const signinServiceRest = async (
@@ -122,7 +119,7 @@ export const signinServiceRest = async (
 					if (!error) {
 						const token: string = setToken(user)
 						resolve({
-							status: 201,
+							status: 200,
 							data: { user },
 							meta: { token },
 						})

@@ -11,6 +11,11 @@ const basicSuite = (server: supertest.SuperTest<supertest.Test>) =>
 				expect(res.status).toBe(200)
 				done()
 			}),
+			it('simple get home/api', async done => {
+				const res: request.Response = await server.get('/api')
+				expect(res.status).toBe(200)
+				done()
+			}),
 			it('GRAPHQL_simple return hello', async done => {
 				const res: request.Response = await server
 					.post('/graphql')

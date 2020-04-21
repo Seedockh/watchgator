@@ -19,10 +19,10 @@ passport.use(
 					nickname,
 				})
 
-				if (!user) return next(null, false)
+				if (!user) return next('User does not exist')
 
 				if (!user.checkIfUnencryptedPasswordIsValid(password))
-					return next(null, false)
+					return next('Password does not match')
 
 				return next(false, user)
 			} catch (err) {

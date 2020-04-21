@@ -29,6 +29,7 @@ export const Middlewares = (app: Application): void => {
 	app.use(helmet())
 	app.use(cacheControl({ noCache: true }))
 	app.use(bodyParser.urlencoded({ extended: true }))
+	app.use(bodyParser.json())
 
 	// Swagger set up
 	const options = {
@@ -43,8 +44,12 @@ export const Middlewares = (app: Application): void => {
 					url: `http://localhost:${process.env.PORT}/api/`,
 				},
 			],
+			basePath: '/',
 		},
-		apis: ['../entities/User.ts', '../controllers/rest/AuthController.ts'],
+		apis: [
+			'./src/entities/User.ts',
+			'./src/controllers/rest/AuthController.ts',
+		],
 	}
 	const specs = swaggerJsdoc(options)
 	app.use('/doc', swaggerUi.serve)
