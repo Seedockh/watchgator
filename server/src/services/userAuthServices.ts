@@ -73,8 +73,6 @@ export const signupService = async (
 						meta: { token },
 					})
 				} catch (error) {
-					console.log('ERROR')
-					console.log(error)
 					reject({
 						status: 400,
 						err: error.message,
