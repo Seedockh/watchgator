@@ -5,6 +5,7 @@ import 'rsuite/dist/styles/rsuite-dark.css';
 import { Login, Home } from './pages'
 import User from './core/user'
 import { Container } from 'rsuite';
+import Register from './pages/Register';
 
 const user = localStorage.getItem('user')
 
@@ -34,7 +35,7 @@ function App(): JSX.Element {
     <User.Provider initialState={userInitialState} reducer={reducer}>
       <Route
         exact
-        path="/"
+        path="/login"
         component={(): JSX.Element => {
           return <Login />
         }}
@@ -46,6 +47,13 @@ function App(): JSX.Element {
           return <Home />
         }}
       />
+      <Route
+        exact
+        path="/register"
+        component={(): JSX.Element => {
+          return <Register />
+        }}
+        />
     </User.Provider>
   )
 }
