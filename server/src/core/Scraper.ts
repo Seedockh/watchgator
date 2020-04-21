@@ -2,8 +2,6 @@ import puppeteer from 'puppeteer'
 import fs from 'fs'
 import ora from 'ora'
 
-/**************************************/
-
 class Scraper {
 	private moviesEndpoint =
 		'https://www.imdb.com/search/title/?title_type=feature,tv_movie'
@@ -24,12 +22,13 @@ class Scraper {
 		this.browser = await puppeteer.launch()
 		this.page = await this.browser.newPage()
 		this.spinner = ora(``).start()
+    console.log('*****************')
 	}
 
 	/** * SCRAPE SAMPLE DATASET WITH FEW MEDIAS * **/
 	public async scrape(type, level): void {
 		await this.initScraper(type)
-		await this.insertDatabaseHeaders(type)
+		await this.insertDatabaseHeaders(type, level)
 		this.spinner.text = `Building ${type} sample dataset ...`
 		this.spinner.indent++
 		let nextPage = null
@@ -39,7 +38,7 @@ class Scraper {
 		while (pagination && currentPage < this[level + 'PagesToScrape']) {
 			currentPage++
 			const currentPageData = await this.scrapePageMedias(type, nextPage)
-			await this.insertPageIntoDatabase(currentPageData, type)
+			await this.insertPageIntoDatabase(currentPageData, type, level)
 			const findNextPage = await this.scrapeNextPage()
 			this.spinner.text = `√ Progress done : ${findNextPage.totalText}`
 
@@ -60,7 +59,7 @@ class Scraper {
   ${this.nbItemsWritten} / ${this.totalItems} ${type} written.`)
 		this.spinner.succeed(`${level.toUpperCase()} ${type} Scraping complete.`)
 
-		await this.insertDatabaseFooters(type)
+		await this.insertDatabaseFooters(type, level)
 		this.totalItems = null
 		this.totalPages = null
 		this.nbItemsWritten = 0
@@ -174,7 +173,7 @@ class Scraper {
 	}
 
 	/** * WRITE DATABASE HEADERS * **/
-	private async insertDatabaseHeaders(type = 'movies', level = 'dev'): void {
+	private async insertDatabaseHeaders(type = 'movies', level = 'sample'): void {
 		fs.openSync(`src/database/imdb_${type}_${level}.json`, 'w')
 		fs.writeFile(
 			`src/database/imdb_${type}_${level}.json`,
@@ -188,7 +187,11 @@ class Scraper {
 	}
 
 	/** * WRITE CURRENT SCRAPED PAGE INTO DATABASE * **/
-	private async insertPageIntoDatabase(data, type = 'movies', level = 'dev'): void {
+	private async insertPageIntoDatabase(
+		data,
+		type = 'movies',
+		level = 'sample',
+	): void {
 		const parsedData = JSON.parse(data)
 		let dataString = ''
 		parsedData.medias.map(
@@ -210,7 +213,7 @@ class Scraper {
 	}
 
 	/** * WRITE DATABASE FOOTERS * **/
-	private async insertDatabaseFooters(type = 'movies', level = 'dev'): void {
+	private async insertDatabaseFooters(type = 'movies', level = 'sample'): void {
 		await fs.appendFile(
 			`src/database/imdb_${type}_${level}.json`,
 			']}',
