@@ -27,7 +27,7 @@ class Scraper {
 
 	/** * SCRAPE SAMPLE DATASET WITH FEW MEDIAS * **/
 	public async scrape(type, level): void {
-		await this.initScraper(type)
+		await this.initScraper()
 		await this.insertDatabaseHeaders(type, level)
 		this.spinner.text = `Building ${type} sample dataset ...`
 		this.spinner.indent++
@@ -195,7 +195,7 @@ class Scraper {
 		const parsedData = JSON.parse(data)
 		let dataString = ''
 		parsedData.medias.map(
-			(media, index) => (dataString += JSON.stringify(media, null, 4) + ',\n'),
+			media => (dataString += JSON.stringify(media, null, 4) + ',\n'),
 		)
 
 		await fs.appendFile(
