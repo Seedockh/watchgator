@@ -32,6 +32,13 @@ class AuthController {
 	static signup = async (req: Request, res: Response): Promise<Response> => {
 		const { nickname, password, email } = req.body
 		try {
+			console.log('SIGN UP')
+			console.log('BODY')
+			console.log(req.body)
+			console.log('nickname', nickname)
+			console.log('password', password)
+			console.log('email', email)
+
 			const result = await signupService(nickname, password, email)
 			return res.status(result.status).json(result)
 		} catch (error) {

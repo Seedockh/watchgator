@@ -51,14 +51,17 @@ export const signupService = async (
 			reject: (result: ErrorResult) => void,
 		) => {
 			// User data validation
+			console.log('VALIDATION')
 			const errors: ValidationError[] = await validate(user)
 			if (errors.length > 0) {
+				console.log('UNVALID')
+				console.log(errors)
 				reject({
 					status: 400,
 					err: errors,
 				})
 			}
-			// User added to DB
+			// Add user to DB
 			else {
 				user.hashPassword()
 
@@ -73,6 +76,8 @@ export const signupService = async (
 						meta: { token },
 					})
 				} catch (error) {
+					console.log('ERROR')
+					console.log(error)
 					reject({
 						status: 400,
 						err: error.message,

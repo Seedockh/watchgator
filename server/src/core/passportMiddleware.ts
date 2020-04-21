@@ -33,23 +33,29 @@ passport.use(
 )
 
 passport.use(
-	new GraphQLLocalStrategy(async (username, password, next) => {
-		try {
-			const userRepository: Repository<User> = getRepository(User)
+	new GraphQLLocalStrategy(
+		async (
+			username: any,
+			password: any,
+			next: (error: any, user?: any) => void,
+		) => {
+			try {
+				const userRepository: Repository<User> = getRepository(User)
 
-			const user: User | undefined = await userRepository.findOne({
-				nickname: username,
-			})
+				const user: User | undefined = await userRepository.findOne({
+					nickname: username,
+				})
 
-			if (!user) return next(null, false)
-			if (!user.checkIfUnencryptedPasswordIsValid(password))
-				return next(null, false)
+				if (!user) return next(null, false)
+				if (!user.checkIfUnencryptedPasswordIsValid(password))
+					return next(null, false)
 
-			return next(false, user)
-		} catch (err) {
-			return next(err.message)
-		}
-	}),
+				return next(false, user)
+			} catch (err) {
+				return next(err.message)
+			}
+		},
+	),
 )
 
 passport.use(
