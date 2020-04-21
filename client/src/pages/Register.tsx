@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Container, Header, Navbar, Content, ControlLabel, FlexboxGrid, Form, Panel, FormGroup, FormControl, Footer, ButtonToolbar, Button } from 'rsuite'
+import { Container, Content, ControlLabel, FlexboxGrid, Form, Panel, FormGroup, FormControl, Button } from 'rsuite'
 import useInput from '../core/useInput'
 import User from '../core/user'
 
-const Login = () => {
+const Register = () => {
   const { value: email } = useInput('')
   const [{ user }, dispatch] = User.GlobalState()
   const history = useHistory()
@@ -27,8 +27,8 @@ const Login = () => {
     history.push('/home')
   }
 
-  const redirectRegister = () => {
-      history.push('/register')    
+  const redirectLogin = () => {
+      history.push('/login')    
   } 
 
   return (
@@ -36,22 +36,25 @@ const Login = () => {
       <Content>
         <FlexboxGrid justify="center">
           <FlexboxGrid.Item colspan={10}>
-            <Panel header={<h3>Login</h3>} bordered>
+            <Panel header={<h3>Register</h3>} bordered>
               <Form fluid>
+              <FormGroup>
+                  <ControlLabel>Pseudo</ControlLabel>
+                  <FormControl name="nickname" />
+                </FormGroup>
                 <FormGroup>
                   <ControlLabel>Email address</ControlLabel>
-                  <FormControl name="name" />
+                  <FormControl name="email" />
                 </FormGroup>
                 <FormGroup>
                   <ControlLabel>Password</ControlLabel>
                   <FormControl name="password" type="password" />
-                  <Button appearance="link">Forgot password?</Button>
                 </FormGroup>
                 <FormGroup style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
-                  <Button appearance="primary" style={{ width: 150 }}>Login</Button>
+                  <Button appearance="primary" style={{ width: 150 }}>Register</Button>
                   <FormGroup style={{ display: "flex", flexDirection: "row", alignItems: "baseline", marginTop: 10 }}>
-                    <ControlLabel>Don't have account ?</ControlLabel>
-                    <Button onClick={redirectRegister} appearance="link"> Sign up</Button>
+                    <ControlLabel> Already have a account ?</ControlLabel>
+                    <Button onClick={redirectLogin} appearance="link"> Sign in</Button>
                   </FormGroup>
                 </FormGroup>
               </Form>
@@ -62,4 +65,4 @@ const Login = () => {
     </Container>
   )
 }
-export default Login;
+export default Register;
