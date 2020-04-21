@@ -1,7 +1,10 @@
 import React from 'react'
 import { Route, Link } from 'react-router-dom'
+import 'rsuite/dist/styles/rsuite-dark.css';
+
 import { Login, Home } from './pages'
 import User from './core/user'
+import { Container } from 'rsuite';
 
 const user = localStorage.getItem('user')
 
@@ -28,41 +31,22 @@ const reducer = (prevState: UserState, action: UserAction): UserState => {
 
 function App(): JSX.Element {
   return (
-    <>
-      <header>
-        <div className="section has-text-centered">
-          <Link to="/">
-            <h1 className="title is-1">My React App</h1>
-          </Link>
-        </div>
-      </header>
-      <main className="section">
-        <User.Provider initialState={userInitialState} reducer={reducer}>
-          <Route
-            exact
-            path="/"
-            component={(): JSX.Element => {
-              return <Login />
-            }}
-          />
-          <Route
-            exact
-            path="/home"
-            component={(): JSX.Element => {
-              return <Home />
-            }}
-          />
-        </User.Provider>
-      </main>
-      <footer className="section">
-        <p className="has-text-centered">
-          <span>&copy;2020 </span>
-          <a href="/">Your</a>
-          <span> - </span>
-          <a href="/">Name</a>
-        </p>
-      </footer>
-    </>
+    <User.Provider initialState={userInitialState} reducer={reducer}>
+      <Route
+        exact
+        path="/"
+        component={(): JSX.Element => {
+          return <Login />
+        }}
+      />
+      <Route
+        exact
+        path="/home"
+        component={(): JSX.Element => {
+          return <Home />
+        }}
+      />
+    </User.Provider>
   )
 }
 
