@@ -14,10 +14,9 @@ module.exports = {
   },
   extends: [
     'plugin:@typescript-eslint/recommended',
-    'prettier/@typescript-eslint',
-    'plugin:prettier/recommended',
+    'plugin:prettier/recommended'
   ],
-  plugins: ['jest', 'prettier'],
+  plugins: ['jest'],
   rules: {
     'no-mixed-spaces-and-tabs': ['warn', 'smart-tabs'],
     'prettier/prettier': ['error', require('./prettier.config.js')],
