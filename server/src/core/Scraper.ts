@@ -22,7 +22,7 @@ class Scraper {
 		this.browser = await puppeteer.launch()
 		this.page = await this.browser.newPage()
 		this.spinner = ora(``).start()
-    console.log('*****************')
+		console.log('*****************')
 	}
 
 	/** * SCRAPE SAMPLE DATASET WITH FEW MEDIAS * **/
