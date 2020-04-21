@@ -6,6 +6,7 @@ import { Login, Home } from './pages'
 import User from './core/user'
 import { Container } from 'rsuite';
 import Register from './pages/Register';
+import Profile from './pages/Profiles';
 
 const user = localStorage.getItem('user')
 
@@ -36,24 +37,23 @@ function App(): JSX.Element {
       <Route
         exact
         path="/login"
-        component={(): JSX.Element => {
-          return <Login />
-        }}
-      />
-      <Route
-        exact
-        path="/home"
-        component={(): JSX.Element => {
-          return <Home />
-        }}
+        component={Login}
       />
       <Route
         exact
         path="/register"
-        component={(): JSX.Element => {
-          return <Register />
-        }}
+        component={Register}
         />
+        <Route
+        exact
+        path="/profile"
+        component={Profile}
+        />
+      <Route
+        exact
+        path="/home"
+        component={Home}
+      />
     </User.Provider>
   )
 }
