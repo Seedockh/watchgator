@@ -22,7 +22,7 @@ class Scraper {
 		this.browser = await puppeteer.launch()
 		this.page = await this.browser.newPage()
 		this.spinner = ora(``).start()
-		console.log('*****************')
+		console.log('******** SCRAPING *********')
 	}
 
 	/** * SCRAPE SAMPLE DATASET WITH FEW MEDIAS * **/
@@ -40,7 +40,7 @@ class Scraper {
 			const currentPageData = await this.scrapePageMedias(type, nextPage)
 			await this.insertPageIntoDatabase(currentPageData, type, level)
 			const findNextPage = await this.scrapeNextPage()
-			this.spinner.text = `√ Progress done : ${findNextPage.totalText}`
+			this.spinner.text = `✔️ Progress done : ${findNextPage.totalText}`
 
 			if (this.totalItems === null) {
 				// const totalSearchItems = findNextPage.totalText.replace(/^.* of /, '').replace(' titles.', '')
@@ -74,67 +74,75 @@ class Scraper {
 		await this.page.setViewport({ width: 1200, height: 800 })
 		await this.autoScroll(this.page)
 
-		const data = await this.page.evaluate(sampleItemsPerPage => {
-			const medias = []
-			Array.from(document.querySelectorAll('.lister-item'), (item, index) => {
-				if (index < sampleItemsPerPage) {
-					const casting = []
-					Array.from(
-						item.querySelectorAll(
-							'div.ratings-bar + p.text-muted + p > .ghost ~ a',
-						),
-						actor => casting.push(actor.innerText),
-					)
+		try {
+			const data = await this.page.evaluate(sampleItemsPerPage => {
+				const medias = []
 
-					const title = item.querySelector('h3 .lister-item-index + a')
-					const year = item.querySelector('h3 span.lister-item-year')
-					const rating = item.querySelector(
-						'div.ratings-bar > .ratings-imdb-rating strong',
-					)
-					const nbRatings = item.querySelector(
-						'p.sort-num_votes-visible > span.text-muted + span[name="nv"]',
-					)
-					const metaScore = item.querySelector(
-						'div.ratings-bar > .ratings-metascore .metascore',
-					)
-					const certificate = item.querySelector(
-						'p.text-muted > span.certificate',
-					)
-					const runtime = item.querySelector('p.text-muted > span.runtime')
-					const genre = item.querySelector('p.text-muted > span.genre')
-					const description = item.querySelector(
-						'div.ratings-bar + p.text-muted',
-					)
-					const picture = item.querySelector(
-						'.lister-item-image a img[class="loadlate"]',
-					)
-					const director = item.querySelector(
-						'div.ratings-bar + p.text-muted + p > a',
-					)
-					const gross = item.querySelector(
-						'p.sort-num_votes-visible span.ghost + span.text-muted + span[name="nv"]',
-					)
+					Array.from(document.querySelectorAll('.lister-item'), (item, index) => {
+						if (index < sampleItemsPerPage) {
+							const casting = []
+							Array.from(
+								item.querySelectorAll(
+									'div.ratings-bar + p.text-muted + p > .ghost ~ a',
+								),
+								actor => casting.push(actor ? actor.innerText : null),
+							)
 
-					return medias.push({
-						title: title ? title.innerText : null,
-						year: year ? year.innerText.replace(/\(|\)/g, '') : null,
-						rating: rating ? rating.innerText : null,
-						nbRatings: nbRatings ? nbRatings.innerText : null,
-						metaScore: metaScore ? metaScore.innerText : null,
-						certificate: certificate ? certificate.innerText : null,
-						runtime: runtime ? runtime.innerText : null,
-						genre: genre ? genre.innerText : null,
-						description: description ? description.innerText : null,
-						picture: picture ? picture.src.replace(/\@\..*\./g, '@.') : null,
-						director: director ? director.innerText : null,
-						casting: casting,
-						gross: gross ? gross.innerText : null,
+							const title = item.querySelector('h3 .lister-item-index + a')
+							const year = item.querySelector('h3 span.lister-item-year')
+							const rating = item.querySelector(
+								'div.ratings-bar > .ratings-imdb-rating strong',
+							)
+							const nbRatings = item.querySelector(
+								'p.sort-num_votes-visible > span.text-muted + span[name="nv"]',
+							)
+							const metaScore = item.querySelector(
+								'div.ratings-bar > .ratings-metascore .metascore',
+							)
+							const certificate = item.querySelector(
+								'p.text-muted > span.certificate',
+							)
+							const runtime = item.querySelector('p.text-muted > span.runtime')
+							const genre = item.querySelector('p.text-muted > span.genre')
+							const description = item.querySelector(
+								'div.ratings-bar + p.text-muted',
+							)
+							const picture = item.querySelector(
+								'.lister-item-image a img[class="loadlate"]',
+							)
+							const director = item.querySelector(
+								'div.ratings-bar + p.text-muted + p > a',
+							)
+							const gross = item.querySelector(
+								'p.sort-num_votes-visible span.ghost + span.text-muted + span[name="nv"]',
+							)
+
+							return medias.push({
+								title: title ? title.innerText : null,
+								year: year ? year.innerText.replace(/\(|\)/g, '') : null,
+								rating: rating ? rating.innerText : null,
+								nbRatings: nbRatings ? nbRatings.innerText : null,
+								metaScore: metaScore ? metaScore.innerText : null,
+								certificate: certificate ? certificate.innerText : null,
+								runtime: runtime ? runtime.innerText : null,
+								genre: genre ? genre.innerText : null,
+								description: description ? description.innerText : null,
+								picture: picture ? picture.src.replace(/\@\..*\./g, '@.') : null,
+								director: director ? director.innerText : null,
+								casting: casting,
+								gross: gross ? gross.innerText : null,
+							})
+						}
 					})
-				}
-			})
-			return { medias }
-		}, this.sampleItemsPerPage)
-		return JSON.stringify(data)
+					return { medias }
+			}, this.sampleItemsPerPage)
+
+			return JSON.stringify(data)
+		} catch(e) {
+			this.spinner.fail(`Error when attempting to browse ${nextPage ?? this[type + 'Endpoint']}
+${e}`)
+			return {}
+		}
 	}
 
 	/** * GETTING THE NEXT PAGE BUTTON * **/

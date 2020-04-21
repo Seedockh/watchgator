@@ -27,7 +27,7 @@ import Scraper from './core/Scraper'
        await Scraper.scrape('series', 'live')
     */
 	} catch (e) {
-		console.log('Error while scrapping')
-		console.log(e)
+		console.log(`${'\n'}❌Error while scrapping : ${e}`)
+    return e
 	}
 })()
