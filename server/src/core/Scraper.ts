@@ -10,8 +10,8 @@ class Scraper {
   private seriesEndpoint = 'https://www.imdb.com/search/title/?title_type=tv_series'
   private sampleItemsPerPage = 50
   private samplePagesToScrape = 2
-  private liveItemsPerPage = 5
-  private livePagesToScrape = 2
+  private liveItemsPerPage = 50
+  private livePagesToScrape = 100
   private totalItems = null
   private totalPages = null
   private nbItemsWritten = 0
@@ -26,7 +26,7 @@ class Scraper {
   }
 
   /** * SCRAPE SAMPLE DATASET WITH FEW MEDIAS * **/
-	public async scrapeSample(type): void {
+	public async scrape(type, level): void {
     await this.initScraper(type)
     await this.insertDatabaseHeaders(type)
     this.spinner.text = `Building ${type} sample dataset ...`
@@ -35,7 +35,7 @@ class Scraper {
     let currentPage = 0
     let pagination = true
 
-    while (pagination && currentPage < this.samplePagesToScrape) {
+    while (pagination && currentPage < this[level + 'PagesToScrape']) {
       currentPage++
       const currentPageData = await this.scrapePageMedias(type, nextPage)
       await this.insertPageIntoDatabase(currentPageData, type)
@@ -45,7 +45,7 @@ class Scraper {
       if (this.totalItems === null) {
         // const totalSearchItems = findNextPage.totalText.replace(/^.* of /, '').replace(' titles.', '')
         // const nbPages = Math.ceil(parseInt(totalSearchItems) / 50)
-        this.totalItems = this.sampleItemsPerPage * this.samplePagesToScrape
+        this.totalItems = this[level + 'ItemsPerPage'] * this[level + 'PagesToScrape']
       }
 
       if (findNextPage.nextLink === null) pagination = false
@@ -56,7 +56,7 @@ class Scraper {
     this.spinner.indent--
     console.log(`
   ${this.nbItemsWritten} / ${this.totalItems} ${type} written.`)
-    this.spinner.succeed(`Sample ${type} Scraping complete.`)
+    this.spinner.succeed(`${level.toUpperCase()} ${type} Scraping complete.`)
 
     await this.insertDatabaseFooters(type)
     this.totalItems = null
