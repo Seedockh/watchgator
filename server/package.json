@@ -16,6 +16,7 @@
 		"docker:logs": "docker-compose logs -f"
 	},
 	"dependencies": {
+		"@mhirba/eslint-config-base": "^1.2.0",
 		"@typescript-eslint/eslint-plugin": "^2.29.0",
 		"@typescript-eslint/parser": "^2.29.0",
 		"chalk": "^3.0.0",
