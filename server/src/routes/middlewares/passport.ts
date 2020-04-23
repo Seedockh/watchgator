@@ -1,10 +1,15 @@
+/** ****** ENV ****** **/
+require('dotenv').config()
+/** ****** AUTH ****** **/
 import passport from 'passport'
 import { Strategy as LocalStrategy } from 'passport-local'
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt'
 import { GraphQLLocalStrategy } from 'graphql-passport'
+/** ****** ORM ****** **/
 import { getRepository, Repository } from 'typeorm'
-import { User } from '../entities/User'
-require('dotenv').config()
+/** ****** INTERNALS ****** **/
+import { User } from '../../database/models/User'
+
 
 passport.use(
 	new LocalStrategy(
