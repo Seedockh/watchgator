@@ -1,8 +1,7 @@
+/** ****** SERVER ****** **/
 import { Request, Response } from 'express'
-import {
-	signupService,
-	signinServiceRest,
-} from '../../services/userAuthServices'
+/** ****** INTERNALS ****** **/
+import Authenticate from '../../services/Authenticate'
 
 class AuthController {
 	/**
@@ -32,7 +31,7 @@ class AuthController {
 	static signup = async (req: Request, res: Response): Promise<Response> => {
 		const { nickname, password, email } = req.body
 		try {
-			const result = await signupService(nickname, password, email)
+			const result = await Authenticate.register(nickname, password, email)
 			return res.status(result.status).json(result)
 		} catch (error) {
 			return res.status(error.status).send(error.err)
@@ -69,7 +68,7 @@ class AuthController {
 		res: Response,
 	): Promise<Response | void> => {
 		try {
-			const result = await signinServiceRest(req, res)
+			const result = await Authenticate.login(req, res)
 			console.log()
 			return res.status(result.status).json(result)
 		} catch (error) {

@@ -1,4 +1,4 @@
-// Construct a schema, using GraphQL schema language
+/** ****** GRAPHQL ****** **/
 import { gql } from 'apollo-server-express'
 
 export const typeDefs = gql`

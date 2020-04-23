@@ -12,7 +12,7 @@ import { buildContext } from 'graphql-passport'
 import swaggerJsdoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
 /** ****** INTERNALS ****** **/
-import './passportMiddleware'
+import './passport'
 import { User } from '../../database/models/User'
 import { typeDefs } from '../../controllers/graphQl/typeDefs'
 import { resolvers } from '../../controllers/graphQl/resolvers'

@@ -1,11 +1,12 @@
+/** ****** INTERNALS ****** **/
 import './prelude'
 import './postlude'
-import startApp from './core/ExpressServer'
-import { createConnection } from 'typeorm'
-import DbConfig from './core/DbConfig'
+import ExpressServer from './core/ExpressServer'
+import Database from './database/Database'
+import UserRepository from './database/repositories/UserRepository'
 
-createConnection(DbConfig)
-	.then(() => {
-		startApp()
-	})
-	.catch(error => console.log(error))
+(async () => {
+	await Database.boot()
+	await UserRepository.init()
+	await ExpressServer.run()
+})

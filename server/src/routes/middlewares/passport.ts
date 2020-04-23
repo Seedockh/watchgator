@@ -10,7 +10,6 @@ import { getRepository, Repository } from 'typeorm'
 /** ****** INTERNALS ****** **/
 import { User } from '../../database/models/User'
 
-
 passport.use(
 	new LocalStrategy(
 		{
