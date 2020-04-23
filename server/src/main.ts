@@ -9,4 +9,4 @@ import UserRepository from './database/repositories/UserRepository'
 	await Database.boot()
 	await UserRepository.init()
 	await ExpressServer.run()
-})
+})()

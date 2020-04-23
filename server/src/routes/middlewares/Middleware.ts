@@ -17,7 +17,7 @@ import { User } from '../../database/models/User'
 import { typeDefs } from '../../controllers/graphQl/typeDefs'
 import { resolvers } from '../../controllers/graphQl/resolvers'
 
-export const Middleware = (app: Application): void => {
+const Middleware = (app: Application): void => {
 	app.use(
 		cors({
 			origin: '*', // after change to url website
@@ -68,3 +68,5 @@ export const Middleware = (app: Application): void => {
 	})
 	server.applyMiddleware({ app })
 }
+
+export default Middleware

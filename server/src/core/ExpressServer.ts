@@ -3,8 +3,8 @@ import express, { Express, Request, Response } from 'express'
 import { Server } from 'http'
 /** ****** INTERNALS ****** **/
 import api from '../routes'
-import { Middlewares } from '../routes/middlewares/Middleware'
-import { sLog } from 'chalk'
+import Middleware from '../routes/middlewares/Middleware'
+import { sLog } from './Log'
 
 class ExpressServer {
 	// server | api instance
@@ -18,7 +18,7 @@ class ExpressServer {
 			res.send('Welcome on your app root endpoint ! Try to get /api now :)')
 		})
 		// use Middlewares on app
-		Middlewares(this.app)
+		Middleware(this.app)
 		// use routes
 		this.app.use('/api', api)
 		// open server
