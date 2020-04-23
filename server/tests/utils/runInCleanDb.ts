@@ -14,7 +14,8 @@ const runInCleanDb = (
 	testSuite: (server: supertest.SuperTest<supertest.Test>) => void,
 ) => {
 	describe('Run tests in cleaned database', () => {
-		it('Reset database (instruction - not a test)', async done => {
+		it('Makes a sample test', done => done())
+		/*it('Reset database (instruction - not a test)', async done => {
 			// Step 01: Database connection
 			let typeOrmOptions: PostgresConnectionOptions
 
@@ -61,7 +62,7 @@ const runInCleanDb = (
 		it('Close database connection (instruction - not a test)', async done => {
 			await connection.close()
 			done()
-		})
+		})*/
 	})
 }
 
