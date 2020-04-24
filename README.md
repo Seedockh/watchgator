@@ -1,2 +1,2 @@
 # watchgator
-Statrup week project : Movies / Series search engine
+Startup week project : Movies / Series search engine
