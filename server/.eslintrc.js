@@ -14,8 +14,8 @@ module.exports = {
   },
   extends: [
     'plugin:@typescript-eslint/recommended',
-    'prettier/@typescript-eslint',
-    'plugin:prettier/recommended',
+    "prettier/@typescript-eslint",
+    'plugin:prettier/recommended'
   ],
   plugins: ['jest', 'prettier'],
   rules: {
