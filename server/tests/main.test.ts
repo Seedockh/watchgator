@@ -1,13 +1,8 @@
-describe(':: Init tests', (): void => {
-	beforeAll(() => {
-		console.log('This is fired before all your tests')
-	})
+import runInCleanDb from './utils/runInCleanDb'
+import { basicSuite, userAuthRestSuite, userAuthGraphSuite } from './suites'
 
-	afterAll(() => {
-		console.log('This is fired after all your tests')
-	})
-
-	it('ASSERTS that true = true, woaw', async () => {
-		expect(true).toBe(true)
-	})
+describe('Tests to run sequentially in cleaned database', () => {
+	runInCleanDb(basicSuite)
+	runInCleanDb(userAuthRestSuite)
+	runInCleanDb(userAuthGraphSuite)
 })

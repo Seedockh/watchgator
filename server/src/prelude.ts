@@ -1,14 +1,17 @@
-import { config } from 'dotenv'
+/** ****** NODE ****** **/
 import path from 'path'
 import { existsSync } from 'fs'
-import chalk from 'chalk'
 import { isEmpty } from 'lodash'
+/** ****** .ENV ****** **/
+import { config } from 'dotenv'
+/** ****** LOGGER ****** **/
+import { sLog } from './core/Log'
 
 const envPathName = path.join(process.cwd(), '.env')
 
 // Define here every variable needed in your .env
 // so that you never forget it 👀
-const neededValues = ['PORT']
+const neededValues = ['PORT', 'SECRET', 'DB_URL']
 
 if (existsSync(envPathName)) {
 	config()
@@ -18,16 +21,15 @@ if (existsSync(envPathName)) {
 	)
 
 	if (!isEmpty(missingValues)) {
-		console.log(
-			chalk.red.bold(
-				`Sorry [${missingValues.join(
-					'/',
-				)}] value(s) are missing on your .env file`,
-			),
+		sLog(
+			`Sorry [${missingValues.join(
+				'/',
+			)}] value(s) are missing on your .env file`,
+			'FF8800',
 		)
 		process.exit(42)
 	}
 } else {
-	console.log(chalk.red.bold('Sorry an .env file is missing'))
+	sLog('Sorry an .env file is missing', 'FF8800')
 	process.exit(42)
 }
