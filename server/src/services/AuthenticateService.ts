@@ -10,7 +10,7 @@ import { User } from '../database/models/User'
 import UserRepository from '../database/repositories/UserRepository'
 import { sLog } from '../core/Log'
 
-class Authenticate {
+class AuthenticateService {
 	static token: string
 
 	static setToken(user: User): string {
@@ -100,4 +100,4 @@ class Authenticate {
 	}
 }
 
-export default Authenticate
+export default AuthenticateService
