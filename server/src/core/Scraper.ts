@@ -1,6 +1,9 @@
+/** ****** SCRAPING ****** **/
 import puppeteer from 'puppeteer'
+/** ****** NODE ****** **/
 import fs from 'fs'
-import ora from 'ora'
+/** ****** LOG ****** **/
+import { sLog, aLog } from './Log'
 
 class Scraper {
 	private moviesEndpoint =
@@ -18,19 +21,37 @@ class Scraper {
 	private page = null
 	private spinner
 
-	private async initScraper(): void {
+	/** * BOOT SCRAPING ON START * **/
+	public async boot(): void {
+	  try {
+			// 1st param : the type of the data to scrape ("movies" or "series")
+			// 2nd param : the size of data requested ("sample" for 100, "live" for 5000)
+			if (!fs.existsSync('src/database/imdb/imdb_movies_sample.json')) {
+				sLog('Movies datas not found on your system, scraping ...')
+				await this.scrape('movies', 'sample')
+			} else sLog('✔ Movies datas found', '#008000')
+
+			if (!fs.existsSync('src/database/imdb/imdb_series_sample.json')) {
+				sLog('Series datas not found on your system, scraping ...')
+				await this.scrape('series', 'sample')
+			} else sLog('✔ Series datas found', '#008000')
+		} catch (e) {
+			this.spinner.fail(`Error while scrapping : ${e}`)
+			return e
+		}
+	}
+
+	private async setupScraper(): void {
 		this.browser = await puppeteer.launch()
 		this.page = await this.browser.newPage()
-		this.spinner = ora(``).start()
-		console.log('******** SCRAPING *********')
+		this.spinner = aLog('')
 	}
 
 	/** * SCRAPE SAMPLE DATASET WITH FEW MEDIAS * **/
 	public async scrape(type, level): void {
-		await this.initScraper()
+		await this.setupScraper()
 		await this.insertDatabaseHeaders(type, level)
 		this.spinner.text = `Building ${type} sample dataset ...`
-		this.spinner.indent++
 		let nextPage = null
 		let currentPage = 0
 		let pagination = true
@@ -40,7 +61,7 @@ class Scraper {
 			const currentPageData = await this.scrapePageMedias(type, nextPage)
 			await this.insertPageIntoDatabase(currentPageData, type, level)
 			const findNextPage = await this.scrapeNextPage()
-			this.spinner.text = `✔️ Progress done : ${findNextPage.totalText}`
+			this.spinner.text = `Progress done : ${findNextPage.totalText}`
 
 			if (this.totalItems === null) {
 				// const totalSearchItems = findNextPage.totalText.replace(/^.* of /, '').replace(' titles.', '')
@@ -51,12 +72,8 @@ class Scraper {
 
 			if (findNextPage.nextLink === null) pagination = false
 			else nextPage = findNextPage.nextLink
-			console.log('')
 		}
 
-		this.spinner.indent--
-		console.log(`
-  ${this.nbItemsWritten} / ${this.totalItems} ${type} written.`)
 		this.spinner.succeed(`${level.toUpperCase()} ${type} Scraping complete.`)
 
 		await this.insertDatabaseFooters(type, level)
@@ -184,11 +201,11 @@ ${e}`)
 
 	/** * WRITE DATABASE HEADERS * **/
 	private async insertDatabaseHeaders(type = 'movies', level = 'sample'): void {
-		if (!fs.existsSync('src/database')) fs.mkdirSync('src/database')
+		if (!fs.existsSync('src/database/imdb')) fs.mkdirSync('src/database/imdb')
 
-		fs.openSync(`src/database/imdb_${type}_${level}.json`, 'w')
+		fs.openSync(`src/database/imdb/imdb_${type}_${level}.json`, 'w')
 		fs.writeFile(
-			`src/database/imdb_${type}_${level}.json`,
+			`src/database/imdb/imdb_${type}_${level}.json`,
 			'{\n"data": \n[',
 			'utf8',
 			err => {
@@ -211,13 +228,13 @@ ${e}`)
 		)
 
 		await fs.appendFile(
-			`src/database/imdb_${type}_${level}.json`,
+			`src/database/imdb/imdb_${type}_${level}.json`,
 			dataString,
 			'utf8',
 			err => {
 				if (err) {
 					this.spinner.fail('Error while writing to database')
-					return console.log(err)
+					return sLog(err, '#b20000')
 				}
 				this.nbItemsWritten += parsedData.medias.length
 			},
@@ -227,12 +244,12 @@ ${e}`)
 	/** * WRITE DATABASE FOOTERS * **/
 	private async insertDatabaseFooters(type = 'movies', level = 'sample'): void {
 		await fs.appendFile(
-			`src/database/imdb_${type}_${level}.json`,
+			`src/database/imdb/imdb_${type}_${level}.json`,
 			']}',
 			'utf8',
 			err => {
 				if (err)
-					return this.spinner.info('Error while writing database footers')
+					return this.spinner.fail('Error while writing database footers')
 			},
 		)
 	}
