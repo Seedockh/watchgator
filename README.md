@@ -7,7 +7,7 @@ All commands are inspired from [this article](https://medium.com/@shalandy/deplo
 
 ## Setup
 
-First, make sure to get the **``Heroku Cli`**
+First, make sure to get the **`Heroku Cli`**
 ```console
 ~ $ npm install -g heroku
 ~ $ heroku login
