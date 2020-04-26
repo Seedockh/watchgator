@@ -1,13 +1,13 @@
 /** ****** INTERNALS ****** **/
 import './prelude'
 import './postlude'
-import ExpressServer from './core/ExpressServer'
+import Scraper from './core/Scraper'
 import Database from './database/Database'
 import UserRepository from './database/repositories/UserRepository'
-import Scraper from './core/Scraper'
+import ExpressServer from './core/ExpressServer'
 
 (async () => {
-	await Scraper.boot()
+	await Scraper.boot('sample')
 	await Database.boot()
 	await UserRepository.init()
 	await ExpressServer.run()

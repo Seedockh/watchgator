@@ -1,6 +1,6 @@
 /** ****** SCRAPING ****** **/
 import puppeteer, { Browser, Page } from 'puppeteer'
-/** ****** NODE ****** **/
+/** ****** FILES ****** **/
 import fs from 'fs'
 /** ****** LOG ****** **/
 import { sLog, aLog } from './Log'
@@ -14,7 +14,7 @@ class Scraper {
 	private samplePagesToScrape = 2
 	private liveItemsPerPage = 50
 	private livePagesToScrape = 100
-	private totalItems!: number | null
+	private totalItems!: number | null = null
 	private totalPages!: number | null
 	private nbItemsWritten = 0
 	private browser!: Browser
@@ -22,19 +22,19 @@ class Scraper {
 	private spinner!: Ora
 
 	/** * BOOT SCRAPING ON START * **/
-	public async boot(): Promise<void | string> {
+	public async boot(level: string = 'sample'): Promise<void | string> {
 	  try {
 			// 1st param : the type of the data to scrape ("movies" or "series")
 			// 2nd param : the size of data requested ("sample" for 100, "live" for 5000)
-			if (!fs.existsSync('src/database/imdb/imdb_movies_sample.json')) {
-				sLog('Movies datas not found on your system, scraping ...')
-				await this.scrape('movies', 'sample')
-			} else sLog('✔ Movies datas found', '#008000')
+			if (!fs.existsSync(`src/database/imdb/imdb_movies_${level}.json`)) {
+				sLog('Movies datas not found on your system')
+				await this.scrape('movies', level)
+			} else aLog('').succeed('Movies datas found')
 
-			if (!fs.existsSync('src/database/imdb/imdb_series_sample.json')) {
-				sLog('Series datas not found on your system, scraping ...')
-				await this.scrape('series', 'sample')
-			} else sLog('✔ Series datas found', '#008000')
+			if (!fs.existsSync(`src/database/imdb/imdb_series_${level}.json`)) {
+				sLog('Series datas not found on your system')
+				await this.scrape('series', level)
+			} else aLog('').succeed('Series datas found')
 		} catch (e) {
 			this.spinner.fail(`Error while scrapping : ${e}`)
 			return e
@@ -51,7 +51,7 @@ class Scraper {
 	public async scrape(type: string, level: string): Promise<void> {
 		await this.setupScraper()
 		await this.insertDatabaseHeaders(type, level)
-		this.spinner.text = `Building ${type} sample dataset ...`
+		this.spinner.text = `Scraping ${type} sample dataset ...`
 		let nextPage: string | null = null
 		let currentPage = 0
 		let pagination = true
@@ -62,12 +62,15 @@ class Scraper {
 			const currentPageData = await this.scrapePageMedias(type, nextPage)
 			await this.insertPageIntoDatabase(currentPageData, type, level)
 			const findNextPage = await this.scrapeNextPage()
-			this.spinner.text = `Progress done : ${findNextPage.totalText}`
+			//this.spinner.text = `Progress done : ${findNextPage.totalText}`
 
 			if (this.totalItems === null) {
 				// @ts-ignore: Unreachable context key
 				this.totalItems =	this[level + 'ItemsPerPage'] * this[level + 'PagesToScrape']
 			}
+
+			// @ts-ignore: Unreachable context key
+			this.spinner.text = `${currentPage * this[level + 'ItemsPerPage']}/${this.totalItems} ${type} scraped.`
 
 			if (findNextPage.nextLink === null) pagination = false
 			else nextPage = findNextPage.nextLink
@@ -231,7 +234,21 @@ ${e}`)
 		const parsedData = JSON.parse(data)
 		let dataString = ''
 		parsedData.medias.map(
-			(media: string | null) => (dataString += JSON.stringify(media, null, 4) + ',\n'),
+			(media: string | null) => {
+				this.nbItemsWritten++
+				let totalScrapeLevel
+				let singleMedia = JSON.stringify(media, null, 4)
+
+				if (level === 'live') {
+					totalScrapeLevel = parseInt(this.liveItemsPerPage * this.livePagesToScrape)
+					singleMedia += this.nbItemsWritten < totalScrapeLevel ? ',\n' : '\n'
+				} else {
+					totalScrapeLevel = parseInt(this.sampleItemsPerPage * this.samplePagesToScrape)
+					singleMedia += this.nbItemsWritten < totalScrapeLevel ? ',\n' : '\n'
+				}
+
+				dataString += singleMedia
+			}
 		)
 
 		await fs.appendFile(
@@ -243,22 +260,25 @@ ${e}`)
 					this.spinner.fail('Error while writing to database')
 					return sLog(`${err}`, '#b20000')
 				}
-				this.nbItemsWritten += parsedData.medias.length
 			},
 		)
 	}
 
 	/** * WRITE DATABASE FOOTERS * **/
 	private async insertDatabaseFooters(type = 'movies', level = 'sample'): Promise<void> {
-		await fs.appendFile(
-			`src/database/imdb/imdb_${type}_${level}.json`,
-			']}',
-			'utf8',
-			err => {
-				if (err)
-					return this.spinner.fail('Error while writing database footers')
-			},
-		)
+		try {
+			await fs.appendFile(
+				`src/database/imdb/imdb_${type}_${level}.json`,
+				']}',
+				'utf8',
+				err => {
+					if (err)
+						return this.spinner.fail('Error while writing database footers')
+				},
+			)
+		} catch(error) {
+			this.spinner.fail(error)
+		}
 	}
 }
 
