@@ -32,7 +32,8 @@
   ],
   "include": [
     "src/**/*.ts",
-    "types.d.ts"
+    "types.d.ts",
+    "node_modules/@types/puppeteer/index.d.ts"
   ],
   "exclude": [
     "node_modules"

@@ -1,5 +1,5 @@
 /** ****** SERVER ****** **/
-import express, { Express, Request, Response } from 'express'
+import express, { Application, Express, Request, Response } from 'express'
 import { Server } from 'http'
 /** ****** INTERNALS ****** **/
 import api from '../routes'
