@@ -5,10 +5,9 @@ import passport from 'passport'
 import { Strategy as LocalStrategy } from 'passport-local'
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt'
 import { GraphQLLocalStrategy } from 'graphql-passport'
-/** ****** ORM ****** **/
-import { getRepository, Repository } from 'typeorm'
 /** ****** INTERNALS ****** **/
 import { User } from '../../database/models/User'
+import UserRepository from '../../database/repositories/UserRepository'
 
 passport.use(
 	new LocalStrategy(
@@ -18,8 +17,7 @@ passport.use(
 		},
 		async (nickname, password, next) => {
 			try {
-				const userRepository: Repository<User> = getRepository(User)
-				const user: User | undefined = await userRepository.findOne({
+				const user: User | undefined = await UserRepository.repository.findOne({
 					nickname,
 				})
 
@@ -44,9 +42,7 @@ passport.use(
 			next: (error: any, user?: any) => void,
 		) => {
 			try {
-				const userRepository: Repository<User> = getRepository(User)
-
-				const user: User | undefined = await userRepository.findOne({
+				const user: User | undefined = await UserRepository.repository.findOne({
 					nickname: username,
 				})
 
@@ -69,12 +65,8 @@ passport.use(
 			secretOrKey: String(process.env.SECRET),
 		},
 		async (jwtPayload, next) => {
-			console.log('JWT strategy')
-			console.log('jwtPayload:')
-			console.log(jwtPayload)
 			try {
-				const userRepository: Repository<User> = getRepository(User)
-				const user: User | undefined = await userRepository.findOne({
+				const user: User | undefined = await UserRepository.repository.findOne({
 					uuid: jwtPayload.id,
 				})
 

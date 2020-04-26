@@ -1,6 +1,9 @@
-import puppeteer from 'puppeteer'
+/** ****** SCRAPING ****** **/
+import puppeteer, { Browser, Page } from 'puppeteer'
+/** ****** FILES ****** **/
 import fs from 'fs'
-import ora from 'ora'
+/** ****** LOG ****** **/
+import { sLog, aLog } from './Log'
 
 class Scraper {
 	private moviesEndpoint =
@@ -11,52 +14,68 @@ class Scraper {
 	private samplePagesToScrape = 2
 	private liveItemsPerPage = 50
 	private livePagesToScrape = 100
-	private totalItems = null
-	private totalPages = null
+	private totalItems: number | null = null
+	private totalPages!: number | null
 	private nbItemsWritten = 0
-	private browser = null
-	private page = null
-	private spinner
+	private browser!: Browser
+	private page!: Page
+	private spinner!: Ora
 
-	private async initScraper(): void {
+	/** * BOOT SCRAPING ON START * **/
+	public async boot(level: string = 'sample'): Promise<void | string> {
+	  try {
+			// 1st param : the type of the data to scrape ("movies" or "series")
+			// 2nd param : the size of data requested ("sample" for 100, "live" for 5000)
+			if (!fs.existsSync(`src/database/imdb/imdb_movies_${level}.json`)) {
+				sLog('Movies datas not found on your system')
+				await this.scrape('movies', level)
+			} else aLog('').succeed('Movies datas found')
+
+			if (!fs.existsSync(`src/database/imdb/imdb_series_${level}.json`)) {
+				sLog('Series datas not found on your system')
+				await this.scrape('series', level)
+			} else aLog('').succeed('Series datas found')
+		} catch (e) {
+			this.spinner.fail(`Error while scrapping : ${e}`)
+			return e
+		}
+	}
+
+	private async setupScraper(): Promise<void> {
 		this.browser = await puppeteer.launch()
 		this.page = await this.browser.newPage()
-		this.spinner = ora(``).start()
-		console.log('******** SCRAPING *********')
+		this.spinner = aLog('')
 	}
 
 	/** * SCRAPE SAMPLE DATASET WITH FEW MEDIAS * **/
-	public async scrape(type, level): void {
-		await this.initScraper()
+	public async scrape(type: string, level: string): Promise<void> {
+		await this.setupScraper()
 		await this.insertDatabaseHeaders(type, level)
-		this.spinner.text = `Building ${type} sample dataset ...`
-		this.spinner.indent++
-		let nextPage = null
+		this.spinner.text = `Scraping ${type} sample dataset ...`
+		let nextPage: string | null = null
 		let currentPage = 0
 		let pagination = true
 
+		// @ts-ignore: Unreachable context key
 		while (pagination && currentPage < this[level + 'PagesToScrape']) {
 			currentPage++
 			const currentPageData = await this.scrapePageMedias(type, nextPage)
 			await this.insertPageIntoDatabase(currentPageData, type, level)
 			const findNextPage = await this.scrapeNextPage()
-			this.spinner.text = `✔️ Progress done : ${findNextPage.totalText}`
+			//this.spinner.text = `Progress done : ${findNextPage.totalText}`
 
 			if (this.totalItems === null) {
-				// const totalSearchItems = findNextPage.totalText.replace(/^.* of /, '').replace(' titles.', '')
-				// const nbPages = Math.ceil(parseInt(totalSearchItems) / 50)
-				this.totalItems =
-					this[level + 'ItemsPerPage'] * this[level + 'PagesToScrape']
+				// @ts-ignore: Unreachable context key
+				this.totalItems =	this[level + 'ItemsPerPage'] * this[level + 'PagesToScrape']
 			}
+
+			// @ts-ignore: Unreachable context key
+			this.spinner.text = `${currentPage * this[level + 'ItemsPerPage']}/${this.totalItems} ${type} scraped.`
 
 			if (findNextPage.nextLink === null) pagination = false
 			else nextPage = findNextPage.nextLink
-			console.log('')
 		}
 
-		this.spinner.indent--
-		console.log(`
-  ${this.nbItemsWritten} / ${this.totalItems} ${type} written.`)
 		this.spinner.succeed(`${level.toUpperCase()} ${type} Scraping complete.`)
 
 		await this.insertDatabaseFooters(type, level)
@@ -67,7 +86,8 @@ class Scraper {
 	}
 
 	/** * SCRAPING ONE PAGE MEDIAS * **/
-	private async scrapePageMedias(type, nextPage = null): string {
+	private async scrapePageMedias(type: string, nextPage: string | null = null): Promise<string> {
+		// @ts-ignore: Unreachable context key
 		await this.page.goto(nextPage ?? this[type + 'Endpoint'], {
 			waitUntil: 'networkidle2',
 		})
@@ -76,44 +96,47 @@ class Scraper {
 
 		try {
 			const data = await this.page.evaluate(sampleItemsPerPage => {
-				const medias = []
+				const medias: IMDBMedia[] = []
+				const itemsList: ArrayLike<MediaElement> = document.querySelectorAll('.lister-item')
 
-				Array.from(document.querySelectorAll('.lister-item'), (item, index) => {
+				Array.from(itemsList, (item: MediaElement, index) => {
 					if (index < sampleItemsPerPage) {
-						const casting = []
-						Array.from(
-							item.querySelectorAll(
-								'div.ratings-bar + p.text-muted + p > .ghost ~ a',
-							),
-							actor => casting.push(actor ? actor.innerText : null),
+						const casting: Array<string | null> = []
+						const actorsList: ArrayLike<MediaElement> = item.querySelectorAll(
+							'div.ratings-bar + p.text-muted + p > .ghost ~ a',
 						)
 
-						const title = item.querySelector('h3 .lister-item-index + a')
-						const year = item.querySelector('h3 span.lister-item-year')
-						const rating = item.querySelector(
+						Array.from(
+							actorsList,
+							(actor: MediaElement) => casting.push(actor ? actor.innerText : null),
+						)
+
+						const title: MediaElement | null = item.querySelector('h3 .lister-item-index + a')
+						const year: MediaElement | null = item.querySelector('h3 span.lister-item-year')
+						const rating: MediaElement | null = item.querySelector(
 							'div.ratings-bar > .ratings-imdb-rating strong',
 						)
-						const nbRatings = item.querySelector(
+						const nbRatings: MediaElement | null = item.querySelector(
 							'p.sort-num_votes-visible > span.text-muted + span[name="nv"]',
 						)
-						const metaScore = item.querySelector(
+						const metaScore: MediaElement | null = item.querySelector(
 							'div.ratings-bar > .ratings-metascore .metascore',
 						)
-						const certificate = item.querySelector(
+						const certificate: MediaElement | null = item.querySelector(
 							'p.text-muted > span.certificate',
 						)
-						const runtime = item.querySelector('p.text-muted > span.runtime')
-						const genre = item.querySelector('p.text-muted > span.genre')
-						const description = item.querySelector(
+						const runtime: MediaElement | null = item.querySelector('p.text-muted > span.runtime')
+						const genre: MediaElement | null = item.querySelector('p.text-muted > span.genre')
+						const description: MediaElement | null = item.querySelector(
 							'div.ratings-bar + p.text-muted',
 						)
-						const picture = item.querySelector(
+						const picture: MediaElement | null = item.querySelector(
 							'.lister-item-image a img[class="loadlate"]',
 						)
-						const director = item.querySelector(
+						const director: MediaElement | null = item.querySelector(
 							'div.ratings-bar + p.text-muted + p > a',
 						)
-						const gross = item.querySelector(
+						const gross: MediaElement | null = item.querySelector(
 							'p.sort-num_votes-visible span.ghost + span.text-muted + span[name="nv"]',
 						)
 
@@ -140,29 +163,33 @@ class Scraper {
 			return JSON.stringify(data)
 		} catch (e) {
 			this.spinner.fail(`Error when attempting to browse ${
+				// @ts-ignore: Unreachable context key
 				nextPage ?? this[type + 'Endpoint']
 			}
 ${e}`)
-			return {}
+			return e
 		}
 	}
 
 	/** * GETTING THE NEXT PAGE BUTTON * **/
-	private async scrapeNextPage(): Record<string> {
+	private async scrapeNextPage(): Promise<{ nextLink: string | null, totalText: string | null }> {
 		return await this.page.evaluate(() => {
-			const totalText = document.querySelector(
+			const totalImdbText: MediaElement | null = document.querySelector(
 				'#main > div.article > div.desc > span:nth-child(1)',
-			).innerText
-			let nextLink = document.querySelector(
+			)
+			const nextImdbLink: MediaElement | null = document.querySelector(
 				'#main > div > div.desc > a.lister-page-next',
 			)
-			nextLink = nextLink ? nextLink.href : null
+
+			const totalText: string | null = totalImdbText ? totalImdbText.innerText : null
+			const nextLink: string | null = nextImdbLink ? nextImdbLink.href : null
+
 			return { nextLink, totalText }
 		})
 	}
 
 	/** * SCROLLING ALL PAGE TO PREVENT LAZYLOAD PLACEHOLDERS * **/
-	private async autoScroll(page): void {
+	private async autoScroll(page: Page): Promise<void> {
 		// Using querystrings to prevent Babel from interpreting async/await
 		await page.evaluate(`(async () => {
       await new Promise((resolve, reject) => {
@@ -183,12 +210,12 @@ ${e}`)
 	}
 
 	/** * WRITE DATABASE HEADERS * **/
-	private async insertDatabaseHeaders(type = 'movies', level = 'sample'): void {
-		if (!fs.existsSync('src/database')) fs.mkdirSync('src/database')
+	private async insertDatabaseHeaders(type = 'movies', level = 'sample'): Promise<void> {
+		if (!fs.existsSync('src/database/imdb')) fs.mkdirSync('src/database/imdb')
 
-		fs.openSync(`src/database/imdb_${type}_${level}.json`, 'w')
+		fs.openSync(`src/database/imdb/imdb_${type}_${level}.json`, 'w')
 		fs.writeFile(
-			`src/database/imdb_${type}_${level}.json`,
+			`src/database/imdb/imdb_${type}_${level}.json`,
 			'{\n"data": \n[',
 			'utf8',
 			err => {
@@ -200,41 +227,58 @@ ${e}`)
 
 	/** * WRITE CURRENT SCRAPED PAGE INTO DATABASE * **/
 	private async insertPageIntoDatabase(
-		data,
+		data: string,
 		type = 'movies',
 		level = 'sample',
-	): void {
+	): Promise<void> {
 		const parsedData = JSON.parse(data)
 		let dataString = ''
 		parsedData.medias.map(
-			media => (dataString += JSON.stringify(media, null, 4) + ',\n'),
+			(media: string | null) => {
+				this.nbItemsWritten++
+				let totalScrapeLevel: number
+				let singleMedia = JSON.stringify(media, null, 4)
+
+				if (level === 'live') {
+					totalScrapeLevel = this.liveItemsPerPage * this.livePagesToScrape
+					singleMedia += this.nbItemsWritten < totalScrapeLevel ? ',\n' : '\n'
+				} else {
+					totalScrapeLevel = this.sampleItemsPerPage * this.samplePagesToScrape
+					singleMedia += this.nbItemsWritten < totalScrapeLevel ? ',\n' : '\n'
+				}
+
+				dataString += singleMedia
+			}
 		)
 
 		await fs.appendFile(
-			`src/database/imdb_${type}_${level}.json`,
+			`src/database/imdb/imdb_${type}_${level}.json`,
 			dataString,
 			'utf8',
 			err => {
 				if (err) {
 					this.spinner.fail('Error while writing to database')
-					return console.log(err)
+					return sLog(`${err}`, '#b20000')
 				}
-				this.nbItemsWritten += parsedData.medias.length
 			},
 		)
 	}
 
 	/** * WRITE DATABASE FOOTERS * **/
-	private async insertDatabaseFooters(type = 'movies', level = 'sample'): void {
-		await fs.appendFile(
-			`src/database/imdb_${type}_${level}.json`,
-			']}',
-			'utf8',
-			err => {
-				if (err)
-					return this.spinner.info('Error while writing database footers')
-			},
-		)
+	private async insertDatabaseFooters(type = 'movies', level = 'sample'): Promise<void> {
+		try {
+			await fs.appendFile(
+				`src/database/imdb/imdb_${type}_${level}.json`,
+				']}',
+				'utf8',
+				err => {
+					if (err)
+						return this.spinner.fail('Error while writing database footers')
+				},
+			)
+		} catch(error) {
+			this.spinner.fail(error)
+		}
 	}
 }
 

@@ -3,7 +3,7 @@ import { AuthenticationError } from 'apollo-server-errors'
 import { Context } from 'graphql-passport/lib/buildContext'
 /** ****** INTERNALS ****** **/
 import AuthenticateService from '../../services/AuthenticateService'
-import { User } from '../../entities/User'
+import { User } from '../../database/models/User'
 
 
 // TODO: voir pour utiliser type user du shared package à la place ?

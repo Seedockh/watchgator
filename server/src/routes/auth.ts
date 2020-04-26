@@ -1,9 +1,9 @@
 import { Router } from 'express'
-import RestAuthController from '../controllers/rest/AuthController'
+import AuthController from '../controllers/rest/AuthController'
 
 const router = Router()
 
-router.post('/signup', RestAuthController.signup)
-router.post('/signin', RestAuthController.signin)
+router.post('/signup', AuthController.signup)
+router.post('/signin', AuthController.signin)
 
 export default router

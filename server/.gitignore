@@ -15,7 +15,7 @@ yarn-error.log*
 node_modules/
 
 ## Databases
-src/database/*
+src/database/imdb
 
 # Logs
 
