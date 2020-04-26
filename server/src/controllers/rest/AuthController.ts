@@ -69,7 +69,6 @@ class AuthController {
 	): Promise<Response | void> => {
 		try {
 			const result = await AuthenticateService.login(req, res)
-			console.log()
 			return res.status(result.status).json(result)
 		} catch (error) {
 			return res.status(error.status).send(error.err)

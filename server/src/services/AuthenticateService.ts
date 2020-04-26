@@ -57,11 +57,12 @@ class AuthenticateService {
 
 	static async login(req: Request, res: Response): Promise<Result> {
 		return new Promise(
-			(
+			async (
 				resolve: (result: SuccesResult) => void,
 				reject: (result: ErrorResult) => void,
 			) => {
 				passport.authenticate('local', { session: false }, (error, user) => {
+					console.log(error)
 					if (!error) {
 						this.token = this.setToken(user)
 						return resolve({
@@ -71,7 +72,7 @@ class AuthenticateService {
 						})
 					}
 
-					return reject({ status: 400, err: error.message })
+					return reject({ status: 400, err: error })
 				})(req, res)
 			},
 		)
