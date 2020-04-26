@@ -14,7 +14,7 @@ class Scraper {
 	private samplePagesToScrape = 2
 	private liveItemsPerPage = 50
 	private livePagesToScrape = 100
-	private totalItems!: number | null = null
+	private totalItems: number | null = null
 	private totalPages!: number | null
 	private nbItemsWritten = 0
 	private browser!: Browser
@@ -236,14 +236,14 @@ ${e}`)
 		parsedData.medias.map(
 			(media: string | null) => {
 				this.nbItemsWritten++
-				let totalScrapeLevel
+				let totalScrapeLevel: number
 				let singleMedia = JSON.stringify(media, null, 4)
 
 				if (level === 'live') {
-					totalScrapeLevel = parseInt(this.liveItemsPerPage * this.livePagesToScrape)
+					totalScrapeLevel = this.liveItemsPerPage * this.livePagesToScrape
 					singleMedia += this.nbItemsWritten < totalScrapeLevel ? ',\n' : '\n'
 				} else {
-					totalScrapeLevel = parseInt(this.sampleItemsPerPage * this.samplePagesToScrape)
+					totalScrapeLevel = this.sampleItemsPerPage * this.samplePagesToScrape
 					singleMedia += this.nbItemsWritten < totalScrapeLevel ? ',\n' : '\n'
 				}
 
