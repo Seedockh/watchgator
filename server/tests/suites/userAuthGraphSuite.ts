@@ -1,6 +1,6 @@
 import supertest from 'supertest'
 import request from 'superagent'
-import { User } from '../../src/entities/User'
+import { User } from '../../src/database/models/User'
 
 const graphQlAuthRoutesSuite = (server: supertest.SuperTest<supertest.Test>) =>
 	describe('GraphQL - Auth routes', () => {

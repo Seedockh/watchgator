@@ -1,7 +1,7 @@
 import supertest from 'supertest'
 import request from 'superagent'
-import { User } from '../../src/entities/User'
-import { setToken } from '../../src/services/userAuthServices'
+import { User } from '../../src/database/models/User'
+import AuthenticateService from '../../src/services/AuthenticateService'
 
 const authRoutesSuite = (server: supertest.SuperTest<supertest.Test>) =>
 	describe('Auth routes', () => {
@@ -94,7 +94,7 @@ const authRoutesSuite = (server: supertest.SuperTest<supertest.Test>) =>
 			fictiveUser.password = 'fictive'
 			fictiveUser.email = 'fictive@gmail.com'
 
-			const unexistingJWT = setToken(fictiveUser)
+			const unexistingJWT = AuthenticateService.setToken(fictiveUser)
 
 			// Step 3 : Run test to auth with unformatted token
 			it('Should return 401 if given token is incorrectly formatted', async done => {

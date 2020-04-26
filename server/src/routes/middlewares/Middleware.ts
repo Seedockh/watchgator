@@ -47,6 +47,7 @@ const Middleware = (app: Application): void => {
 		apis: [
 			'./src/entities/User.ts',
 			'./src/controllers/rest/AuthController.ts',
+			'./src/controllers/rest/UserController.ts',
 		],
 	}
 	const specs = swaggerJsdoc(options)
