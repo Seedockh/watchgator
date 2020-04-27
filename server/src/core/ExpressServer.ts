@@ -1,8 +1,10 @@
-import express, { Application, Request, Response } from 'express'
+/** ****** SERVER ****** **/
+import express, { Application, Express, Request, Response } from 'express'
 import { Server } from 'http'
-import chalk from 'chalk'
+/** ****** INTERNALS ****** **/
 import api from '../routes'
-import { Middlewares } from './middlewares'
+import Middleware from '../routes/middlewares/Middleware'
+import { sLog } from './Log'
 
 class ExpressServer {
 	// server | api instance
@@ -16,14 +18,12 @@ class ExpressServer {
 			res.send('Welcome on your app root endpoint ! Try to get /api now :)')
 		})
 		// use Middlewares on app
-		Middlewares(this.app)
+		Middleware(this.app)
 		// use routes
 		this.app.use('/api', api)
 		// open server
 		this.server.listen(port, () => {
-			console.log(
-				chalk.bold.magenta(`💫  Server is running on http://localhost:${port}`),
-			)
+			sLog(`💫 Server is running on http://localhost:${port}`)
 		})
 	}
 }

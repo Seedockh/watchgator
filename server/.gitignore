@@ -3,7 +3,6 @@
 # Environment
 .env
 package-lock.json
-yarn.lock
 
 # Node
 
@@ -13,6 +12,9 @@ yarn-error.log*
 
 ## Modules dependencies
 node_modules/
+
+## Databases
+src/database/imdb
 
 # Logs
 

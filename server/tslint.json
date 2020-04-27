@@ -14,7 +14,7 @@
     ],
     "indent": false,
     "no-console": false,
-    "semicolon": true,
+    "semicolon": false,
     "member-access": [
       false
     ],
@@ -47,7 +47,7 @@
       false
     ],
     "one-line": [
-      false
+      true
     ],
     "one-variable-per-declaration": [
       false
