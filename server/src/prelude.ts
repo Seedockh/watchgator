@@ -13,7 +13,7 @@ const envPathName = path.join(process.cwd(), '.env')
 // so that you never forget it 👀
 const neededValues = ['PORT', 'SECRET', 'DB_URL']
 
-if (existsSync(envPathName)) {
+if (existsSync(envPathName) || process.env.NODE_ENV === 'production') {
 	config()
 
 	const missingValues = neededValues.filter(
