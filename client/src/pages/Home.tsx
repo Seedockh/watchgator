@@ -1,26 +1,12 @@
 import React, { useEffect } from 'react'
 import User from '../core/user'
 import { useHistory } from 'react-router-dom'
-import { Container, Icon, Content, InputGroup, Input, Grid, Row, Col, Panel } from 'rsuite'
+import { Container, Icon, Content, InputGroup, Input, Grid, Row, Col, Panel, Button } from 'rsuite'
 import { MovieCard } from '../widget/MovieCard'
 import { moviesHomeList } from '../data/movies'
 import { Sidebar } from '../widget/sidebar/Sidebar'
 
 export const Home = () => {
-  const [{ user }] = User.GlobalState()
-  const history = useHistory()
-
-  useEffect(() => {
-    console.log('Home page called !')
-
-    if (!user) history.push('/')
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // const logout = (): void => {
-  //   dispatch({ type: 'setUser', payload: null })
-  //   history.push('/')
-  // }
 
   return (
     <div className="sidebar-page">
@@ -78,13 +64,19 @@ export const Home = () => {
           <Panel>
             <Grid fluid>
               <Row>
-                <Col xs={24} md={12} mdOffset={6}>
+                <Col xs={24} md={12} mdOffset={3}>
                   <InputGroup inside size="lg" style={{ width: '100%' }}>
                     <Input />
                     <InputGroup.Button>
                       <Icon icon="search" size="lg" />
                     </InputGroup.Button>
                   </InputGroup>
+                </Col>
+                <Col md={3} mdOffset={3}>
+                    <Button appearance="ghost" block>Login</Button>
+                </Col>
+                <Col md={3}>
+                    <Button appearance="primary" block>Register</Button>
                 </Col>
               </Row>
             </Grid>
