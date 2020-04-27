@@ -19,24 +19,25 @@ class Scraper {
 	private nbItemsWritten = 0
 	private browser!: Browser
 	private page!: Page
-	private spinner!: Ora
+	private spinner: Ora
+	private envSrc = process.env.NODE_ENV === 'production' ? '' : 'src/'
 
 	/** * BOOT SCRAPING ON START * **/
 	public async boot(level: string = 'sample'): Promise<void | string> {
 		try {
 			// 1st param : the type of the data to scrape ("movies" or "series")
 			// 2nd param : the size of data requested ("sample" for 100, "live" for 5000)
-			if (!fs.existsSync(`src/database/imdb/imdb_movies_${level}.json`)) {
+			if (!fs.existsSync(`${this.envSrc}database/imdb/imdb_movies_${level}.json`)) {
 				sLog('Movies datas not found on your system')
 				await this.scrape('movies', level)
 			} else aLog('').succeed('Movies datas found')
 
-			if (!fs.existsSync(`src/database/imdb/imdb_series_${level}.json`)) {
+			if (!fs.existsSync(`${this.envSrc}database/imdb/imdb_series_${level}.json`)) {
 				sLog('Series datas not found on your system')
 				await this.scrape('series', level)
 			} else aLog('').succeed('Series datas found')
 		} catch (e) {
-			this.spinner.fail(`Error while scrapping : ${e}`)
+			sLog(`Error while scrapping : ${e}`, '#FF0000')
 			return e
 		}
 	}
@@ -234,11 +235,11 @@ ${e}`)
 		type = 'movies',
 		level = 'sample',
 	): Promise<void> {
-		if (!fs.existsSync('src/database/imdb')) fs.mkdirSync('src/database/imdb')
+		if (!fs.existsSync(`${this.envSrc}database/imdb`)) fs.mkdirSync(`${this.envSrc}database/imdb`)
 
-		fs.openSync(`src/database/imdb/imdb_${type}_${level}.json`, 'w')
+		fs.openSync(`${this.envSrc}database/imdb/imdb_${type}_${level}.json`, 'w')
 		fs.writeFile(
-			`src/database/imdb/imdb_${type}_${level}.json`,
+			`${this.envSrc}database/imdb/imdb_${type}_${level}.json`,
 			'{\n"data": \n[',
 			'utf8',
 			err => {
@@ -273,7 +274,7 @@ ${e}`)
 		})
 
 		await fs.appendFile(
-			`src/database/imdb/imdb_${type}_${level}.json`,
+			`${this.envSrc}database/imdb/imdb_${type}_${level}.json`,
 			dataString,
 			'utf8',
 			err => {
@@ -292,7 +293,7 @@ ${e}`)
 	): Promise<void> {
 		try {
 			await fs.appendFile(
-				`src/database/imdb/imdb_${type}_${level}.json`,
+				`${this.envSrc}database/imdb/imdb_${type}_${level}.json`,
 				']}',
 				'utf8',
 				err => {
