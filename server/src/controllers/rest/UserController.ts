@@ -72,10 +72,10 @@ class UserController {
 	 *          description: Internal error
 	 */
 
-	static uploadAvatar(
+	static async uploadAvatar(
 		req: Request,
 		res: Response<{ user: User } | { error: string }>,
-	): void {
+	): Promise<void> {
 		const imageUpload = S3.uploadImg.single('file')
 
 		imageUpload(req, res, async (err: { message: any }) => {
@@ -135,7 +135,7 @@ class UserController {
 	 *            application/json:
 	 *              message:
 	 */
-	static deleteAvatar(req: Request, res: Response): Response {
+	static async deleteAvatar(req: Request, res: Response): Promise<Response> {
 		try {
 			S3.deleteImg(req.params.fileKey)
 			return res.status(200).json({
