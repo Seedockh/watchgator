@@ -23,7 +23,7 @@ class Scraper {
 
 	/** * BOOT SCRAPING ON START * **/
 	public async boot(level: string = 'sample'): Promise<void | string> {
-		try {
+	  try {
 			// 1st param : the type of the data to scrape ("movies" or "series")
 			// 2nd param : the size of data requested ("sample" for 100, "live" for 5000)
 			if (!fs.existsSync(`src/database/imdb/imdb_movies_${level}.json`)) {
@@ -66,14 +66,11 @@ class Scraper {
 
 			if (this.totalItems === null) {
 				// @ts-ignore: Unreachable context key
-				this.totalItems =
-					this[level + 'ItemsPerPage'] * this[level + 'PagesToScrape']
+				this.totalItems =	this[level + 'ItemsPerPage'] * this[level + 'PagesToScrape']
 			}
 
 			// @ts-ignore: Unreachable context key
-			this.spinner.text = `${currentPage * this[level + 'ItemsPerPage']}/${
-				this.totalItems
-			} ${type} scraped.`
+			this.spinner.text = `${currentPage * this[level + 'ItemsPerPage']}/${this.totalItems} ${type} scraped.`
 
 			if (findNextPage.nextLink === null) pagination = false
 			else nextPage = findNextPage.nextLink
@@ -89,10 +86,7 @@ class Scraper {
 	}
 
 	/** * SCRAPING ONE PAGE MEDIAS * **/
-	private async scrapePageMedias(
-		type: string,
-		nextPage: string | null = null,
-	): Promise<string> {
+	private async scrapePageMedias(type: string, nextPage: string | null = null): Promise<string> {
 		// @ts-ignore: Unreachable context key
 		await this.page.goto(nextPage ?? this[type + 'Endpoint'], {
 			waitUntil: 'networkidle2',
@@ -103,9 +97,7 @@ class Scraper {
 		try {
 			const data = await this.page.evaluate(sampleItemsPerPage => {
 				const medias: IMDBMedia[] = []
-				const itemsList: ArrayLike<MediaElement> = document.querySelectorAll(
-					'.lister-item',
-				)
+				const itemsList: ArrayLike<MediaElement> = document.querySelectorAll('.lister-item')
 
 				Array.from(itemsList, (item: MediaElement, index) => {
 					if (index < sampleItemsPerPage) {
@@ -114,16 +106,13 @@ class Scraper {
 							'div.ratings-bar + p.text-muted + p > .ghost ~ a',
 						)
 
-						Array.from(actorsList, (actor: MediaElement) =>
-							casting.push(actor ? actor.innerText : null),
+						Array.from(
+							actorsList,
+							(actor: MediaElement) => casting.push(actor ? actor.innerText : null),
 						)
 
-						const title: MediaElement | null = item.querySelector(
-							'h3 .lister-item-index + a',
-						)
-						const year: MediaElement | null = item.querySelector(
-							'h3 span.lister-item-year',
-						)
+						const title: MediaElement | null = item.querySelector('h3 .lister-item-index + a')
+						const year: MediaElement | null = item.querySelector('h3 span.lister-item-year')
 						const rating: MediaElement | null = item.querySelector(
 							'div.ratings-bar > .ratings-imdb-rating strong',
 						)
@@ -136,12 +125,8 @@ class Scraper {
 						const certificate: MediaElement | null = item.querySelector(
 							'p.text-muted > span.certificate',
 						)
-						const runtime: MediaElement | null = item.querySelector(
-							'p.text-muted > span.runtime',
-						)
-						const genre: MediaElement | null = item.querySelector(
-							'p.text-muted > span.genre',
-						)
+						const runtime: MediaElement | null = item.querySelector('p.text-muted > span.runtime')
+						const genre: MediaElement | null = item.querySelector('p.text-muted > span.genre')
 						const description: MediaElement | null = item.querySelector(
 							'div.ratings-bar + p.text-muted',
 						)
@@ -187,10 +172,7 @@ ${e}`)
 	}
 
 	/** * GETTING THE NEXT PAGE BUTTON * **/
-	private async scrapeNextPage(): Promise<{
-		nextLink: string | null
-		totalText: string | null
-	}> {
+	private async scrapeNextPage(): Promise<{ nextLink: string | null, totalText: string | null }> {
 		return await this.page.evaluate(() => {
 			const totalImdbText: MediaElement | null = document.querySelector(
 				'#main > div.article > div.desc > span:nth-child(1)',
@@ -199,9 +181,7 @@ ${e}`)
 				'#main > div > div.desc > a.lister-page-next',
 			)
 
-			const totalText: string | null = totalImdbText
-				? totalImdbText.innerText
-				: null
+			const totalText: string | null = totalImdbText ? totalImdbText.innerText : null
 			const nextLink: string | null = nextImdbLink ? nextImdbLink.href : null
 
 			return { nextLink, totalText }
@@ -230,10 +210,7 @@ ${e}`)
 	}
 
 	/** * WRITE DATABASE HEADERS * **/
-	private async insertDatabaseHeaders(
-		type = 'movies',
-		level = 'sample',
-	): Promise<void> {
+	private async insertDatabaseHeaders(type = 'movies', level = 'sample'): Promise<void> {
 		if (!fs.existsSync('src/database/imdb')) fs.mkdirSync('src/database/imdb')
 
 		fs.openSync(`src/database/imdb/imdb_${type}_${level}.json`, 'w')
@@ -256,21 +233,23 @@ ${e}`)
 	): Promise<void> {
 		const parsedData = JSON.parse(data)
 		let dataString = ''
-		parsedData.medias.map((media: string | null) => {
-			this.nbItemsWritten++
-			let totalScrapeLevel: number
-			let singleMedia = JSON.stringify(media, null, 4)
+		parsedData.medias.map(
+			(media: string | null) => {
+				this.nbItemsWritten++
+				let totalScrapeLevel: number
+				let singleMedia = JSON.stringify(media, null, 4)
 
-			if (level === 'live') {
-				totalScrapeLevel = this.liveItemsPerPage * this.livePagesToScrape
-				singleMedia += this.nbItemsWritten < totalScrapeLevel ? ',\n' : '\n'
-			} else {
-				totalScrapeLevel = this.sampleItemsPerPage * this.samplePagesToScrape
-				singleMedia += this.nbItemsWritten < totalScrapeLevel ? ',\n' : '\n'
+				if (level === 'live') {
+					totalScrapeLevel = this.liveItemsPerPage * this.livePagesToScrape
+					singleMedia += this.nbItemsWritten < totalScrapeLevel ? ',\n' : '\n'
+				} else {
+					totalScrapeLevel = this.sampleItemsPerPage * this.samplePagesToScrape
+					singleMedia += this.nbItemsWritten < totalScrapeLevel ? ',\n' : '\n'
+				}
+
+				dataString += singleMedia
 			}
-
-			dataString += singleMedia
-		})
+		)
 
 		await fs.appendFile(
 			`src/database/imdb/imdb_${type}_${level}.json`,
@@ -286,10 +265,7 @@ ${e}`)
 	}
 
 	/** * WRITE DATABASE FOOTERS * **/
-	private async insertDatabaseFooters(
-		type = 'movies',
-		level = 'sample',
-	): Promise<void> {
+	private async insertDatabaseFooters(type = 'movies', level = 'sample'): Promise<void> {
 		try {
 			await fs.appendFile(
 				`src/database/imdb/imdb_${type}_${level}.json`,
@@ -300,7 +276,7 @@ ${e}`)
 						return this.spinner.fail('Error while writing database footers')
 				},
 			)
-		} catch (error) {
+		} catch(error) {
 			this.spinner.fail(error)
 		}
 	}
