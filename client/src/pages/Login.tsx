@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Container, Header, Navbar, Content, ControlLabel, FlexboxGrid, Form, Panel, FormGroup, FormControl, Footer, ButtonToolbar, Button } from 'rsuite'
+import { Container, Content, ControlLabel, FlexboxGrid, Form, Panel, FormGroup, FormControl, Button } from 'rsuite'
 import useInput from '../core/useInput'
 import User from '../core/user'
 
 const Login = () => {
-  const { value: email } = useInput('')
-  const [{ user }, dispatch] = User.GlobalState()
+  const { bind: emailBind } = useInput('')
+  const { bind: passwordBind } = useInput('')
+  const [{ user }] = User.GlobalState()
   const history = useHistory()
 
   useEffect(() => {
@@ -19,13 +20,13 @@ const Login = () => {
     console.log(`user: ${JSON.stringify(user)}`)
   }, [user])
 
-  const login = (): void => {
-    dispatch({ type: 'setUser', payload: { email } })
-    console.log('User handled !')
-    alert('Check your console.log !')
-    // redirect to next view :
-    history.push('/home')
-  }
+  // const login = (): void => {
+  //   dispatch({ type: 'setUser', payload: { email } })
+  //   console.log('User handled !')
+  //   alert('Check your console.log !')
+  //   // redirect to next view :
+  //   history.push('/home')
+  // }
 
   const redirectRegister = () => {
       history.push('/register')    
@@ -40,11 +41,11 @@ const Login = () => {
               <Form fluid>
                 <FormGroup>
                   <ControlLabel>Email address</ControlLabel>
-                  <FormControl name="name" />
+                  <FormControl name="name" {...emailBind} />
                 </FormGroup>
                 <FormGroup>
                   <ControlLabel>Password</ControlLabel>
-                  <FormControl name="password" type="password" />
+                  <FormControl name="password" type="password" {...passwordBind} />
                   <Button appearance="link">Forgot password?</Button>
                 </FormGroup>
                 <FormGroup style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>

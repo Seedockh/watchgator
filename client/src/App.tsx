@@ -1,10 +1,9 @@
 import React from 'react'
-import { Route, Link } from 'react-router-dom'
+import { Route } from 'react-router-dom'
 import 'rsuite/dist/styles/rsuite-dark.css';
 
 import { Login, Home } from './pages'
-import User from './core/user'
-import { Container } from 'rsuite';
+import User from './core/user';
 import Register from './pages/Register';
 
 const user = localStorage.getItem('user')
@@ -33,27 +32,9 @@ const reducer = (prevState: UserState, action: UserAction): UserState => {
 function App(): JSX.Element {
   return (
     <User.Provider initialState={userInitialState} reducer={reducer}>
-      <Route
-        exact
-        path="/login"
-        component={(): JSX.Element => {
-          return <Login />
-        }}
-      />
-      <Route
-        exact
-        path="/home"
-        component={(): JSX.Element => {
-          return <Home />
-        }}
-      />
-      <Route
-        exact
-        path="/register"
-        component={(): JSX.Element => {
-          return <Register />
-        }}
-        />
+      <Route exact path="/login" component={Login} />
+      <Route exact path="/home" component={Home} />
+      <Route exact path="/register" component={Register} />
     </User.Provider>
   )
 }

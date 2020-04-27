@@ -5,8 +5,9 @@ import useInput from '../core/useInput'
 import User from '../core/user'
 
 const Register = () => {
-  const { value: email } = useInput('')
-  const [{ user }, dispatch] = User.GlobalState()
+  const { bind: emailBind } = useInput('')
+  const { bind: passwordBind } = useInput('')
+  const [{ user }] = User.GlobalState()
   const history = useHistory()
 
   useEffect(() => {
@@ -19,13 +20,13 @@ const Register = () => {
     console.log(`user: ${JSON.stringify(user)}`)
   }, [user])
 
-  const login = (): void => {
-    dispatch({ type: 'setUser', payload: { email } })
-    console.log('User handled !')
-    alert('Check your console.log !')
-    // redirect to next view :
-    history.push('/home')
-  }
+  // const login = (): void => {
+  //   dispatch({ type: 'setUser', payload: { email } })
+  //   console.log('User handled !')
+  //   alert('Check your console.log !')
+  //   // redirect to next view :
+  //   history.push('/home')
+  // }
 
   const redirectLogin = () => {
       history.push('/login')    
@@ -44,11 +45,11 @@ const Register = () => {
                 </FormGroup>
                 <FormGroup>
                   <ControlLabel>Email address</ControlLabel>
-                  <FormControl name="email" />
+                  <FormControl name="email" {...emailBind} />
                 </FormGroup>
                 <FormGroup>
                   <ControlLabel>Password</ControlLabel>
-                  <FormControl name="password" type="password" />
+                  <FormControl name="password" type="password" {...passwordBind} />
                 </FormGroup>
                 <FormGroup style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
                   <Button appearance="primary" style={{ width: 150 }}>Register</Button>
