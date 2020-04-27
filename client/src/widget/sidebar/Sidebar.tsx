@@ -1,13 +1,18 @@
 import React, { useState, CSSProperties, FunctionComponent } from 'react'
 import { ExpandBtn } from './ExpandBtn'
-import { Sidenav, Sidebar as RSidebar, Icon, Nav, Dropdown } from 'rsuite'
+import { Sidenav, Sidebar as RSidebar, Icon, Nav, Dropdown, Toggle } from 'rsuite'
 import { IconNames } from 'rsuite/lib/Icon';
 import logo from '../../assets/logo.png';
 
 const headerStyles: CSSProperties = {
-    padding: 20,
+    padding: '20px 10px',
     overflow: 'hidden',
-    textAlign: 'center'
+    textAlign: 'center',
+};
+
+const imageStyles: CSSProperties = {
+    maxWidth: 150,
+    width: '100%'
 };
 
 type SubItem = {
@@ -47,7 +52,7 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ items }) => {
                 <ExpandBtn expand={expand} onPress={handleToggle} />
                 <Sidenav.Header>
                     <div style={headerStyles}>
-                        <img src={logo} alt="Watchgator" style={{ width: '100%' }} />
+                        <img src={logo} alt="Watchgator" style={imageStyles} />
                         {expand && (
                             <>
                                 <br />
@@ -61,9 +66,11 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ items }) => {
                     <Nav>
                         {items.map((item, index) => {
                             if (!item.items) {
-                                return <Nav.Item eventKey={index} active icon={<Icon icon={item.icon} />}>
-                                    {item.title}
-                                </Nav.Item>
+                                return (
+                                    <Nav.Item eventKey={index} active icon={<Icon icon={item.icon} />}>
+                                        {item.title}
+                                    </Nav.Item>
+                                )
                             }
                             return <Dropdown
                                 eventKey={index}
@@ -73,7 +80,12 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ items }) => {
                                 placement="rightStart"
                             >
                                 {item.items.map((subItem, subIndex) => (
-                                    <Dropdown.Item eventKey={`${index}-${subIndex}`}>{subItem.title}</Dropdown.Item>
+                                    <Dropdown.Item eventKey={`${index}-${subIndex}`}>
+                                        <>
+                                            <Toggle checkedChildren={<Icon icon="check" />} unCheckedChildren={<Icon icon="close" />} />
+                                            <span style={{ marginLeft: 12 }}>{subItem.title}</span>
+                                        </>
+                                    </Dropdown.Item>
                                 ))}
                             </Dropdown>
                         })}
