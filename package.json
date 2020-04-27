@@ -9,5 +9,8 @@
     "pcli": "heroku git:remote -a watchgator-client && git subtree push --prefix client heroku master",
     "pheroku": "npm run pserv && npm run pcli"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "helmet": "^3.22.0"
+  }
 }
