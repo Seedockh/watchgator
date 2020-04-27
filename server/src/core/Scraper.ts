@@ -43,7 +43,7 @@ class Scraper {
 	}
 
 	private async setupScraper(): Promise<void> {
-		this.browser = await puppeteer.launch()
+		this.browser = await puppeteer.launch({ args: ['--no-sandbox'] })
 		this.page = await this.browser.newPage()
 		this.spinner = aLog('')
 	}
