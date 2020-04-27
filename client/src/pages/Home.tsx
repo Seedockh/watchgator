@@ -64,19 +64,13 @@ export const Home = () => {
           <Panel>
             <Grid fluid>
               <Row>
-                <Col xs={24} md={12} mdOffset={3}>
+                <Col xs={24} md={12} mdOffset={6}>
                   <InputGroup inside size="lg" style={{ width: '100%' }}>
                     <Input />
                     <InputGroup.Button>
                       <Icon icon="search" size="lg" />
                     </InputGroup.Button>
                   </InputGroup>
-                </Col>
-                <Col md={3} mdOffset={3}>
-                    <Button appearance="ghost" block>Login</Button>
-                </Col>
-                <Col md={3}>
-                    <Button appearance="primary" block>Register</Button>
                 </Col>
               </Row>
             </Grid>

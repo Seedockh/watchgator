@@ -33,26 +33,10 @@ const reducer = (prevState: UserState, action: UserAction): UserState => {
 function App(): JSX.Element {
   return (
     <User.Provider initialState={userInitialState} reducer={reducer}>
-      <Route
-        exact
-        path="/login"
-        component={Login}
-      />
-      <Route
-        exact
-        path="/register"
-        component={Register}
-        />
-        <Route
-        exact
-        path="/profile"
-        component={Profile}
-        />
-      <Route
-        exact
-        path="/home"
-        component={Home}
-      />
+      <Route exact path="/login" component={Login} />
+      <Route exact path="/" component={Home} />
+      <Route exact path="/register" component={Register} />
+      <Route exact path="/profile" component={Profile} />
     </User.Provider>
   )
 }
