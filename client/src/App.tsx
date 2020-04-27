@@ -4,9 +4,8 @@ import 'rsuite/dist/styles/rsuite-dark.css';
 
 import { Login, Home } from './pages'
 import User from './core/user'
-import { Container } from 'rsuite';
 import Register from './pages/Register';
-import Profile from './pages/Profiles';
+import Profile from './pages/Profile';
 
 const user = localStorage.getItem('user')
 
