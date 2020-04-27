@@ -1,7 +1,7 @@
 import supertest from 'supertest'
 import request from 'superagent'
-import { User } from '../../src/entities/User'
-import { setToken } from '../../src/services/userAuthServices'
+import { User } from '../../src/database/models/User'
+import { setToken } from '../../src/services/AuthenticateService'
 
 const authRoutesSuite = (server: supertest.SuperTest<supertest.Test>) =>
 	describe('Auth routes', () => {

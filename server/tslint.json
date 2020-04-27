@@ -12,6 +12,7 @@
       true,
       "single"
     ],
+    "ban-ts-ignore": false,
     "indent": false,
     "no-console": false,
     "semicolon": false,

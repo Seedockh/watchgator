@@ -27,12 +27,16 @@ class Scraper {
 		try {
 			// 1st param : the type of the data to scrape ("movies" or "series")
 			// 2nd param : the size of data requested ("sample" for 100, "live" for 5000)
-			if (!fs.existsSync(`${this.envSrc}database/imdb/imdb_movies_${level}.json`)) {
+			if (
+				!fs.existsSync(`${this.envSrc}database/imdb/imdb_movies_${level}.json`)
+			) {
 				sLog('Movies datas not found on your system')
 				await this.scrape('movies', level)
 			} else aLog('').succeed('Movies datas found')
 
-			if (!fs.existsSync(`${this.envSrc}database/imdb/imdb_series_${level}.json`)) {
+			if (
+				!fs.existsSync(`${this.envSrc}database/imdb/imdb_series_${level}.json`)
+			) {
 				sLog('Series datas not found on your system')
 				await this.scrape('series', level)
 			} else aLog('').succeed('Series datas found')
@@ -235,7 +239,8 @@ ${e}`)
 		type = 'movies',
 		level = 'sample',
 	): Promise<void> {
-		if (!fs.existsSync(`${this.envSrc}database/imdb`)) fs.mkdirSync(`${this.envSrc}database/imdb`)
+		if (!fs.existsSync(`${this.envSrc}database/imdb`))
+			fs.mkdirSync(`${this.envSrc}database/imdb`)
 
 		fs.openSync(`${this.envSrc}database/imdb/imdb_${type}_${level}.json`, 'w')
 		fs.writeFile(
