@@ -149,6 +149,58 @@ class UserController {
 			else return res.status(500).json({ message: 'error', error })
 		}
 	}
+
+	/**
+	 * @swagger
+	 * path:
+	 *  /user/get/:userUuid:
+	 *    get:
+	 *      summary: Get user by uuid
+	 *      tags: [Users]
+	 *      parameters:
+	 *        - in: path
+	 *          name: uuid
+	 *          description: user uuid
+	 *          schema:
+	 *            type: string
+	 *          required: true
+	 *        - in: header
+	 *          name: Authorization
+	 *          description: Bearer + TOKEN
+	 *          schema:
+	 *            type: string
+	 *            format: token
+	 *          required: true
+	 *      responses:
+	 *        "200":
+	 *          description: User found
+	 *          content:
+	 *            application/json:
+	 *              user: User
+	 *        "404":
+	 *          description: User cannot be found
+	 *          content:
+	 *            application/json:
+	 *              message:
+	 *        "500":
+	 *          description: Unexpected error
+	 *          content:
+	 *            application/json:
+	 *              message:
+	 *              error:
+	 */
+	static async getUser(req: Request, res: Response) {
+		try {
+			const response = await UserService.getUser(req.params.uuid)
+			return res.status(response.status).json({ user: response.data.user })
+		} catch (error) {
+			if (error instanceof DatabaseError)
+				return res
+					.status(error.status)
+					.json({ message: error.message, error: error.details })
+			else return res.status(500).json({ message: 'Unexpected error', error })
+		}
+	}
 }
 
 export default UserController
