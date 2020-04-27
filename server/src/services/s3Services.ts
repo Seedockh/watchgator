@@ -12,11 +12,11 @@ aws.config.update({
 
 const s3: AWS.S3 = new aws.S3()
 
-const fileFilter: void = (
+const fileFilter: (
 	req: any,
 	file: Express.Multer.File,
-	cb: FileFilterCallback,
-) => {
+	cb: multer.FileFilterCallback,
+) => void = (req: any, file: Express.Multer.File, cb: FileFilterCallback) => {
 	if (
 		file.mimetype === 'image/jpeg' ||
 		file.mimetype === 'image/jpg' ||
