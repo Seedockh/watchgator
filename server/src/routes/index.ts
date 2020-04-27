@@ -1,5 +1,6 @@
 import { Request, Response, Router } from 'express'
 import auth from './auth'
+import movies from './movies'
 import secured from './secured/'
 import passport from 'passport'
 
@@ -10,6 +11,7 @@ api.get('/', (req: Request, res: Response) => {
 })
 
 api.use('/auth', auth)
+api.use('/movies', movies)
 
 api.use('/', passport.authenticate('jwt', { session: false }), secured)
 
