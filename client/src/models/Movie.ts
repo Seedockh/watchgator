@@ -4,7 +4,7 @@ export class BasicMovie {
         public name: string,
         public imageUrl: string,
         public categories: string[],
-        public rating: number
+        public rating?: number
     ) { }
 }
 
@@ -14,8 +14,12 @@ export class Movie extends BasicMovie {
         public name: string,
         public imageUrl: string,
         public categories: string[],
-        public rating: number,
-        public actors: string[]
+        public rating?: number,
+        public actors?: string,
+        public year?: string,
+        public director?: string,
+        public description?: string,
+        public runtime?: string
     ) {
         super(id, name, imageUrl, categories, rating)
     }
