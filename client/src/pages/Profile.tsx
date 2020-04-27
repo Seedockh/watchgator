@@ -3,8 +3,8 @@ import { useHistory } from 'react-router-dom'
 import { Container, Content, Grid, Panel, Col, Row, Divider } from 'rsuite'
 import useInput from '../core/useInput'
 import User from '../core/user'
-import MyPlaylist from '../components/MyPlaylist'
-import { films } from '../data/films'
+import MyPlaylist from '../widget/MyPlaylist'
+import { moviesList } from '../data/movies'
 import { Sidebar } from '../widget/sidebar/Sidebar'
 import { MovieCard } from '../widget/MovieCard'
 
@@ -39,21 +39,11 @@ const Profile = () => {
             <Divider />
             <Grid fluid>
               <Row className="show-grid" gutter={30}>
-                {films.map((item) =>
+                {moviesList.map((movie) =>
                   (
-                    
-                    <Col xs={24} sm={12} md={6} lg={4} style={{width: 240}} >
-                     <MovieCard movie={item} />
-                  </Col>
-                    // <Col xs={4} style={{ marginBottom: 20 }}>
-                    //   <MovieCard movie={item} />
-                    //   {/* <Panel shaded bordered bodyFill style={{ display: 'inline-block', width: 240, height: 400 }}>
-                    //     <img src={item.posterUrl} style={{ width: "100%", height: "50%" }} />
-                    //     <Content>
-                    //       <h5 style={{ padding: 5, textAlign: "center" }}>{item.title}</h5>
-                    //     </Content>
-                    //   </Panel> */}
-                    // </Col>
+                    <Col xs={24} sm={12} md={6} lg={4} style={{ width: 240 }} >
+                      <MovieCard movie={movie} />
+                    </Col>
                   )
                 )}
               </Row>
