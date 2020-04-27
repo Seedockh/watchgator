@@ -1,20 +1,10 @@
-import React, { useEffect, useState, CSSProperties } from 'react'
+import React, { useEffect, useState } from 'react'
 import User from '../core/user'
 import { useHistory } from 'react-router-dom'
-import { Container, Sidebar, Sidenav, Icon, Nav, Dropdown, Content, InputGroup, Input, Grid, Row, Col, Panel, FlexboxGrid } from 'rsuite'
-import { NavToggle } from '../widget/NavToggle'
+import { Container, Icon, Content, InputGroup, Input, Grid, Row, Col, Panel } from 'rsuite'
 import { MovieCard } from '../widget/MovieCard'
 import { moviesHomeList } from '../data/movies'
-
-const headerStyles: CSSProperties = {
-  padding: 18,
-  fontSize: 16,
-  height: 56,
-  background: '#34c3ff',
-  color: ' #fff',
-  whiteSpace: 'nowrap',
-  overflow: 'hidden'
-};
+import { Sidebar } from '../widget/sidebar/Sidebar'
 
 export const Home = () => {
   const [{ user }] = User.GlobalState()
@@ -38,63 +28,56 @@ export const Home = () => {
   }
 
   return (
-    <div className="show-fake-browser sidebar-page">
+    <div className="sidebar-page">
       <Container>
-        <Sidebar
-          style={{ display: 'flex', flexDirection: 'column' }}
-          width={expand ? 260 : 56}
-          collapsible
-        >
-          <Sidenav.Header>
-            <div style={headerStyles}>
-              <Icon icon="logo-analytics" size="lg" style={{ verticalAlign: 0 }} />
-              <span style={{ marginLeft: 12 }}> WatchGator</span>
-            </div>
-          </Sidenav.Header>
-          <Sidenav
-            expanded={expand}
-            defaultOpenKeys={['3']}
-            appearance="subtle"
-          >
-            <Sidenav.Body>
-              <Nav>
-                <Nav.Item eventKey="1" active icon={<Icon icon="dashboard" />}>
-                  Dashboard
-                  </Nav.Item>
-                <Nav.Item eventKey="2" icon={<Icon icon="group" />}>
-                  User Group
-                  </Nav.Item>
-                <Dropdown
-                  eventKey="3"
-                  trigger="hover"
-                  title="Advanced"
-                  icon={<Icon icon="magic" />}
-                  placement="rightStart"
-                >
-                  <Dropdown.Item eventKey="3-1">Geo</Dropdown.Item>
-                  <Dropdown.Item eventKey="3-2">Devices</Dropdown.Item>
-                  <Dropdown.Item eventKey="3-3">Brand</Dropdown.Item>
-                  <Dropdown.Item eventKey="3-4">Loyalty</Dropdown.Item>
-                  <Dropdown.Item eventKey="3-5">Visit Depth</Dropdown.Item>
-                </Dropdown>
-                <Dropdown
-                  eventKey="4"
-                  trigger="hover"
-                  title="Settings"
-                  icon={<Icon icon="gear-circle" />}
-                  placement="rightStart"
-                >
-                  <Dropdown.Item eventKey="4-1">Applications</Dropdown.Item>
-                  <Dropdown.Item eventKey="4-2">Websites</Dropdown.Item>
-                  <Dropdown.Item eventKey="4-3">Channels</Dropdown.Item>
-                  <Dropdown.Item eventKey="4-4">Tags</Dropdown.Item>
-                  <Dropdown.Item eventKey="4-5">Versions</Dropdown.Item>
-                </Dropdown>
-              </Nav>
-            </Sidenav.Body>
-          </Sidenav>
-          <NavToggle expand={expand} onChange={handleToggle} />
-        </Sidebar>
+        <Sidebar items={[
+          {
+            title: 'Categories',
+            icon: 'bookmark',
+            items: [
+              {
+                title: 'Action',
+                path: '/categories/action'
+              },
+              {
+                title: 'Science-fiction',
+                path: '/categories/science-fiction'
+              },
+              {
+                title: 'Policier',
+                path: '/categories/policier'
+              },
+              {
+                title: 'Animé',
+                path: '/categories/anime'
+              }
+            ]
+
+          },
+          {
+            title: 'Decade',
+            icon: 'calendar',
+            items: [
+              {
+                title: '80\'s',
+                path: '/decade/1980'
+              },
+              {
+                title: '90\'s',
+                path: '/decade/1990'
+              },
+              {
+                title: '2000\'s',
+                path: '/decade/2000'
+              },
+              {
+                title: '2010\'s',
+                path: '/decade/2010'
+              },
+            ]
+
+          }
+        ]} />
 
         <Content>
           <Panel>

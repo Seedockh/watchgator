@@ -1,5 +1,6 @@
 export class BasicMovie {
     constructor(
+        public id: number,
         public name: string,
         public imageUrl: string,
         public categories: string[],
@@ -9,12 +10,13 @@ export class BasicMovie {
 
 export class Movie extends BasicMovie {
     constructor(
+        public id: number,
         public name: string,
         public imageUrl: string,
         public categories: string[],
         public rating: number,
         public actors: string[]
     ) {
-        super(name, imageUrl, categories, rating)
+        super(id, name, imageUrl, categories, rating)
     }
 }
