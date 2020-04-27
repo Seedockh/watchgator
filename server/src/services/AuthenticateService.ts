@@ -57,7 +57,6 @@ class AuthenticateService {
 		return new Promise(
 			(resolve: (result: AuthServiceResponse) => void, reject: any) => {
 				passport.authenticate('local', { session: false }, (error, user) => {
-					console.log(error)
 					if (!error) {
 						this.token = this.setToken(user)
 

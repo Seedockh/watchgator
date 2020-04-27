@@ -62,7 +62,12 @@ const deleteImg: (key: string) => Promise<void> = async imgKey => {
 	s3.deleteObject({
 		Bucket: String(process.env.AWS_S3_BUCKET),
 		Key: imgKey,
-	})
+	},
+	function(err, data) {},
+	)
 }
 
-export default { uploadImg, deleteImg }
+const extractS3FileKey = (plainUrl?: string): string | null => (plainUrl != null || plainUrl != undefined) ? plainUrl.replace(String(process.env.AWS_S3_URL), "") : null;
+
+
+export default { uploadImg, deleteImg, extractS3FileKey }
