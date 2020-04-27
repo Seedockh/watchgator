@@ -1,7 +1,6 @@
 import React, { useState, CSSProperties, FunctionComponent } from 'react'
 import { ExpandBtn } from './ExpandBtn'
-import { Sidenav, Sidebar as RSidebar, Icon, Nav, Dropdown, Badge } from 'rsuite'
-import { SVGIcon } from 'rsuite/lib/@types/common';
+import { Sidenav, Sidebar as RSidebar, Icon, Nav, Dropdown } from 'rsuite'
 import { IconNames } from 'rsuite/lib/Icon';
 import logo from '../../assets/logo.png';
 
@@ -48,7 +47,7 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ items }) => {
                 <ExpandBtn expand={expand} onPress={handleToggle} />
                 <Sidenav.Header>
                     <div style={headerStyles}>
-                        <img src={logo} style={{ width: '100%' }} />
+                        <img src={logo} alt="Watchgator" style={{ width: '100%' }} />
                         {expand && (
                             <>
                                 <br />

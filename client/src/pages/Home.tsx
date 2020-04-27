@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import User from '../core/user'
 import { useHistory } from 'react-router-dom'
 import { Container, Icon, Content, InputGroup, Input, Grid, Row, Col, Panel } from 'rsuite'
@@ -8,7 +8,6 @@ import { Sidebar } from '../widget/sidebar/Sidebar'
 
 export const Home = () => {
   const [{ user }] = User.GlobalState()
-  const [expand, setExpand] = useState(true)
   const history = useHistory()
 
   useEffect(() => {
@@ -22,10 +21,6 @@ export const Home = () => {
   //   dispatch({ type: 'setUser', payload: null })
   //   history.push('/')
   // }
-
-  const handleToggle = () => {
-    setExpand(!expand);
-  }
 
   return (
     <div className="sidebar-page">

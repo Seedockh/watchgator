@@ -22,7 +22,7 @@ export const MovieCard: FunctionComponent<MovieCardProps> = ({ movie }) => {
             history.push(`/movies/${movie.id}`)
         }}>
             <div className="poster">
-                <img src={movie.imageUrl} style={{ width: '100%', borderRadius: 8 }} />
+                <img src={movie.imageUrl} alt={movie.name} style={{ width: '100%', borderRadius: 8 }} />
             </div>
             <div style={{ padding: 16 }}>
                 <h4>{movie.name}</h4>
