@@ -1,11 +1,15 @@
 import React, { FunctionComponent, CSSProperties } from 'react'
 import { BasicMovie } from './../models/Movie';
 import { useHistory } from 'react-router-dom';
+import { Panel, Content } from 'rsuite';
 
 const movieCardStyle: CSSProperties = {
     margin: 16,
     backgroundColor: 'rgba(0,0,0,0.2)',
-    borderRadius: 8
+    borderRadius: 8,
+    //width: "100%",
+    width: 200, 
+    height: 400
 }
 
 type MovieCardProps = {

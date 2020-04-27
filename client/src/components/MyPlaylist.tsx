@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
 import {
     Container, Content, Divider, FlexboxGrid, Icon,
-    Button, Modal, Form, FormControl, FormGroup, ControlLabel,
-    RadioGroup, Radio, Panel, Row, Col, Toggle
+    Button, Modal, Form, FormControl, FormGroup, ControlLabel, Panel, Row, Col, Toggle
 } from 'rsuite'
-import films from '../data/films';
+import {films} from '../data/films';
 
 const MyPlaylist = () => {
     const [show, setShow] = useState(false);
@@ -72,7 +71,7 @@ const MyPlaylist = () => {
                     {playlists.map((item) => 
                         (<Col xs={4} style={{marginBottom: 20}}>
                             <Panel style={{ height: 200, padding: 0}}  bodyFill header={`${item.name}  -     films :   ${item.films.length}`} bordered>
-                                <img src={item.films[0].posterUrl} style={{width: "100%", height: "100%"}}/>
+                                <img src={item.films[0].imageUrl} style={{width: "100%", height: "100%"}}/>
                             </Panel>
                         </Col>)
                     )}
