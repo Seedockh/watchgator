@@ -20,7 +20,7 @@ class Scraper {
 	private browser!: Browser
 	private page!: Page
 	private spinner: Ora
-	private envSrc = process.env.NODE_ENV === 'production' ? './' : 'src/'
+	private envSrc = process.env.NODE_ENV === 'production' ? '.dist/' : 'src/'
 
 	/** * BOOT SCRAPING ON START * **/
 	public async boot(level: string = 'sample'): Promise<void | string> {
