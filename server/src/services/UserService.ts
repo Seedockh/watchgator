@@ -6,6 +6,12 @@ import UserRepository from '../database/repositories/UserRepository'
 import { DatabaseError } from '../core/CustomErrors'
 
 class UserService {
+	static async getUser(uuid: string): Promise<UserServiceResponse> {
+		const user = await UserRepository.get({ uuid })
+		if (user == undefined)
+			throw new DatabaseError(`User with uuid ${uuid} not found`, 404)
+		return { status: 200, data: { user } }
+	}
 	static async uploadAvatar(
 		uuid: string,
 		avatar: string,
