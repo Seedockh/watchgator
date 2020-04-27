@@ -11,7 +11,7 @@ class Database {
 	static connection: Connection
 	static spinner: Ora
 
-	static async boot(): Promise<void> {
+	static async boot(): Promise<boolean | void> {
 		this.spinner = aLog('Connecting to database ...')
 
 		if (process.env.DB_URL) {

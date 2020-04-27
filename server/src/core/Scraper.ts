@@ -19,8 +19,8 @@ class Scraper {
 	private nbItemsWritten = 0
 	private browser!: Browser
 	private page!: Page
-	private spinner: Ora
 	private envSrc = process.env.NODE_ENV === 'production' ? '.dist/' : 'src/'
+	static spinner: Ora
 
 	/** * BOOT SCRAPING ON START * **/
 	public async boot(level: string = 'sample'): Promise<void | string> {
