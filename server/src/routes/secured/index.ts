@@ -1,9 +1,8 @@
-import { Request, Response, Router } from 'express'
+import { Router } from 'express'
+import user from './user'
 
 const routes: Router = Router()
 
-routes.get('/', (req: Request, res: Response) => {
-	res.status(200).json({ hello: 'You are in protected routes ! 🚀' })
-})
+routes.use('/user', user)
 
 export default routes

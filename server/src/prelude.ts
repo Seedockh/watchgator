@@ -11,7 +11,15 @@ const envPathName = path.join(process.cwd(), '.env')
 
 // Define here every variable needed in your .env
 // so that you never forget it 👀
-const neededValues = ['PORT', 'SECRET', 'DB_URL']
+const neededValues = [
+	'PORT',
+	'SECRET',
+	'DB_URL',
+	'AWS_S3_SECRET_ACCESS_KEY',
+	'AWS_S3_ACCESS_KEY_ID',
+	'AWS_S3_REGION',
+	'AWS_S3_BUCKET',
+]
 
 if (existsSync(envPathName) || process.env.NODE_ENV === 'production') {
 	config()

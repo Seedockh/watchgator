@@ -1,9 +1,9 @@
 /** ****** ORM ****** **/
-import { getConnection, getRepository, Repository } from 'typeorm'
+import { getConnection, Repository, FindConditions } from 'typeorm'
 /** ****** INTERNALS ****** **/
-import Database from '../Database'
 import { User } from '../models/User'
 import { aLog } from '../../core/Log'
+import { QueryPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
 
 class UserRepository {
 	static repository: Repository<User>
@@ -17,12 +17,15 @@ class UserRepository {
 		return await this.repository?.save(user)
 	}
 
-	static async get(id: any) {
-		// TODO
+	static async get(user: FindConditions<User>): Promise<User | undefined> {
+		return await this.repository?.findOne(user)
 	}
 
-	static async update(id: any) {
-		// TODO
+	static async update(
+		criteria: FindConditions<User>,
+		partialEntity: QueryPartialEntity<User>,
+	) {
+		return await this.repository?.update(criteria, partialEntity)
 	}
 
 	static async delete(id: any) {

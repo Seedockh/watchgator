@@ -77,6 +77,9 @@ export class User {
 	@IsNotEmpty()
 	password!: string
 
+	@Column('text', { nullable: true })
+	avatar?: string
+
 	hashPassword(): void {
 		this.password = bcrypt.hashSync(this.password, 8)
 	}

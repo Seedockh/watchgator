@@ -2,6 +2,7 @@
 import { Request, Response } from 'express'
 /** ****** INTERNALS ****** **/
 import AuthenticateService from '../../services/AuthenticateService'
+import { DatabaseError } from '../../core/CustomErrors'
 
 class AuthController {
 	/**
@@ -31,10 +32,16 @@ class AuthController {
 	static signup = async (req: Request, res: Response): Promise<Response> => {
 		const { nickname, password, email } = req.body
 		try {
-			const result = await AuthenticateService.register(nickname, password, email)
+			const result = await AuthenticateService.register(
+				nickname,
+				password,
+				email,
+			)
 			return res.status(result.status).json(result)
 		} catch (error) {
-			return res.status(error.status).send(error.err)
+			if (error instanceof DatabaseError)
+				return res.status(error.status).send(error.message)
+			return res.status(400).send(error)
 		}
 	}
 
@@ -71,7 +78,9 @@ class AuthController {
 			const result = await AuthenticateService.login(req, res)
 			return res.status(result.status).json(result)
 		} catch (error) {
-			return res.status(error.status).send(error.err)
+			if (error instanceof DatabaseError)
+				return res.status(error.status).send(error.message)
+			return res.status(500).send(error)
 		}
 	}
 }
