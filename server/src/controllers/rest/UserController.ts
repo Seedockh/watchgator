@@ -78,18 +78,29 @@ class UserController {
 	 *          description: User found
 	 *          content:
 	 *            application/json:
-	 *              user: User
+	 *              schema:
+	 *                type: array
+	 *                $ref: '#/components/schemas/User'
 	 *        "404":
 	 *          description: User cannot be found
 	 *          content:
 	 *            application/json:
-	 *              message:
+	 *              schema:
+	 *                type: object
+	 *                properties:
+	 *                  message:
+	 *                    type: string
 	 *        "500":
 	 *          description: Unexpected error
 	 *          content:
 	 *            application/json:
-	 *              message:
-	 *              error:
+	 *              schema:
+	 *                type: object
+	 *                properties:
+	 *                  message:
+	 *                    type: string
+	 *                  error:
+	 *                    type: string
 	 */
 	static async getUser(req: Request, res: Response) {
 		try {
@@ -130,18 +141,31 @@ class UserController {
 	 *          description: User found
 	 *          content:
 	 *            application/json:
-	 *              success:
+	 *              schema:
+	 *                type: object
+	 *                properties:
+	 *                  success:
+	 *                    type: string
 	 *        "400":
 	 *          description: Uuid required
 	 *          content:
 	 *            application/json:
-	 *              error:
+	 *              schema:
+	 *                type: object
+	 *                properties:
+	 *                  error:
+	 *                    type: string
 	 *        "500":
 	 *          description: Unexpected error
 	 *          content:
 	 *            application/json:
-	 *              error:
-	 *              details:
+	 *              schema:
+	 *                type: object
+	 *                properties:
+	 *                  error:
+	 *                    type: string
+	 *                  details:
+	 *                    type: string
 	 */
 	static async deleteUser(req: Request, res: Response) {
 		const {uuid} = req.params;
