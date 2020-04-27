@@ -65,8 +65,8 @@ class Scraper {
 			//this.spinner.text = `Progress done : ${findNextPage.totalText}`
 
 			if (this.totalItems === null) {
-				// @ts-ignore: Unreachable context key
 				this.totalItems =
+					// @ts-ignore: Unreachable context key
 					this[level + 'ItemsPerPage'] * this[level + 'PagesToScrape']
 			}
 
