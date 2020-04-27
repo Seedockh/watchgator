@@ -3,5 +3,6 @@ module.exports = {
   rules: {
     'react-hooks/exhaustive-deps': 'off',
     'react/jsx-uses-vars': 2,
+    'semi': 'never'
   },
 }
