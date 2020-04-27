@@ -9,6 +9,6 @@ import ExpressServer from './core/ExpressServer'
 (async () => {
 	await Scraper.boot('sample')
 	await Database.boot()
-	await UserRepository.init()
+	UserRepository.init()
 	await ExpressServer.run()
 })()

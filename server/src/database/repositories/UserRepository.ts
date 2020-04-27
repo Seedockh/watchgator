@@ -12,7 +12,7 @@ class UserRepository {
 		return getConnection('main')
 	}
 
-	static async init() {
+	static init() {
 		this.repository = getConnection('main').getRepository(User)
 		aLog('').succeed('Users initialized')
 	}
