@@ -3,7 +3,7 @@ import {
     Container, Content, Divider, FlexboxGrid, Icon,
     Button, Modal, Form, FormControl, FormGroup, ControlLabel, Panel, Row, Col, Toggle
 } from 'rsuite'
-import {films} from '../data/films';
+import { moviesList } from '../data/movies';
 
 const MyPlaylist = () => {
     const [show, setShow] = useState(false);
@@ -16,38 +16,37 @@ const MyPlaylist = () => {
         setShow(false)
     }
 
-    const listFilms = films
     const playlists = [
         {
             "name": "Aventure",
             "films": [
-                listFilms[1],
-                listFilms[2],
-                listFilms[3],
-                listFilms[4],
-                listFilms[6],
+                moviesList[1],
+                moviesList[2],
+                moviesList[3],
+                moviesList[4],
+                moviesList[6],
             ]
         },
         {
             "name": "Romance",
             "films": [
-                listFilms[1],
+                moviesList[1],
             ]
         },
         {
             "name": "Action",
             "films": [
-                listFilms[11],
-                listFilms[13],
+                moviesList[11],
+                moviesList[13],
             ]
         },
         {
             "name": "Comedie",
             "films": [
-                listFilms[3],
-                listFilms[4],
-                listFilms[11],
-                listFilms[13],
+                moviesList[3],
+                moviesList[4],
+                moviesList[11],
+                moviesList[13],
             ]
         },
     ]
@@ -68,10 +67,10 @@ const MyPlaylist = () => {
                 <Divider />
                 {/*TODO: For each playlist */}
                 <Row className="show-grid" gutter={30}>
-                    {playlists.map((item) => 
-                        (<Col xs={4} style={{marginBottom: 20}}>
-                            <Panel style={{ height: 200, padding: 0}}  bodyFill header={`${item.name}  -     films :   ${item.films.length}`} bordered>
-                                <img src={item.films[0].imageUrl} style={{width: "100%", height: "100%"}}/>
+                    {playlists.map((item) =>
+                        (<Col xs={4} style={{ marginBottom: 20 }}>
+                            <Panel style={{ height: 200, padding: 0 }} bodyFill header={`${item.name}  -     films :   ${item.films.length}`} bordered>
+                                <img src={item.films[0].imageUrl} style={{ width: "100%", height: "100%" }} />
                             </Panel>
                         </Col>)
                     )}
