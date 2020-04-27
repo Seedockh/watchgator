@@ -1,7 +1,7 @@
 /********************************
  * Define Server Response types *
  ********************************/
-interface BaseResult {
+interface BaseResponse {
 	status: number
 }
 
@@ -9,18 +9,18 @@ interface Token {
 	token: string
 }
 
-interface SuccesResult extends BaseResult {
+interface AuthServiceResponse extends BaseResponse {
 	data: {
 		user: User
 	}
 	meta: Token
 }
 
-interface ErrorResult extends BaseResult {
-	err: any
+interface UserServiceResponse extends BaseResponse {
+	data: {
+		user: User
+	}
 }
-
-type Result = SuccesResult | ErrorResult
 
 /********************
  * Define Log types *
@@ -50,4 +50,14 @@ interface IMDBMedia {
 	director: string | null,
 	casting: (string | null)[],
 	gross: string | null,
+}
+/********************
+ * Extended Express types *
+ ********************/
+declare namespace Express {
+	declare namespace Multer {
+		export interface File {
+			location: string
+		}
+	}
 }

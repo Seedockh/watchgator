@@ -1,9 +1,9 @@
-import { app } from '../../src/core/ExpressServer'
+import app from '../../src/core/ExpressServer'
 import supertest from 'supertest'
 import { createConnection, Connection } from 'typeorm'
 import * as PostgressConnectionStringParser from 'pg-connection-string'
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions'
-import { User } from '../../src/entities/User'
+import { User } from '../../src/database/models/User'
 
 require('dotenv').config()
 

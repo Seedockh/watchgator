@@ -17,7 +17,7 @@ passport.use(
 		},
 		async (nickname, password, next) => {
 			try {
-				const user: User | undefined = await UserRepository.repository.findOne({
+				const user: User | undefined = await UserRepository.get({
 					nickname,
 				})
 
@@ -42,7 +42,7 @@ passport.use(
 			next: (error: any, user?: any) => void,
 		) => {
 			try {
-				const user: User | undefined = await UserRepository.repository.findOne({
+				const user: User | undefined = await UserRepository.get({
 					nickname: username,
 				})
 
@@ -66,8 +66,8 @@ passport.use(
 		},
 		async (jwtPayload, next) => {
 			try {
-				const user: User | undefined = await UserRepository.repository.findOne({
-					uuid: jwtPayload.id,
+				const user: User | undefined = await UserRepository.get({
+					uuid: jwtPayload.uuid,
 				})
 
 				if (!user) throw new Error('user not found')
