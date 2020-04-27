@@ -3,7 +3,6 @@
 # Environment
 .env
 package-lock.json
-yarn.lock
 
 # Node
 
