@@ -1,6 +1,11 @@
 # WatchGator
 Startup week project : Movies / Series search engine
 
+# Hosted URLs
+
+- Client: https://watchgator-client.herokuapp.com/
+- Server: https://watchgator-server.herokuapp.com/
+
 # Heroku Deploys
 
 All commands are inspired from [this article](https://medium.com/@shalandy/deploy-git-subdirectory-to-heroku-ea05e95fce1f).
@@ -13,7 +18,7 @@ First, make sure to get the **`Heroku Cli`**
 ~ $ heroku login
 ```
 
-## Client
+## Deploy Client
 
 You can run either :
 ```console
@@ -26,7 +31,7 @@ Or :
 ~/watchgator$ git subtree push --prefix client heroku master
 ```
 
-## Server
+## Deploy Server
 
 You can run either :
 ```console
