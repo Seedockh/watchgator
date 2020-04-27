@@ -15,6 +15,14 @@ class UserService {
 		return { status: 200, data: { user } }
 	}
 
+	static async deleteUser(uuid: string): Promise<boolean> {
+		try{
+			const res = await UserRepository.delete( uuid )
+			return res.affected != 0
+		}
+		catch(error){return false}
+	}
+
 	/*
 	Update user avatar and remove previous from AWS
 	*/

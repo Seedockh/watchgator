@@ -104,7 +104,7 @@ class UserController {
 	/**
 	 * @swagger
 	 * path:
-	 *  /user/remove-avatar/:fileKey:
+	 *  /user/delete-avatar/:fileKey:
 	 *    delete:
 	 *      summary: Delete avatar from AWS S3 by id
 	 *      tags: [Users]
@@ -153,7 +153,7 @@ class UserController {
 	/**
 	 * @swagger
 	 * path:
-	 *  /user/get/:userUuid:
+	 *  /user/get/:uuid:
 	 *    get:
 	 *      summary: Get user by uuid
 	 *      tags: [Users]
@@ -201,6 +201,60 @@ class UserController {
 			else return res.status(500).json({ message: 'Unexpected error', error })
 		}
 	}
+
+		/**
+	 * @swagger
+	 * path:
+	 *  /user/delete/:uuid:
+	 *    delete:
+	 *      summary: Get user by uuid
+	 *      tags: [Users]
+	 *      parameters:
+	 *        - in: path
+	 *          name: uuid
+	 *          description: user uuid
+	 *          schema:
+	 *            type: string
+	 *          required: true
+	 *        - in: header
+	 *          name: Authorization
+	 *          description: Bearer + TOKEN
+	 *          schema:
+	 *            type: string
+	 *            format: token
+	 *          required: true
+	 *      responses:
+	 *        "200":
+	 *          description: User found
+	 *          content:
+	 *            application/json:
+	 *              success:
+	 *        "400":
+	 *          description: Uuid required
+	 *          content:
+	 *            application/json:
+	 *              error:
+	 *        "500":
+	 *          description: Unexpected error
+	 *          content:
+	 *            application/json:
+	 *              error:
+	 *              details:
+	 */
+	static async deleteUser(req: Request, res: Response) {
+		const {uuid} = req.params;
+
+		if(uuid == null || uuid == null) return res.status(400).json({ error: 'Uuid is required to delete any user' })
+		
+		try {
+			const response = await UserService.deleteUser(uuid)
+			return response == true ? res.status(200).json({success: `User with uuid ${uuid} succesfully deleted`}) : res.status(500).json({message: `Error: User with uuid ${uuid} cannot be deleted`});
+		} catch (error) {
+			return res.status(500).json({ error: `Unexpected error: User with uuid ${uuid} cannot be deleted`, details: error })
+		}
+	}
+
+
 }
 
 export default UserController
