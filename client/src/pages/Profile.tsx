@@ -22,7 +22,6 @@ const Profile = () => {
     console.log(`user: ${JSON.stringify(user)}`)
   }, [user])
 
-  //const listFilms = films
   return (
     <div className="sidebar-page">
       <Container>

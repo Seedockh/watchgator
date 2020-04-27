@@ -1,6 +1,8 @@
 import React, { useState, CSSProperties, FunctionComponent } from 'react'
+import { Sidenav, Sidebar as RSidebar, Icon, Nav, Dropdown, Toggle, Button } from 'rsuite'
+import { useHistory } from 'react-router-dom'
+
 import { ExpandBtn } from './ExpandBtn'
-import { Sidenav, Sidebar as RSidebar, Icon, Nav, Dropdown, Toggle } from 'rsuite'
 import { IconNames } from 'rsuite/lib/Icon';
 import logo from '../../assets/logo.png';
 
@@ -32,6 +34,7 @@ type SidebarProps = {
 
 export const Sidebar: FunctionComponent<SidebarProps> = ({ items }) => {
     const [expand, setExpand] = useState(true)
+    const history = useHistory()
 
     const handleToggle = () => {
         setExpand(!expand);
@@ -57,6 +60,8 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ items }) => {
                             <>
                                 <br />
                                 <h4 style={{ marginTop: 8 }}>WatchGator</h4>
+                                <Button appearance="ghost" block onClick={() => {
+                                    history.push(`/login`)}} > Login</Button>
                             </>
                         )}
                     </div>

@@ -52,7 +52,7 @@ const Register = () => {
                   <FormControl name="password" type="password" {...passwordBind} />
                 </FormGroup>
                 <FormGroup style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
-                  <Button appearance="primary" style={{ width: 150 }}>Register</Button>
+                  <Button appearance="primary" style={{ width: 150 }} onClick={() => history.push('/')}>Register</Button>
                   <FormGroup style={{ display: "flex", flexDirection: "row", alignItems: "baseline", marginTop: 10 }}>
                     <ControlLabel> Already have a account ?</ControlLabel>
                     <Button onClick={redirectLogin} appearance="link"> Sign in</Button>

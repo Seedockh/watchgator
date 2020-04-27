@@ -29,8 +29,8 @@ const Login = () => {
   // }
 
   const redirectRegister = () => {
-      history.push('/register')    
-  } 
+    history.push('/register')
+  }
 
   return (
     <Container style={{ marginTop: 200 }}>
@@ -49,7 +49,7 @@ const Login = () => {
                   <Button appearance="link">Forgot password?</Button>
                 </FormGroup>
                 <FormGroup style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
-                  <Button appearance="primary" style={{ width: 150 }}>Login</Button>
+                  <Button appearance="primary" style={{ width: 150 }} onClick={() => history.push('/')}>Login</Button>
                   <FormGroup style={{ display: "flex", flexDirection: "row", alignItems: "baseline", marginTop: 10 }}>
                     <ControlLabel>Don't have account ?</ControlLabel>
                     <Button onClick={redirectRegister} appearance="link"> Sign up</Button>
