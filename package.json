@@ -10,7 +10,5 @@
     "pheroku": "npm run pserv && npm run pcli"
   },
   "license": "MIT",
-  "dependencies": {
-    "helmet": "^3.22.0"
-  }
+  "dependencies": {}
 }
