@@ -8,10 +8,8 @@ import { User } from 'src/database/models/User'
 
 class UserController {
 
-	static async uploadAvatar(
-		req: Request,
-		res: Response<{ user: User } | { error: string }>,
-	): Promise<void> {
+	static async updateAvatar(req: Request, res: Response<{ user: User } | { error: string, details: any }>) {
+
 		const imageUpload = S3.uploadImg.single('file')
 
 		imageUpload(req, res, async (err: { message: any }) => {
@@ -19,7 +17,7 @@ class UserController {
 				console.log('ERROR in image uploading: ', err.message)
 
 				return res.status(422).send({
-					error: `Image Upload Error'${err.message}`,
+					error: 'Image Upload Error', details: err.message,
 				})
 			}
 
@@ -27,20 +25,21 @@ class UserController {
 			const avatar: string = req.file.location
 
 			try {
-				const result = await UserService.uploadAvatar(uuid, avatar)
-				const userUpdated = result.data.user
-				res.status(200).send({ user: userUpdated })
+				const response = await UserService.updateAvatar(uuid, avatar)
+				return res.status(response.status).json({ user: response.data.user })
 			} catch (error) {
 				if (error instanceof DatabaseError)
-					return res.status(error.status).send({ error: error.message })
-				else return res.status(500).send(error)
+					return res
+						.status(error.status)
+						.json({ error: error.message, details: error.details })
+				else return res.status(500).json({ error: 'Unexpected error', details: error })
 			}
 		})
 	}
 
 	static async deleteAvatar(req: Request, res: Response): Promise<Response> {
 		try {
-			S3.deleteImg(req.params.fileKey)
+			S3.deleteImg(req.params.fileKey) // Delete from user also!!
 			return res.status(200).json({
 				message: 'Success - Image deleted from S3 or not existing',
 			})

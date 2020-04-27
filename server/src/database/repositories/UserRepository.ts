@@ -8,6 +8,10 @@ import { QueryPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
 class UserRepository {
 	static repository: Repository<User>
 
+	static getConnection() {
+		return getConnection('main')
+	}
+
 	static async init() {
 		this.repository = getConnection('main').getRepository(User)
 		aLog('').succeed('Users initialized')
