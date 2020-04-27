@@ -3,9 +3,9 @@ import { Route } from 'react-router-dom'
 import 'rsuite/dist/styles/rsuite-dark.css';
 
 import { Login, Home } from './pages'
-import User from './core/user';
+import User from './core/user'
 import Register from './pages/Register';
-import Profile from './pages/Profiles';
+import Profile from './pages/Profile';
 
 const user = localStorage.getItem('user')
 
@@ -33,11 +33,6 @@ const reducer = (prevState: UserState, action: UserAction): UserState => {
 function App(): JSX.Element {
   return (
     <User.Provider initialState={userInitialState} reducer={reducer}>
-<<<<<<< HEAD
-      <Route exact path="/login" component={Login} />
-      <Route exact path="/home" component={Home} />
-      <Route exact path="/register" component={Register} />
-=======
       <Route
         exact
         path="/login"
@@ -58,7 +53,6 @@ function App(): JSX.Element {
         path="/home"
         component={Home}
       />
->>>>>>> [EVOL] Beggin page profile
     </User.Provider>
   )
 }
