@@ -3,6 +3,7 @@ import { User } from '../database/models/User'
 import UserRepository from '../database/repositories/UserRepository'
 import { DatabaseError, EndpointAccessError } from '../core/CustomErrors'
 import { QueryFailedError } from 'typeorm'
+import { validate, ValidationError } from 'class-validator'
 
 class UserService {
 	static throwIfManipulateSomeoneElse(
@@ -59,6 +60,56 @@ class UserService {
 			if (error instanceof DatabaseError) throw error
 			if (error instanceof QueryFailedError)
 				throw new DatabaseError(error.message, 400, error.stack, error)
+			return false
+		}
+	}
+
+	/**
+	 * Update user password only
+	 */
+	static async updateUserPwd(
+		token: string | undefined,
+		uuid: string,
+		currentPwd: string,
+		newPwd: string,
+	): Promise<boolean> {
+		if (typeof uuid == 'undefined') return false
+
+		this.throwIfManipulateSomeoneElse(token, uuid)
+		let userToUpdate: User | undefined
+		try {
+			userToUpdate = await UserRepository.get({ uuid })
+
+			// Check provided current password
+			if (!userToUpdate?.checkIfUnencryptedPasswordIsValid(currentPwd))
+				throw new DatabaseError('Wrong current password', 403)
+
+			// Prepare pwd update if well formatted
+			userToUpdate.password = newPwd
+			const errors: ValidationError[] = await validate(userToUpdate)
+			if (errors.length > 0) {
+				userToUpdate.password = currentPwd
+				throw new DatabaseError(
+					'Wrong format for new password',
+					400,
+					undefined,
+					errors,
+				)
+			}
+			userToUpdate.hashPassword()
+
+			// Exec user update
+			const res = await UserRepository.update(
+				{ uuid },
+				{ password: userToUpdate.password },
+			)
+			return res.affected != 0
+		} catch (error) {
+			if (error instanceof DatabaseError) throw error
+			if (error instanceof QueryFailedError) {
+				if (userToUpdate !== undefined) userToUpdate.password = currentPwd
+				throw new DatabaseError(error.message, 400, error.stack, error)
+			}
 			return false
 		}
 	}

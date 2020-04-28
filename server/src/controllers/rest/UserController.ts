@@ -386,7 +386,12 @@ class UserController {
 	 *    schemas:
 	 *      BodyUserToUpdate:
 	 *        type: object
+	 *        required:
+	 *          - uuid
 	 *        properties:
+	 *          uuid:
+	 *            type: string
+	 *            description: uuid of user to update
 	 *          nickname:
 	 *            type: string
 	 *            description: new desired nickname
@@ -394,6 +399,7 @@ class UserController {
 	 *            type: string
 	 *            description: new desired email
 	 *        example:
+	 *           uuid: 1234
 	 *           nickname: Bill
 	 *           email: bill@gmail.com
 	 * path:
@@ -408,12 +414,6 @@ class UserController {
 	 *            schema:
 	 *              $ref: '#/components/schemas/BodyUserToUpdate'
 	 *      parameters:
-	 *        - in: path
-	 *          name: uuid
-	 *          description: user uuid
-	 *          schema:
-	 *            type: string
-	 *          required: true
 	 *        - in: header
 	 *          name: Authorization
 	 *          description: Bearer + TOKEN
@@ -487,7 +487,134 @@ class UserController {
 					.status(error.status)
 					.json({ error: { message: error.message, details: error.details } })
 			return res.status(500).json({
-				error: `Unexpected error: User with uuid ${uuid} cannot be deleted`,
+				error: `Unexpected error: User with uuid ${uuid} cannot be updated`,
+				details: error.message || error,
+			})
+		}
+	}
+
+	/**
+	 * @swagger
+	 *  components:
+	 *    schemas:
+	 *      BodyPasswordToUpdate:
+	 *        type: object
+	 *        required:
+	 *          - uuid
+	 *          - currentPwd
+	 *          - newPwd
+	 *        properties:
+	 *          uuid:
+	 *            type: string
+	 *            description: uuid of user to update
+	 *          currentPwd:
+	 *            type: string
+	 *            description: current passwword
+	 *          newPwd:
+	 *            type: string
+	 *            description: new desired passwword
+	 *        example:
+	 *           uuid: 1234-5678
+	 *           currentPwd: 1234
+	 *           newPwd: 1234
+	 * path:
+	 *  /user/update-password:
+	 *    put:
+	 *      summary: Update user by uuid
+	 *      tags: [Users]
+	 *      requestBody:
+	 *        required: true
+	 *        content:
+	 *          application/json:
+	 *            schema:
+	 *              $ref: '#/components/schemas/BodyPasswordToUpdate'
+	 *      parameters:
+	 *        - in: header
+	 *          name: Authorization
+	 *          description: Bearer + TOKEN
+	 *          schema:
+	 *            type: string
+	 *            format: token
+	 *          required: true
+	 *      responses:
+	 *        "200":
+	 *          description: Password updated
+	 *          content:
+	 *            application/json:
+	 *              schema:
+	 *                type: object
+	 *                properties:
+	 *                  success:
+	 *                    type: string
+	 *        "400":
+	 *          description: Format error
+	 *          content:
+	 *            application/json:
+	 *              schema:
+	 *                type: object
+	 *                properties:
+	 *                  error:
+	 *                    type: object
+	 *                    properties:
+	 *                      message:
+	 *                        type: string
+	 *                      details:
+	 *                        type: array
+	 *                        items:
+	 *                          type: object
+	 *        "403":
+	 *          description: Only operations on its own user are allowed
+	 *          content:
+	 *            application/json:
+	 *              schema:
+	 *                $ref: '#/components/schemas/ResponseUnauthorized'
+	 *        "500":
+	 *          description: Unexpected error
+	 *          content:
+	 *            application/json:
+	 *              schema:
+	 *                type: object
+	 *                properties:
+	 *                  error:
+	 *                    type: string
+	 *                  details:
+	 *                    type: string
+	 */
+	static async updateUserPwd(req: Request, res: Response): Promise<Response> {
+		const { uuid, currentPwd, newPwd } = req.body
+		if (
+			typeof uuid === 'undefined' ||
+			typeof currentPwd === 'undefined' ||
+			typeof newPwd === 'undefined'
+		)
+			return res
+				.status(400)
+				.json({ error: 'Uuid - currentPw and newPwd are required in body' })
+
+		try {
+			const response = await UserService.updateUserPwd(
+				getTokenFromHeader(req),
+				uuid,
+				currentPwd,
+				newPwd,
+			)
+
+			if (response)
+				return res.status(200).json({
+					success: `Password of user with uuid ${uuid} succesfully updated`,
+				})
+			throw new Error('Incorrect keys in body')
+		} catch (error) {
+			if (error instanceof EndpointAccessError)
+				return res
+					.status(error.status)
+					.json({ error: { message: error.message } })
+			if (error instanceof DatabaseError)
+				return res
+					.status(error.status)
+					.json({ error: { message: error.message, details: error.details } })
+			return res.status(500).json({
+				error: `Unexpected error: Password of user with uuid ${uuid} cannot be updated`,
 				details: error.message || error,
 			})
 		}
