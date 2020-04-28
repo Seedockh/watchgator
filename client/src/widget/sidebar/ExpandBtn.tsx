@@ -1,18 +1,10 @@
 import React, { FunctionComponent, CSSProperties } from 'react'
-import { Icon } from 'rsuite'
+import { Icon, IconButton } from 'rsuite'
 
 const btnStyle: CSSProperties = {
     position: 'absolute',
-    right: -20,
-    bottom: 15,
-    borderRadius: 50,
-    backgroundColor: 'rgba(0, 0, 0, 0.9)',
-    padding: '12px 20px'
-}
-
-const iconStyle: CSSProperties = {
-    verticalAlign: 'middle',
-    textAlign: 'center'
+    right: -23,
+    top: 63,
 }
 
 type ExpandBtnProps = {
@@ -20,10 +12,12 @@ type ExpandBtnProps = {
     onPress: () => void
 }
 
-export const ExpandBtn: FunctionComponent<ExpandBtnProps> = (props) => {
-    return (
-        <div style={btnStyle} onClick={props.onPress}>
-            <Icon size="lg" icon={props.expand ? 'angle-left' : 'angle-right'} style={iconStyle} />
-        </div>
-    )
-}
+export const ExpandBtn: FunctionComponent<ExpandBtnProps> = (props) => (
+    <IconButton
+        icon={<Icon icon={props.expand ? 'angle-left' : 'angle-right'} />}
+        circle
+        size="lg"
+        onClick={props.onPress}
+        style={btnStyle}
+    />
+)

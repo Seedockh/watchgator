@@ -59,7 +59,7 @@ export const Home = () => {
       ]} />
 
       <Container>
-        <Header style={{ padding: 16 }}>
+        <Header className='p-4'>
           <Searchbar />
         </Header>
         <Content>
