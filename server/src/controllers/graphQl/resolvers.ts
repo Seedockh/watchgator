@@ -8,7 +8,7 @@ import { DatabaseError } from '../../core/CustomErrors'
 
 export const resolvers = {
 	Query: {
-		hello: () => 'Hello world!',
+		hello: (): string => 'Hello world!',
 	},
 	Mutation: {
 		signUp: async (_: any, args: User): Promise<User> => {

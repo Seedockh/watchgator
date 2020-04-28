@@ -27,6 +27,33 @@ class AuthController {
 	 *                $ref: '#/components/schemas/ResponseUserRegistered'
 	 *        "400":
 	 *          description: Incorrect input data - User not created
+	 *          content:
+	 *            application/json:
+	 *              schema:
+	 *                type: object
+	 *                properties:
+	 *                  error:
+	 *                    type: object
+	 *                    properties:
+	 *                      message:
+	 *                        type: string
+	 *                      details:
+	 *                        type: array
+	 *                        items:
+	 *                          type: object
+	 *                          properties:
+	 *                            target:
+	 *                              type: object
+	 *                            value:
+	 *                              type: string
+	 *                            property:
+	 *                              type: string
+	 *                            children:
+	 *                              type: array
+	 *                              items:
+	 *                                type: string
+	 *                            constraints:
+	 *                              type: object
 	 */
 
 	static signup = async (req: Request, res: Response): Promise<Response> => {
@@ -40,7 +67,9 @@ class AuthController {
 			return res.status(result.status).json(result)
 		} catch (error) {
 			if (error instanceof DatabaseError)
-				return res.status(error.status).send(error.message)
+				return res
+					.status(error.status)
+					.send({ error: { message: error.message, details: error.details } })
 			return res.status(400).send(error)
 		}
 	}

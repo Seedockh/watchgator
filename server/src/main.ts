@@ -5,10 +5,9 @@ import Scraper from './core/Scraper'
 import Database from './database/Database'
 import UserRepository from './database/repositories/UserRepository'
 import ExpressServer from './core/ExpressServer'
-
-(async () => {
+;(async () => {
 	await Scraper.boot('sample')
 	await Database.boot()
-	await UserRepository.init()
+	UserRepository.init()
 	await ExpressServer.run()
 })()
