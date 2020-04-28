@@ -3,10 +3,13 @@ import {
     Container, Content, Divider, FlexboxGrid, Icon,
     Button, Modal, Form, FormControl, FormGroup, ControlLabel, Panel, Row, Col, Toggle
 } from 'rsuite'
-import { moviesList } from '../data/movies';
+import { useHistory } from 'react-router-dom';
+
+import { playlists } from '../data/playlists';
 
 const MyPlaylist = () => {
     const [show, setShow] = useState(false);
+    const history = useHistory();
 
     const openModal = () => {
         setShow(true)
@@ -15,41 +18,6 @@ const MyPlaylist = () => {
     const closeModal = () => {
         setShow(false)
     }
-
-    const playlists = [
-        {
-            "name": "Aventure",
-            "films": [
-                moviesList[1],
-                moviesList[2],
-                moviesList[3],
-                moviesList[4],
-                moviesList[6],
-            ]
-        },
-        {
-            "name": "Romance",
-            "films": [
-                moviesList[1],
-            ]
-        },
-        {
-            "name": "Action",
-            "films": [
-                moviesList[11],
-                moviesList[13],
-            ]
-        },
-        {
-            "name": "Comedie",
-            "films": [
-                moviesList[3],
-                moviesList[4],
-                moviesList[11],
-                moviesList[13],
-            ]
-        },
-    ]
 
     return (
         <Container>
@@ -65,13 +33,15 @@ const MyPlaylist = () => {
                     </FlexboxGrid.Item>
                 </FlexboxGrid>
                 <Divider />
-                {/*TODO: For each playlist */}
                 <Row className="show-grid" gutter={30}>
-                    {playlists.map((item) =>
-                        (<Col xs={4} style={{ marginBottom: 20 }}>
-                            <Panel style={{ height: 200, padding: 0 }} bodyFill header={`${item.name}  -     films :   ${item.films.length}`} bordered>
-                                <img src={item.films[0].imageUrl} style={{ width: "100%", height: "100%" }} />
-                            </Panel>
+                    {playlists.map((playlist) =>
+                        (<Col xs={8} style={{ marginBottom: 20 }}>
+                            <div className="grow" onClick={() => history.push(`/playlist/${playlist.id}`)}>
+                                <Panel style={{ height: 200, padding: 0 }} bodyFill  bordered>
+                                    <img src={playlist.movies[0].imageUrl} style={{ width: "100%",  }} />
+                                </Panel>
+                                <h5>{playlist.name}  -     movie list :   {playlist.movies.length}</h5>
+                            </div>
                         </Col>)
                     )}
                 </Row>
