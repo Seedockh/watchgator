@@ -12,7 +12,7 @@ class IMDBService {
     const spinner = aLog('Initializing Movies datas ...')
     this.sampleMovies = this.readSampleMovies()
     this.liveMovies = await this.readLiveMovies()
-    spinner.succeed('Movies ready')
+    spinner.succeed('Movies initialized')
   }
 
 	static readSampleMovies(): Dataset {

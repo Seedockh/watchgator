@@ -33,14 +33,14 @@ class Scraper {
 			) {
 				sLog('Movies datas not found on your system')
 				await this.scrape('movies', level)
-			} else aLog('').succeed('Movies datas found')
+			}
 
 			if (
 				!fs.existsSync(`${this.envSrc}database/imdb/imdb_series_${level}.json`)
 			) {
 				sLog('Series datas not found on your system')
 				await this.scrape('series', level)
-			} else aLog('').succeed('Series datas found')
+			}
 		} catch (e) {
 			sLog(`Error while scrapping : ${e}`, '#FF0000')
 			return e
