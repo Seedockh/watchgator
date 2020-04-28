@@ -25,6 +25,7 @@ type SubItem = {
 type Item = {
     title: string
     icon: IconNames
+    path?: string
     items?: SubItem[]
 }
 
@@ -72,7 +73,7 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ items }) => {
                         {items.map((item, index) => {
                             if (!item.items) {
                                 return (
-                                    <Nav.Item eventKey={index} active icon={<Icon icon={item.icon} />}>
+                                    <Nav.Item eventKey={index} active icon={<Icon icon={item.icon} />} onClick={() => history.push(item.path!)}>
                                         {item.title}
                                     </Nav.Item>
                                 )

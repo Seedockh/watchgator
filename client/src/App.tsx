@@ -6,6 +6,7 @@ import { Login, Home } from './pages'
 import User from './core/user';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
+import Information from './pages/Information';
 
 const user = localStorage.getItem('user')
 
@@ -37,6 +38,8 @@ function App(): JSX.Element {
       <Route exact path="/" component={Home} />
       <Route exact path="/register" component={Register} />
       <Route exact path="/profile" component={Profile} />
+      <Route exact path="/informations" component={Information} />
+
     </User.Provider>
   )
 }

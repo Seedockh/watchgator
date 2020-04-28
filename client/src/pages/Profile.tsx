@@ -21,6 +21,7 @@ const Profile = () => {
           {
             title: 'Update information',
             icon: 'edit',
+            path: "/information"
           }
         ]} />
         <Content style={{ marginRight: 100 }}>
