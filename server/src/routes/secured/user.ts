@@ -2,7 +2,7 @@ import { Router } from 'express'
 import UserController from '../../controllers/rest/UserController'
 import UserRepository from '../../database/repositories/UserRepository'
 import { User } from '../../database/models/User'
-import { Request, Response, RequestHandler } from 'express'
+import { Request } from 'express'
 
 const router = Router()
 

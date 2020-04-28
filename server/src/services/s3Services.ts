@@ -5,6 +5,7 @@ import multerS3 from 'multer-s3'
 import aws from 'aws-sdk'
 /** ****** INTERNALS ****** **/
 import IStorageService from './IStorageService'
+import { sLog } from '../core/Log'
 
 aws.config.update({
 	secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
@@ -15,7 +16,7 @@ aws.config.update({
 class S3Service implements IStorageService {
 	static s3: AWS.S3 = new aws.S3()
 
-	private static fileFilter = (
+	private static fileFilter: (
 		req: any,
 		file: Express.Multer.File,
 		cb: FileFilterCallback,
@@ -39,14 +40,14 @@ class S3Service implements IStorageService {
 			req: Express.Request,
 			file: Express.Multer.File,
 			cb: (error: any, metadata?: any) => void,
-		) {
+		): void {
 			cb(null, { fieldName: 'TESTING_METADATA' })
 		},
 		key: function(
 			req: Express.Request,
 			file: Express.Multer.File,
 			cb: (error: any, key?: string) => void,
-		) {
+		): void {
 			cb(null, Date.now().toString())
 		},
 	}
@@ -67,7 +68,9 @@ class S3Service implements IStorageService {
 				Bucket: String(process.env.AWS_S3_BUCKET),
 				Key: imgKey,
 			},
-			function(err, data) {},
+			function(err) {
+				if (err) sLog(err.message)
+			},
 		)
 	}
 
