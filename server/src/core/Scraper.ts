@@ -123,10 +123,12 @@ class Scraper {
 							'div.ratings-bar + p.text-muted + p > .ghost ~ a',
 						)
 						Array.from(actorsList, (actor: MediaElement) =>
-							actorsList ? actors.push({
-								id: actor.getAttribute('href')!.split('/')[2],
-								name: actor.innerText
-							}) : null,
+							actorsList
+								? actors.push({
+										id: actor.getAttribute('href')!.split('/')[2],
+										name: actor.innerText,
+								  })
+								: null,
 						)
 
 						let isDirector = true
@@ -139,7 +141,7 @@ class Scraper {
 							if (isDirector && directorsList) {
 								directors.push({
 									id: director.getAttribute('href')!.split('/')[2],
-									name: director.innerText
+									name: director.innerText,
 								})
 							}
 						})
@@ -147,11 +149,15 @@ class Scraper {
 						const genresList: MediaElement | null = item.querySelector(
 							'p.text-muted > span.genre',
 						)
-						const genresArray: Array<string | null> = genresList ? genresList.innerText.split(', ') : []
-						genresArray.map((genre: string | null) => genres.push({ name: genre ?? null	}))
+						const genresArray: Array<string | null> = genresList
+							? genresList.innerText.split(', ')
+							: []
+						genresArray.map((genre: string | null) =>
+							genres.push({ name: genre ?? null }),
+						)
 
 						const id: MediaElement | null = item.querySelector(
-							'.lister-item .lister-top-right .ribbonize'
+							'.lister-item .lister-top-right .ribbonize',
 						)
 						const title: MediaElement | null = item.querySelector(
 							'h3 .lister-item-index + a',
