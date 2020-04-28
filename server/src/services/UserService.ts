@@ -54,6 +54,27 @@ class UserService {
 		this.throwIfManipulateSomeoneElse(token, uuid)
 
 		try {
+			// Simulate updated user to check if new datas are well formatted
+			const userToUpdate = await UserRepository.get({ uuid })
+
+			if (typeof userToUpdate === 'undefined')
+				throw new DatabaseError('User not found', 400)
+
+			for (const key in { ...dataToUpdate }) {
+				if (
+					key in userToUpdate &&
+					typeof { ...dataToUpdate }[key] !== 'undefined'
+				)
+					userToUpdate[key] = { ...dataToUpdate }[key]
+			}
+
+			// Throw if incorrect format
+			userToUpdate.password = 'fake' // otherwise validation test consider encrypted pwd too long
+			const errors: ValidationError[] = await validate(userToUpdate)
+			if (errors.length > 0)
+				throw new DatabaseError('Incorrect data', 400, undefined, errors)
+
+			// Update user if correct format
 			const res = await UserRepository.update({ uuid }, { ...dataToUpdate })
 			return res.affected != 0
 		} catch (error) {
