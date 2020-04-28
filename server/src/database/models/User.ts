@@ -3,6 +3,11 @@ import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm'
 import { Length, IsNotEmpty, IsEmail } from 'class-validator'
 /** ****** ENCRYPT ****** **/
 import * as bcrypt from 'bcryptjs'
+import * as jwt from 'jsonwebtoken'
+import UserRepository from '../repositories/UserRepository'
+/** ****** INTERNALS ****** **/
+import S3 from '../../services/s3Services'
+import IStorageService from 'src/services/IStorageService'
 
 @Entity()
 @Unique(['nickname'])
@@ -33,5 +38,14 @@ export class User {
 
 	checkIfUnencryptedPasswordIsValid(unencryptedPassword: string): boolean {
 		return bcrypt.compareSync(unencryptedPassword, this.password)
+	}
+
+	static get storageService(): IStorageService {
+		return S3
+	}
+
+	static tokenBelongsToUser(token: string, uuid: string): boolean {
+		const userFromJwt = jwt.verify(token, String(process.env.SECRET)) as User
+		return userFromJwt.uuid == uuid
 	}
 }

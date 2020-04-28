@@ -6,8 +6,8 @@ import IMDBService from './services/IMDBService'
 import Database from './database/Database'
 import UserRepository from './database/repositories/UserRepository'
 import ExpressServer from './core/ExpressServer'
-
-(async () => {
+;(async () => {
+	await Scraper.boot('sample')
 	await Database.boot()
 	await Scraper.boot()
 	await UserRepository.init()
