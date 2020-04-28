@@ -39,10 +39,10 @@ class AuthController {
 	 *                        type: string
 	 *                      details:
 	 *                        type: array
-	 *                        items: 
+	 *                        items:
 	 *                          type: object
 	 *                          properties:
-	 *                            target: 
+	 *                            target:
 	 *                              type: object
 	 *                            value:
 	 *                              type: string
@@ -50,7 +50,7 @@ class AuthController {
 	 *                              type: string
 	 *                            children:
 	 *                              type: array
-	 *                              items: 
+	 *                              items:
 	 *                                type: string
 	 *                            constraints:
 	 *                              type: object
@@ -67,7 +67,9 @@ class AuthController {
 			return res.status(result.status).json(result)
 		} catch (error) {
 			if (error instanceof DatabaseError)
-				return res.status(error.status).send({error: {message: error.message, details: error.details}})
+				return res
+					.status(error.status)
+					.send({ error: { message: error.message, details: error.details } })
 			return res.status(400).send(error)
 		}
 	}

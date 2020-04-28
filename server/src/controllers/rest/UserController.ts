@@ -1,10 +1,10 @@
 /** ****** SERVER ****** **/
 import { Request, Response, RequestHandler } from 'express'
 /** ****** INTERNALS ****** **/
-import S3 from '../../services/s3Services'
 import UserService from '../../services/UserService'
-import { DatabaseError } from '../../core/CustomErrors'
-import { User } from 'src/database/models/User'
+import { DatabaseError, EndpointAccessError } from '../../core/CustomErrors'
+import { User } from '../../database/models/User'
+import { getTokenFromHeader } from './utils'
 
 class UserController {
 	/**
@@ -26,6 +26,14 @@ class UserController {
 	 *        example:
 	 *           uuid: 1234
 	 *           file: image.png
+	 *      ResponseUnauthorized:
+	 *         type: object
+	 *         properties:
+	 *           error:
+	 *             type: object
+	 *             properties:
+	 *               message:
+	 *                 type: string
 	 *      ResponseUserWithAvatar:
 	 *        example:
 	 *          user:
@@ -66,22 +74,26 @@ class UserController {
 	 *            application/json:
 	 *              schema:
 	 *                $ref: '#/components/schemas/ResponseUserWithAvatar'
+	 *        "403":
+	 *          description: Only operations on its own user are allowed
+	 *          content:
+	 *            application/json:
+	 *              schema:
+	 *                $ref: '#/components/schemas/ResponseUnauthorized'
 	 *        "422":
 	 *          description: Incorrect image data
 	 *        "500":
 	 *          description: Internal error
 	 */
 
-	static async updateAvatar(req: Request, res: Response<{ user: User } | { error: string, details: any }>) {
-
-		const imageUpload = S3.uploadImg.single('file')
+	static async updateAvatar(req: Request, res: Response) {
+		const imageUpload = User.storageService.uploadImg.single('file')
 
 		imageUpload(req, res, async (err: { message: any }) => {
 			if (err) {
-				console.log('ERROR in image uploading: ', err.message)
-
 				return res.status(422).send({
-					error: 'Image Upload Error', details: err.message,
+					error: 'Image Upload Error',
+					details: err.message,
 				})
 			}
 
@@ -89,25 +101,53 @@ class UserController {
 			const avatar: string = req.file.location
 
 			try {
-				const response = await UserService.updateAvatar(uuid, avatar)
+				const response = await UserService.updateAvatar(
+					getTokenFromHeader(req),
+					uuid,
+					avatar,
+				)
 				return res.status(response.status).json({ user: response.data.user })
 			} catch (error) {
 				if (error instanceof DatabaseError)
 					return res
 						.status(error.status)
 						.json({ error: error.message, details: error.details })
-				else return res.status(500).json({ error: 'Unexpected error', details: error })
+				if (error instanceof EndpointAccessError)
+					return res
+						.status(error.status)
+						.json({ error: { message: error.message } })
+				return res
+					.status(500)
+					.json({ error: 'Unexpected error', details: error })
 			}
 		})
 	}
 
 	/**
 	 * @swagger
+	 *  components:
+	 *    schemas:
+	 *      BodyAvatarToDelete:
+	 *        type: object
+	 *        required:
+	 *          - uuid
+	 *        properties:
+	 *          uuid:
+	 *            type: integer
+	 *            description: uuid of user we want to remove avatar
+	 *        example:
+	 *           uuid: 1234
 	 * path:
 	 *  /user/delete-avatar/:fileKey:
 	 *    delete:
 	 *      summary: Delete avatar from AWS S3 by id
 	 *      tags: [Users]
+	 *      requestBody:
+	 *        required: true
+	 *        content:
+	 *          application/json:
+	 *            schema:
+	 *              $ref: '#/components/schemas/BodyAvatarToDelete'
 	 *      parameters:
 	 *        - in: path
 	 *          name: fileKey
@@ -132,6 +172,12 @@ class UserController {
 	 *                properties:
 	 *                  message:
 	 *                    type: string
+	 *        "403":
+	 *          description: Only operations on its own user are allowed
+	 *          content:
+	 *            application/json:
+	 *              schema:
+	 *                $ref: '#/components/schemas/ResponseUnauthorized'
 	 *        "500":
 	 *          description: Image cannot be deleted
 	 *          content:
@@ -146,7 +192,12 @@ class UserController {
 	 */
 	static async deleteAvatar(req: Request, res: Response): Promise<Response> {
 		try {
-			S3.deleteImg(req.params.fileKey) // Delete from user also!!
+			const result = await UserService.deleteAvatar(
+				getTokenFromHeader(req),
+				req.body.uuid,
+				req.params.fileKey,
+			) // TODO: Delete from user also!!
+			if (!result) throw new Error()
 			return res.status(200).json({
 				message: 'Success - Image deleted from S3 or not existing',
 			})
@@ -155,6 +206,10 @@ class UserController {
 				return res
 					.status(error.status)
 					.json({ message: error.message, error: error.details })
+			if (error instanceof EndpointAccessError)
+				return res
+					.status(error.status)
+					.json({ error: { message: error.message } })
 			else return res.status(500).json({ message: 'error', error })
 		}
 	}
@@ -188,6 +243,12 @@ class UserController {
 	 *              schema:
 	 *                type: array
 	 *                $ref: '#/components/schemas/User'
+	 *        "403":
+	 *          description: Only operations on its own user are allowed
+	 *          content:
+	 *            application/json:
+	 *              schema:
+	 *                $ref: '#/components/schemas/ResponseUnauthorized'
 	 *        "404":
 	 *          description: User cannot be found
 	 *          content:
@@ -211,18 +272,25 @@ class UserController {
 	 */
 	static async getUser(req: Request, res: Response) {
 		try {
-			const response = await UserService.getUser(req.params.uuid)
+			const response = await UserService.getUser(
+				getTokenFromHeader(req),
+				req.params.uuid,
+			)
 			return res.status(response.status).json({ user: response.data.user })
 		} catch (error) {
 			if (error instanceof DatabaseError)
 				return res
 					.status(error.status)
 					.json({ message: error.message, error: error.details })
+			if (error instanceof EndpointAccessError)
+				return res
+					.status(error.status)
+					.json({ error: { message: error.message } })
 			else return res.status(500).json({ message: 'Unexpected error', error })
 		}
 	}
 
-		/**
+	/**
 	 * @swagger
 	 * path:
 	 *  /user/delete/:uuid:
@@ -262,6 +330,12 @@ class UserController {
 	 *                properties:
 	 *                  error:
 	 *                    type: string
+	 *        "403":
+	 *          description: Only operations on its own user are allowed
+	 *          content:
+	 *            application/json:
+	 *              schema:
+	 *                $ref: '#/components/schemas/ResponseUnauthorized'
 	 *        "500":
 	 *          description: Unexpected error
 	 *          content:
@@ -275,19 +349,36 @@ class UserController {
 	 *                    type: string
 	 */
 	static async deleteUser(req: Request, res: Response) {
-		const {uuid} = req.params;
+		const { uuid } = req.params
 
-		if(uuid == null || uuid == null) return res.status(400).json({ error: 'Uuid is required to delete any user' })
-		
+		if (uuid == null || uuid == null)
+			return res
+				.status(400)
+				.json({ error: 'Uuid is required to delete any user' })
+
 		try {
-			const response = await UserService.deleteUser(uuid)
-			return response == true ? res.status(200).json({success: `User with uuid ${uuid} succesfully deleted`}) : res.status(500).json({message: `Error: User with uuid ${uuid} cannot be deleted`});
+			const response = await UserService.deleteUser(
+				getTokenFromHeader(req),
+				uuid,
+			)
+			return response == true
+				? res
+						.status(200)
+						.json({ success: `User with uuid ${uuid} succesfully deleted` })
+				: res.status(500).json({
+						message: `Error: User with uuid ${uuid} cannot be deleted`,
+				  })
 		} catch (error) {
-			return res.status(500).json({ error: `Unexpected error: User with uuid ${uuid} cannot be deleted`, details: error })
+			if (error instanceof EndpointAccessError)
+				return res
+					.status(error.status)
+					.json({ error: { message: error.message } })
+			return res.status(500).json({
+				error: `Unexpected error: User with uuid ${uuid} cannot be deleted`,
+				details: error,
+			})
 		}
 	}
-
-
 }
 
 export default UserController
