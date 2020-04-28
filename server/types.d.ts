@@ -49,17 +49,21 @@ interface IMDBMedia {
 	metaScore: string | null,
 	certificate: string | null,
 	runtime: string | null,
-	genre: (string | null)[],
+	genres: (IMDBCategory | null)[],
 	description: string | null,
 	picture: string | null,
-	director: (string | null)[],
-	casting: (string | null)[],
+	directors: (IMDBPerson | null)[],
+	actors: (IMDBPerson | null)[],
 	gross: string | null,
 }
 
-interface IMDBSubMedia {
+interface IMDBPerson {
 	id: string | null,
+	name: string | null
+}
 
+interface IMDBCategory {
+	name: string | null
 }
 
 /********************

@@ -115,16 +115,16 @@ class Scraper {
 
 				Array.from(itemsList, (item: MediaElement, index) => {
 					if (index < sampleItemsPerPage) {
-						const actors: Record<string | null> = []
-						const directors: Array<string | null> = []
-						const genres: Array<string | null> = []
+						const actors: Array<IMDBPerson | null> = []
+						const directors: Array<IMDBPerson | null> = []
+						const genres: Array<IMDBCategory | null> = []
 
 						const actorsList: ArrayLike<MediaElement> = item.querySelectorAll(
 							'div.ratings-bar + p.text-muted + p > .ghost ~ a',
 						)
 						Array.from(actorsList, (actor: MediaElement) =>
 							actorsList ? actors.push({
-								id: actor.getAttribute('href').split('/')[2],
+								id: actor.getAttribute('href')!.split('/')[2],
 								name: actor.innerText
 							}) : null,
 						)
@@ -138,17 +138,17 @@ class Scraper {
 
 							if (isDirector && directorsList) {
 								directors.push({
-									id: director.getAttribute('href').split('/')[2],
+									id: director.getAttribute('href')!.split('/')[2],
 									name: director.innerText
 								})
 							}
 						})
 
-						const genresList: ArrayLike<MediaElement> = item.querySelector(
+						const genresList: MediaElement | null = item.querySelector(
 							'p.text-muted > span.genre',
 						)
-						const genresArray: Array<string> = genresList ? genresList.innerText.split(', ') : []
-						genresArray.map(genre => genres.push({ name: genre ?? null	}))
+						const genresArray: Array<string | null> = genresList ? genresList.innerText.split(', ') : []
+						genresArray.map((genre: string | null) => genres.push({ name: genre ?? null	}))
 
 						const id: MediaElement | null = item.querySelector(
 							'.lister-item .lister-top-right .ribbonize'
@@ -193,7 +193,7 @@ class Scraper {
 							metaScore: metaScore ? metaScore.innerText : null,
 							certificate: certificate ? certificate.innerText : null,
 							runtime: runtime ? runtime.innerText : null,
-							genre: genres,
+							genres: genres,
 							description: description ? description.innerText : null,
 							picture: picture ? picture.src.replace(/\@\..*\./g, '@.') : null,
 							directors: directors,
