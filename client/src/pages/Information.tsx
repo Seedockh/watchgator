@@ -46,8 +46,9 @@ const Information = () => {
                 ]} />
                 <Content style={{ marginRight: 100 }}>
                     <Panel>
+                    <Form>
                         <div className="flex-colums">
-                            {/* <Uploader
+                            <Uploader
                                 fileListVisible={false}
                                 listType="picture"
                                 action="//jsonplaceholder.typicode.com/posts/"
@@ -76,10 +77,7 @@ const Information = () => {
                                             <Icon icon="avatar" size="5x" />
                                         )}
                                 </button>
-                            </Uploader> */}
-                        </div>
-
-                        <Form layout="horizontal">
+                            </Uploader>
                             <FormGroup >
                                 <ControlLabel>Username</ControlLabel>
                                 <FormControl name="nickname" />
@@ -104,6 +102,7 @@ const Information = () => {
                             <Button appearance="primary" >
                                 Update
                             </Button>
+                        </div>                            
                         </Form>
                     </Panel>
                 </Content>
