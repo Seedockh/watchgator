@@ -36,6 +36,10 @@ type Ora = import('ora').Ora
 	href: string
  }
 
+interface Dataset {
+	data: [IMDBMedia]
+}
+
 interface IMDBMedia {
 	title: string | null,
 	year: string | null,

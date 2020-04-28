@@ -5,7 +5,6 @@ import { User } from '../database/models/User'
 import UserRepository from '../database/repositories/UserRepository'
 import { DatabaseError } from '../core/CustomErrors'
 
-// TODO: add class
 class UserService {
 	static async uploadAvatar(
 		uuid: string,
