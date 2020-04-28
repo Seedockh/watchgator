@@ -115,15 +115,44 @@ class Scraper {
 
 				Array.from(itemsList, (item: MediaElement, index) => {
 					if (index < sampleItemsPerPage) {
-						const casting: Array<string | null> = []
+						const actors: Record<string | null> = []
+						const directors: Array<string | null> = []
+						const genres: Array<string | null> = []
+
 						const actorsList: ArrayLike<MediaElement> = item.querySelectorAll(
 							'div.ratings-bar + p.text-muted + p > .ghost ~ a',
 						)
-
 						Array.from(actorsList, (actor: MediaElement) =>
-							casting.push(actor ? actor.innerText : null),
+							actorsList ? actors.push({
+								id: actor.getAttribute('href').split('/')[2],
+								name: actor.innerText
+							}) : null,
 						)
 
+						let isDirector = true
+						const directorsList: ArrayLike<MediaElement> = item.querySelectorAll(
+							'div.ratings-bar + p.text-muted + p > *',
+						)
+						Array.from(directorsList, (director: MediaElement) => {
+							if (director.localName === 'span') isDirector = false
+
+							if (isDirector && directorsList) {
+								directors.push({
+									id: director.getAttribute('href').split('/')[2],
+									name: director.innerText
+								})
+							}
+						})
+
+						const genresList: ArrayLike<MediaElement> = item.querySelector(
+							'p.text-muted > span.genre',
+						)
+						const genresArray: Array<string> = genresList ? genresList.innerText.split(', ') : []
+						genresArray.map(genre => genres.push({ name: genre ?? null	}))
+
+						const id: MediaElement | null = item.querySelector(
+							'.lister-item .lister-top-right .ribbonize'
+						)
 						const title: MediaElement | null = item.querySelector(
 							'h3 .lister-item-index + a',
 						)
@@ -145,23 +174,18 @@ class Scraper {
 						const runtime: MediaElement | null = item.querySelector(
 							'p.text-muted > span.runtime',
 						)
-						const genre: MediaElement | null = item.querySelector(
-							'p.text-muted > span.genre',
-						)
 						const description: MediaElement | null = item.querySelector(
 							'div.ratings-bar + p.text-muted',
 						)
 						const picture: MediaElement | null = item.querySelector(
 							'.lister-item-image a img[class="loadlate"]',
 						)
-						const director: MediaElement | null = item.querySelector(
-							'div.ratings-bar + p.text-muted + p > a',
-						)
 						const gross: MediaElement | null = item.querySelector(
 							'p.sort-num_votes-visible span.ghost + span.text-muted + span[name="nv"]',
 						)
 
 						return medias.push({
+							id: id ? id.getAttribute('data-tconst') : null,
 							title: title ? title.innerText : null,
 							year: year ? year.innerText.replace(/\(|\)/g, '') : null,
 							rating: rating ? rating.innerText : null,
@@ -169,11 +193,11 @@ class Scraper {
 							metaScore: metaScore ? metaScore.innerText : null,
 							certificate: certificate ? certificate.innerText : null,
 							runtime: runtime ? runtime.innerText : null,
-							genre: genre ? genre.innerText : null,
+							genre: genres,
 							description: description ? description.innerText : null,
 							picture: picture ? picture.src.replace(/\@\..*\./g, '@.') : null,
-							director: director ? director.innerText : null,
-							casting: casting,
+							directors: directors,
+							actors: actors,
 							gross: gross ? gross.innerText : null,
 						})
 					}
