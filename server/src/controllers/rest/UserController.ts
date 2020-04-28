@@ -1,5 +1,5 @@
 /** ****** SERVER ****** **/
-import { Request, Response, RequestHandler } from 'express'
+import { Request, Response } from 'express'
 /** ****** INTERNALS ****** **/
 import UserService from '../../services/UserService'
 import { DatabaseError, EndpointAccessError } from '../../core/CustomErrors'
@@ -86,7 +86,7 @@ class UserController {
 	 *          description: Internal error
 	 */
 
-	static async updateAvatar(req: Request, res: Response) {
+	static async updateAvatar(req: Request, res: Response): Promise<void> {
 		const imageUpload = User.storageService.uploadImg.single('file')
 
 		imageUpload(req, res, async (err: { message: any }) => {
@@ -270,7 +270,7 @@ class UserController {
 	 *                  error:
 	 *                    type: string
 	 */
-	static async getUser(req: Request, res: Response) {
+	static async getUser(req: Request, res: Response): Promise<Response> {
 		try {
 			const response = await UserService.getUser(
 				getTokenFromHeader(req),
@@ -348,7 +348,7 @@ class UserController {
 	 *                  details:
 	 *                    type: string
 	 */
-	static async deleteUser(req: Request, res: Response) {
+	static async deleteUser(req: Request, res: Response): Promise<Response> {
 		const { uuid } = req.params
 
 		if (uuid == null || uuid == null)

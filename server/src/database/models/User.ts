@@ -4,7 +4,6 @@ import { Length, IsNotEmpty, IsEmail } from 'class-validator'
 /** ****** ENCRYPT ****** **/
 import * as bcrypt from 'bcryptjs'
 import * as jwt from 'jsonwebtoken'
-import UserRepository from '../repositories/UserRepository'
 /** ****** INTERNALS ****** **/
 import S3 from '../../services/s3Services'
 import IStorageService from 'src/services/IStorageService'

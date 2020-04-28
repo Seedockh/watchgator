@@ -5,6 +5,7 @@ import {
 	FindConditions,
 	DeleteResult,
 	UpdateResult,
+	Connection,
 } from 'typeorm'
 /** ****** INTERNALS ****** **/
 import { User } from '../models/User'
@@ -14,11 +15,11 @@ import { QueryPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
 class UserRepository {
 	static repository: Repository<User>
 
-	static getConnection() {
+	static getConnection(): Connection {
 		return getConnection('main')
 	}
 
-	static init() {
+	static init(): void {
 		this.repository = getConnection('main').getRepository(User)
 		aLog('').succeed('Users initialized')
 	}
