@@ -86,7 +86,7 @@ class MoviesController {
   }
 
   static getAllByPage(req: Request, res: Response) {
-    const page = req.params.page
+    const page = parseInt(req.params.page)
     const start = 20 * page
     const end = start + 20
 

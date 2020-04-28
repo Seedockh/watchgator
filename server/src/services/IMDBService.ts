@@ -5,10 +5,10 @@ import fetch from 'node-fetch'
 import { sLog, aLog } from '../core/Log'
 
 class IMDBService {
-  private sampleMovies
-  private liveMovies
+  static sampleMovies: Dataset
+  static liveMovies: Dataset
 
-  static async init(): void {
+  static async init(): Promise<void> {
     const spinner = aLog('Initializing Movies datas ...')
     this.sampleMovies = this.readSampleMovies()
     this.liveMovies = await this.readLiveMovies()
