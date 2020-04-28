@@ -3,7 +3,7 @@ import User from '../core/user'
 import { useHistory } from 'react-router-dom'
 import { Container, Icon, Content, InputGroup, Input, Grid, Row, Col, Panel, Button } from 'rsuite'
 import { MovieCard } from '../widget/MovieCard'
-import { moviesHomeList } from '../data/movies'
+import { moviesList } from '../data/movies'
 import { Sidebar } from '../widget/sidebar/Sidebar'
 
 export const Home = () => {
@@ -64,19 +64,13 @@ export const Home = () => {
           <Panel>
             <Grid fluid>
               <Row>
-                <Col xs={24} md={12} mdOffset={3}>
+                <Col xs={24} md={12} mdOffset={6}>
                   <InputGroup inside size="lg" style={{ width: '100%' }}>
                     <Input />
                     <InputGroup.Button>
                       <Icon icon="search" size="lg" />
                     </InputGroup.Button>
                   </InputGroup>
-                </Col>
-                <Col md={3} mdOffset={3}>
-                    <Button appearance="ghost" block>Login</Button>
-                </Col>
-                <Col md={3}>
-                    <Button appearance="primary" block>Register</Button>
                 </Col>
               </Row>
             </Grid>
@@ -85,7 +79,7 @@ export const Home = () => {
 
             <Grid fluid>
               <Row className="show-grid">
-                {moviesHomeList.map((movie) => (
+                {moviesList.map((movie) => (
                   <Col xs={24} sm={12} md={6} lg={4} >
                     <MovieCard movie={movie} />
                   </Col>
