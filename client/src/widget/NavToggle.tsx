@@ -4,8 +4,7 @@ import React, { FunctionComponent, CSSProperties } from "react";
 const iconStyles: CSSProperties = {
     width: 56,
     height: 56,
-    lineHeight: '56px',
-    textAlign: 'center'
+    lineHeight: '56px'
 };
 
 type NavTogglePros = {
@@ -21,7 +20,7 @@ export const NavToggle: FunctionComponent<NavTogglePros> = ({ expand, onChange }
                     placement="topStart"
                     trigger="click"
                     renderTitle={children => {
-                        return <Icon style={iconStyles} icon="cog" />;
+                        return <Icon className='text-center' style={iconStyles} icon="cog" />;
                     }}
                 >
                     <Dropdown.Item>Help</Dropdown.Item>
@@ -31,7 +30,7 @@ export const NavToggle: FunctionComponent<NavTogglePros> = ({ expand, onChange }
             </Nav>
 
             <Nav pullRight>
-                <Nav.Item onClick={onChange} style={{ width: 56, textAlign: 'center' }}>
+                <Nav.Item onClick={onChange} className='text-center' style={{ width: 56 }}>
                     <Icon icon={expand ? 'angle-left' : 'angle-right'} />
                 </Nav.Item>
             </Nav>

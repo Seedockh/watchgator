@@ -48,9 +48,9 @@ const Login = () => {
                   <FormControl name="password" type="password" {...passwordBind} />
                   <Button appearance="link">Forgot password?</Button>
                 </FormGroup>
-                <FormGroup style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
+                <FormGroup className='flex flex-column flex-align-center'>
                   <Button appearance="primary" style={{ width: 150 }} onClick={() => history.push('/')}>Login</Button>
-                  <FormGroup style={{ display: "flex", flexDirection: "row", alignItems: "baseline", marginTop: 10 }}>
+                  <FormGroup className='flex' style={{ alignItems: "baseline", marginTop: 10 }}>
                     <ControlLabel>Don't have account ?</ControlLabel>
                     <Button onClick={redirectRegister} appearance="link"> Sign up</Button>
                   </FormGroup>
