@@ -7,7 +7,6 @@ import { User } from '../../database/models/User'
 import { getTokenFromHeader } from './utils'
 
 class UserController {
-
 	static async updateAvatar(req: Request, res: Response): Promise<void> {
 		const imageUpload = User.storageService.uploadImg.single('file')
 
@@ -69,62 +68,6 @@ class UserController {
 		}
 	}
 
-	/**
-	 * @swagger
-	 * path:
-	 *  /user/get/:uuid:
-	 *    get:
-	 *      summary: Get user by uuid
-	 *      tags: [Users]
-	 *      parameters:
-	 *        - in: path
-	 *          name: uuid
-	 *          description: user uuid
-	 *          schema:
-	 *            type: string
-	 *          required: true
-	 *        - in: header
-	 *          name: Authorization
-	 *          description: Bearer + TOKEN
-	 *          schema:
-	 *            type: string
-	 *            format: token
-	 *          required: true
-	 *      responses:
-	 *        "200":
-	 *          description: User found
-	 *          content:
-	 *            application/json:
-	 *              schema:
-	 *                type: array
-	 *                $ref: '#/components/schemas/User'
-	 *        "403":
-	 *          description: Only operations on its own user are allowed
-	 *          content:
-	 *            application/json:
-	 *              schema:
-	 *                $ref: '#/components/schemas/ResponseUnauthorized'
-	 *        "404":
-	 *          description: User cannot be found
-	 *          content:
-	 *            application/json:
-	 *              schema:
-	 *                type: object
-	 *                properties:
-	 *                  message:
-	 *                    type: string
-	 *        "500":
-	 *          description: Unexpected error
-	 *          content:
-	 *            application/json:
-	 *              schema:
-	 *                type: object
-	 *                properties:
-	 *                  message:
-	 *                    type: string
-	 *                  error:
-	 *                    type: string
-	 */
 	static async getUser(req: Request, res: Response): Promise<Response> {
 		try {
 			const response = await UserService.getUser(
@@ -145,64 +88,6 @@ class UserController {
 		}
 	}
 
-	/**
-	 * @swagger
-	 * path:
-	 *  /user/delete/:uuid:
-	 *    delete:
-	 *      summary: Get user by uuid
-	 *      tags: [Users]
-	 *      parameters:
-	 *        - in: path
-	 *          name: uuid
-	 *          description: user uuid
-	 *          schema:
-	 *            type: string
-	 *          required: true
-	 *        - in: header
-	 *          name: Authorization
-	 *          description: Bearer + TOKEN
-	 *          schema:
-	 *            type: string
-	 *            format: token
-	 *          required: true
-	 *      responses:
-	 *        "200":
-	 *          description: User found
-	 *          content:
-	 *            application/json:
-	 *              schema:
-	 *                type: object
-	 *                properties:
-	 *                  success:
-	 *                    type: string
-	 *        "400":
-	 *          description: Uuid required
-	 *          content:
-	 *            application/json:
-	 *              schema:
-	 *                type: object
-	 *                properties:
-	 *                  error:
-	 *                    type: string
-	 *        "403":
-	 *          description: Only operations on its own user are allowed
-	 *          content:
-	 *            application/json:
-	 *              schema:
-	 *                $ref: '#/components/schemas/ResponseUnauthorized'
-	 *        "500":
-	 *          description: Unexpected error
-	 *          content:
-	 *            application/json:
-	 *              schema:
-	 *                type: object
-	 *                properties:
-	 *                  error:
-	 *                    type: string
-	 *                  details:
-	 *                    type: string
-	 */
 	static async deleteUser(req: Request, res: Response): Promise<Response> {
 		const { uuid } = req.params
 

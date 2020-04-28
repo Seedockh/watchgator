@@ -7,9 +7,12 @@ import IMDBService from '../../services/IMDBService'
 
 class MoviesController {
 <<<<<<< HEAD
+<<<<<<< HEAD
   static getAll(req: Request, res: Response) {
 =======
 
+=======
+>>>>>>> move docs to specific yml files
   static async getAll(req: Request, res: Response) {
 >>>>>>> add getAll and getAllByPage movies routes
     res.json(process.env.NODE_ENV === 'production' ?
