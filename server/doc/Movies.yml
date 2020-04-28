@@ -14,11 +14,11 @@ path:
      tags: [Movies]
      responses:
        "200":
-         description: List of all movies
+         description: List of all movies, chunked by pages of 20 movies.
          content:
            array:
              schema:
-               $ref: '#/components/schemas/Movie'
+               $ref: '#/components/schemas/MoviesList'
  /movies/all/{page}:
    get:
      summary: Get the {page} chunk containing 20 movies
@@ -29,12 +29,26 @@ path:
          content:
            application/json:
              schema:
-               $ref: '#/components/schemas/Movie'
+               $ref: '#/components/schemas/MoviesChunk'
 
 components:
  schemas:
-   Movie:
+   MoviesList:
      type: array
+     items:
+       $ref: '#/components/schemas/MoviesChunk'
+     uniqueItems: true
+
+   MoviesChunk:
+     type: array
+     items:
+       $ref: '#/components/schemas/Movie'
+     minItems: 1
+     maxItems: 20
+     uniqueItems: true
+
+   Movie:
+     type: object
      properties:
        title:
          type: string

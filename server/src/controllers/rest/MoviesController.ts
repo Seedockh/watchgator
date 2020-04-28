@@ -6,7 +6,7 @@ import _ from 'lodash'
 import IMDBService from '../../services/IMDBService'
 
 class MoviesController {
-  static async getAll(req: Request, res: Response) {
+  static getAll(req: Request, res: Response) {
     res.json(process.env.NODE_ENV === 'production' ?
       _.chunk(IMDBService.liveMovies.data, 20) :
       _.chunk(IMDBService.sampleMovies.data, 20)
