@@ -24,7 +24,9 @@ class Database {
 				uuidExtension: 'uuid-ossp',
 				entities: [User],
 				extra: {
-					ssl: false,
+					ssl: {
+						rejectUnauthorized: false,
+					},
 					keepAlive: true,
 				},
 			}
