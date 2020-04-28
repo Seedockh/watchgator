@@ -37,6 +37,7 @@ type Ora = import('ora').Ora
  }
 
 interface IMDBMedia {
+	id: string | null,
 	title: string | null,
 	year: string | null,
 	rating: string | null,
@@ -44,13 +45,19 @@ interface IMDBMedia {
 	metaScore: string | null,
 	certificate: string | null,
 	runtime: string | null,
-	genre: string | null,
+	genre: (string | null)[],
 	description: string | null,
 	picture: string | null,
-	director: string | null,
+	director: (string | null)[],
 	casting: (string | null)[],
 	gross: string | null,
 }
+
+interface IMDBSubMedia {
+	id: string | null,
+
+}
+
 /********************
  * Extended Express types *
  ********************/
