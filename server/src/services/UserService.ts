@@ -46,7 +46,7 @@ class UserService {
 	 */
 	static async updateUser(
 		token: string | undefined,
-		partialUser: IUser,
+		partialUser: User,
 	): Promise<boolean> {
 		const { uuid, password, ...dataToUpdate } = partialUser
 		if (typeof uuid == 'undefined') return false

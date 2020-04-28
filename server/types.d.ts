@@ -9,22 +9,6 @@ interface Token {
 	token: string
 }
 
-interface IUser {
-	uuid: string
-	nickname: string
-	email: string
-	password: string
-	avatar?: string
-}
-
-interface IPartialUser {
-	uuid?: string
-	nickname?: string
-	email?: string
-	password?: string
-	avatar?: string
-}
-
 interface AuthServiceResponse extends BaseResponse {
 	data: {
 		user: IUser
