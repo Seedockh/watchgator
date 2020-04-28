@@ -10,3 +10,9 @@
 /* draw something here 🎨 */
 .grow { transition: all .2s ease-in-out; }
 .grow:hover { transform: scale(1.05); }
+
+.flex-colums {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

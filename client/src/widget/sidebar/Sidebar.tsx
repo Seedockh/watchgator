@@ -25,6 +25,7 @@ type SubItem = {
 type Item = {
     title: string
     icon: IconNames
+    state?: string
     path?: string
     items?: SubItem[]
 }
@@ -62,7 +63,8 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ items }) => {
                                 <br />
                                 <h4 style={{ marginTop: 8 }}>WatchGator</h4>
                                 <Button appearance="ghost" block onClick={() => {
-                                    history.push(`/login`)}} > Login</Button>
+                                    history.push(`/login`)
+                                }} > Login</Button>
                             </>
                         )}
                     </div>
@@ -72,11 +74,11 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ items }) => {
                     <Nav>
                         {items.map((item, index) => {
                             if (!item.items) {
-                                return (
-                                    <Nav.Item eventKey={index} active icon={<Icon icon={item.icon} />} onClick={() => history.push(item.path!)}>
-                                        {item.title}
-                                    </Nav.Item>
-                                )
+                                return item.state === "active" ? (<Nav.Item eventKey={index} active icon={<Icon icon={item.icon} />} onClick={() => history.push(item.path!)} >
+                                    {item.title}
+                                </Nav.Item>) : (<Nav.Item eventKey={index} icon={<Icon icon={item.icon} />} onClick={() => history.push(item.path!)} >
+                                    {item.title}
+                                </Nav.Item>)
                             }
                             return <Dropdown
                                 eventKey={index}

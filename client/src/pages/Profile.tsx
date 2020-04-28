@@ -22,7 +22,19 @@ const Profile = () => {
             title: 'Update information',
             icon: 'edit',
             path: "/information"
-          }
+          },
+          {
+            title: 'Profile',
+            icon: 'user',
+            state: "active",
+            path: "/profile"
+          },
+          {
+            title: 'Home',
+            icon: 'home',
+            path: "/"
+          },
+
         ]} />
         <Content style={{ marginRight: 100 }}>
           <Panel>
