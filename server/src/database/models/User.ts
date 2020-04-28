@@ -63,7 +63,7 @@ import IStorageService from 'src/services/IStorageService'
 
 @Entity()
 @Unique(['nickname'])
-export class User {
+export class User implements IUser {
 	@PrimaryGeneratedColumn('uuid')
 	uuid!: string
 

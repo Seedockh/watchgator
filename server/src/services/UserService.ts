@@ -21,7 +21,7 @@ class UserService {
 
 		const user = await UserRepository.get({ uuid })
 		if (user == undefined)
-			throw new DatabaseError(`User with uuid ${uuid} not found`, 404)
+			throw new DatabaseError(`User with uuid ${uuid} : user not found`, 404)
 		return { status: 200, data: { user } }
 	}
 
@@ -39,7 +39,27 @@ class UserService {
 		}
 	}
 
-	/*
+	/**
+	 * Update everything from user except uuid and password
+	 */
+	static async updateUser(
+		token: string | undefined,
+		partialUser: IUser,
+	): Promise<boolean> {
+		const { uuid, password, ...dataToUpdate } = partialUser
+		if (typeof uuid == 'undefined') return false
+
+		this.throwIfManipulateSomeoneElse(token, uuid)
+
+		try {
+			const res = await UserRepository.update({ uuid }, { ...dataToUpdate })
+			return res.affected != 0
+		} catch (error) {
+			return false
+		}
+	}
+
+	/**
 	Update user avatar and remove previous from AWS
 	*/
 	static async updateAvatar(

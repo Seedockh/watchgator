@@ -36,6 +36,8 @@ class UserRepository {
 		criteria: FindConditions<User>,
 		partialEntity: QueryPartialEntity<User>,
 	): Promise<UpdateResult> {
+		console.log('partialEntity')
+		console.log(partialEntity)
 		return await this.repository?.update(criteria, partialEntity)
 	}
 

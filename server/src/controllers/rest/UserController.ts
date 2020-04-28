@@ -351,7 +351,7 @@ class UserController {
 	static async deleteUser(req: Request, res: Response): Promise<Response> {
 		const { uuid } = req.params
 
-		if (uuid == null || uuid == null)
+		if (typeof uuid == 'undefined')
 			return res
 				.status(400)
 				.json({ error: 'Uuid is required to delete any user' })
@@ -361,7 +361,7 @@ class UserController {
 				getTokenFromHeader(req),
 				uuid,
 			)
-			return response == true
+			return response
 				? res
 						.status(200)
 						.json({ success: `User with uuid ${uuid} succesfully deleted` })
@@ -376,6 +376,35 @@ class UserController {
 			return res.status(500).json({
 				error: `Unexpected error: User with uuid ${uuid} cannot be deleted`,
 				details: error,
+			})
+		}
+	}
+
+	static async updateUser(req: Request, res: Response): Promise<Response> {
+		const { uuid } = req.body
+		if (typeof uuid == 'undefined')
+			return res
+				.status(400)
+				.json({ error: 'Uuid is required to edit any user' })
+
+		try {
+			const response = await UserService.updateUser(getTokenFromHeader(req), {
+				...req.body,
+			})
+
+			if (response)
+				return res
+					.status(200)
+					.json({ success: `User with uuid ${uuid} succesfully updated` })
+			throw new Error('Incorrect keys in body')
+		} catch (error) {
+			if (error instanceof EndpointAccessError)
+				return res
+					.status(error.status)
+					.json({ error: { message: error.message } })
+			return res.status(500).json({
+				error: `Unexpected error: User with uuid ${uuid} cannot be deleted`,
+				details: error.message || error,
 			})
 		}
 	}
