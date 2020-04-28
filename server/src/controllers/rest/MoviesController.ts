@@ -24,8 +24,17 @@ class MoviesController {
     )
   }
 
-  static getTitle(req: Request, res: Response) {
-    res.json({ params: req.params })
+  static findByKeys(req: Request, res: Response) {
+    const keys = { ...req.body }
+
+    res.json({ results: _.chunk(
+      _.filter(
+        process.env.NODE_ENV === 'production' ?
+          IMDBService.liveMovies.data :
+          IMDBService.sampleMovies.data,
+        keys
+      ), 20)
+    })
   }
 }
 
