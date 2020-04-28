@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
 import { Container, Content, Grid, Panel, Col, Row, Divider } from 'rsuite'
-import useInput from '../core/useInput'
+
 import User from '../core/user'
 import MyPlaylist from '../widget/MyPlaylist'
 import { moviesList } from '../data/movies'
@@ -10,13 +9,6 @@ import { MovieCard } from '../widget/MovieCard'
 
 const Profile = () => {
   const [{ user }, dispatch] = User.GlobalState()
-  const history = useHistory()
-
-  useEffect(() => {
-    // do something once here
-    console.log('Login page called !')
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   useEffect(() => {
     console.log(`user: ${JSON.stringify(user)}`)
@@ -38,8 +30,7 @@ const Profile = () => {
             <Divider />
             <Grid fluid>
               <Row className="show-grid" gutter={30}>
-                {moviesList.map((movie) =>
-                  (
+                {moviesList.map((movie) => (
                     <Col xs={24} sm={12} md={6} lg={4} style={{ width: 240 }} >
                       <MovieCard movie={movie} />
                     </Col>
