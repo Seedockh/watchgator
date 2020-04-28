@@ -380,6 +380,86 @@ class UserController {
 		}
 	}
 
+	/**
+	 * @swagger
+	 *  components:
+	 *    schemas:
+	 *      BodyUserToUpdate:
+	 *        type: object
+	 *        properties:
+	 *          nickname:
+	 *            type: string
+	 *            description: new desired nickname
+	 *          email:
+	 *            type: string
+	 *            description: new desired email
+	 *        example:
+	 *           nickname: Bill
+	 *           email: bill@gmail.com
+	 * path:
+	 *  /user/update:
+	 *    put:
+	 *      summary: Update user by uuid
+	 *      tags: [Users]
+	 *      requestBody:
+	 *        required: true
+	 *        content:
+	 *          application/json:
+	 *            schema:
+	 *              $ref: '#/components/schemas/BodyUserToUpdate'
+	 *      parameters:
+	 *        - in: path
+	 *          name: uuid
+	 *          description: user uuid
+	 *          schema:
+	 *            type: string
+	 *          required: true
+	 *        - in: header
+	 *          name: Authorization
+	 *          description: Bearer + TOKEN
+	 *          schema:
+	 *            type: string
+	 *            format: token
+	 *          required: true
+	 *      responses:
+	 *        "200":
+	 *          description: User found
+	 *          content:
+	 *            application/json:
+	 *              schema:
+	 *                type: object
+	 *                properties:
+	 *                  success:
+	 *                    type: string
+	 *        "400":
+	 *          description: Format error
+	 *          content:
+	 *            application/json:
+	 *              schema:
+	 *                type: object
+	 *                properties:
+	 *                  error:
+	 *                    type: string
+	 *                  details:
+	 *                    type: object
+	 *        "403":
+	 *          description: Only operations on its own user are allowed
+	 *          content:
+	 *            application/json:
+	 *              schema:
+	 *                $ref: '#/components/schemas/ResponseUnauthorized'
+	 *        "500":
+	 *          description: Unexpected error
+	 *          content:
+	 *            application/json:
+	 *              schema:
+	 *                type: object
+	 *                properties:
+	 *                  error:
+	 *                    type: string
+	 *                  details:
+	 *                    type: string
+	 */
 	static async updateUser(req: Request, res: Response): Promise<Response> {
 		const { uuid } = req.body
 		if (typeof uuid == 'undefined')
@@ -402,6 +482,10 @@ class UserController {
 				return res
 					.status(error.status)
 					.json({ error: { message: error.message } })
+			if (error instanceof DatabaseError)
+				return res
+					.status(error.status)
+					.json({ error: { message: error.message, details: error.details } })
 			return res.status(500).json({
 				error: `Unexpected error: User with uuid ${uuid} cannot be deleted`,
 				details: error.message || error,

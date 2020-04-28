@@ -7,10 +7,12 @@ import {
 	UpdateResult,
 	Connection,
 } from 'typeorm'
+import { QueryPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
+import { validate, ValidationError } from 'class-validator'
 /** ****** INTERNALS ****** **/
 import { User } from '../models/User'
 import { aLog } from '../../core/Log'
-import { QueryPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
+import { DatabaseError } from '../../core/CustomErrors'
 
 class UserRepository {
 	static repository: Repository<User>
@@ -36,8 +38,24 @@ class UserRepository {
 		criteria: FindConditions<User>,
 		partialEntity: QueryPartialEntity<User>,
 	): Promise<UpdateResult> {
-		console.log('partialEntity')
-		console.log(partialEntity)
+		// Simulate updated user to check if new datas are well formatted
+		const user = await this.repository?.findOne(criteria)
+
+		if (typeof user === 'undefined')
+			throw new DatabaseError('User not found', 400)
+
+		for (const key in partialEntity) {
+			if (typeof partialEntity[key] !== 'undefined')
+				user[key] = partialEntity[key]
+		}
+
+		// Throw if incorrect format
+		user.password = 'fake' // otherwise validation test consider encrypted pwd too long
+		const errors: ValidationError[] = await validate(user)
+		if (errors.length > 0)
+			throw new DatabaseError('Incorrect data', 400, undefined, errors)
+
+		// Update user if correct format
 		return await this.repository?.update(criteria, partialEntity)
 	}
 

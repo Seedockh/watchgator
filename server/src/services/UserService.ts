@@ -2,6 +2,7 @@
 import { User } from '../database/models/User'
 import UserRepository from '../database/repositories/UserRepository'
 import { DatabaseError, EndpointAccessError } from '../core/CustomErrors'
+import { QueryFailedError } from 'typeorm'
 
 class UserService {
 	static throwIfManipulateSomeoneElse(
@@ -21,7 +22,7 @@ class UserService {
 
 		const user = await UserRepository.get({ uuid })
 		if (user == undefined)
-			throw new DatabaseError(`User with uuid ${uuid} : user not found`, 404)
+			throw new DatabaseError(`Uuid ${uuid} : user not found`, 404)
 		return { status: 200, data: { user } }
 	}
 
@@ -55,6 +56,9 @@ class UserService {
 			const res = await UserRepository.update({ uuid }, { ...dataToUpdate })
 			return res.affected != 0
 		} catch (error) {
+			if (error instanceof DatabaseError) throw error
+			if (error instanceof QueryFailedError)
+				throw new DatabaseError(error.message, 400, error.stack, error)
 			return false
 		}
 	}
