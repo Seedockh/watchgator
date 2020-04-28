@@ -6,7 +6,7 @@ type TagList = {
 }
 
 export const TagList: FunctionComponent<TagList> = ({ tags }) => (
-    <TagGroup style={{ marginTop: 12 }}>
+    <TagGroup>
         {tags.map((tag) => <Tag>{tag}</Tag>)}
     </TagGroup>
 )

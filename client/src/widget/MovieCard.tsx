@@ -1,7 +1,6 @@
 import React, { FunctionComponent, CSSProperties } from 'react'
 import { BasicMovie } from './../models/Movie';
 import { useHistory } from 'react-router-dom';
-import { Panel, Content } from 'rsuite';
 
 const movieCardStyle: CSSProperties = {
     margin: 16,
