@@ -95,7 +95,8 @@ class UserService {
 		this.throwIfManipulateSomeoneElse(token, uuid)
 
 		try {
-			await User.storageService.deleteImg(fileKey) // Delete from user also!!
+			await UserRepository.update({ uuid }, { avatar: undefined })
+			await User.storageService.deleteImg(fileKey)
 			return true
 		} catch (error) {
 			return false

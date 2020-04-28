@@ -196,7 +196,7 @@ class UserController {
 				getTokenFromHeader(req),
 				req.body.uuid,
 				req.params.fileKey,
-			) // TODO: Delete from user also!!
+			)
 			if (!result) throw new Error()
 			return res.status(200).json({
 				message: 'Success - Image deleted from S3 or not existing',
