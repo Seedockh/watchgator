@@ -44,11 +44,7 @@ const Middleware = (app: Application): void => {
 			],
 			basePath: '/',
 		},
-		apis: [
-			'./src/database/models/User.ts',
-			'./src/controllers/rest/AuthController.ts',
-			'./src/controllers/rest/UserController.ts',
-		],
+		apis: ['./doc/User.yml'],
 	}
 	const specs = swaggerJsdoc(options)
 	app.use('/doc', swaggerUi.serve)

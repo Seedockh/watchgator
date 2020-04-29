@@ -8,59 +8,6 @@ import * as jwt from 'jsonwebtoken'
 import S3 from '../../services/s3Services'
 import IStorageService from 'src/services/IStorageService'
 
-/**
- * @swagger
- *  components:
- *    schemas:
- *      User:
- *        type: object
- *        required:
- *          - nickname
- *          - email
- *          - password
- *        properties:
- *          nickname:
- *            type: string
- *            description: needs to be unique
- *          email:
- *            type: string
- *            format: email
- *          password:
- *            type: string
- *            format: min. 4 characters
- *        example:
- *           nickname: Luc
- *           email: luc@gmail.com
- *           password: luc1
- *      UserToSignIn:
- *        type: object
- *        required:
- *          - nickname
- *          - password
- *        properties:
- *          nickname:
- *            type: string
- *            description: needs to be unique
- *          password:
- *            type: string
- *            format: min. 4 characters
- *        example:
- *           nickname: Luc
- *           email: luc@gmail.com
- *           password: luc1
- *      ResponseUserRegistered:
- *        example:
- *           data:
- *            user:
- *              uuid: UUID
- *              nickname: Luc
- *              email: luc@gmail.com
- *              password: luc1
- *              avatar:
- *           meta:
- *            token: TOKEN
- */
-
 @Entity()
 @Unique(['nickname'])
 export class User {
