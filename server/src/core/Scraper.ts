@@ -71,16 +71,17 @@ class Scraper {
 		// @ts-ignore: Unreachable context key
 		while (pagination && currentPage < this[level + 'PagesToScrape']) {
 			currentPage++
-			const currentPageData = type === 'peoples' ?
-				await this.scrapePagePeople(type, nextPage)
-				: await this.scrapePageMedias(type, nextPage)
+			const currentPageData =
+				type === 'peoples'
+					? await this.scrapePagePeople(type, nextPage)
+					: await this.scrapePageMedias(type, nextPage)
 
 			this.nbItemsWritten = await CreateIMDBDatasetService.insertPageIntoDatabase(
 				currentPageData,
 				level === 'live' ? this.liveItemsPerPage : this.sampleItemsPerPage,
 				level === 'live' ? this.livePagesToScrape : this.samplePagesToScrape,
 				type,
-				level
+				level,
 			)
 
 			const findNextPage = await this.scrapeNextPage()
@@ -209,12 +210,18 @@ class Scraper {
 						return medias.push({
 							id: id ? id.getAttribute('data-tconst') : null,
 							title: title ? title.innerText : null,
-							year: year ? parseInt(year.innerText.replace(/\(|\)/g, '')) : null,
+							year: year
+								? parseInt(year.innerText.replace(/\(|\)/g, ''))
+								: null,
 							rating: rating ? parseFloat(rating.innerText) : null,
-							nbRatings: nbRatings ? parseInt(nbRatings.innerText.replace(',', '')) : null,
+							nbRatings: nbRatings
+								? parseInt(nbRatings.innerText.replace(',', ''))
+								: null,
 							metaScore: metaScore ? parseInt(metaScore.innerText) : null,
 							certificate: certificate ? certificate.innerText : null,
-							runtime: runtime ? parseInt(runtime.innerText.replace(' min', '')) : null,
+							runtime: runtime
+								? parseInt(runtime.innerText.replace(' min', ''))
+								: null,
 							genres: genres,
 							description: description ? description.innerText : null,
 							picture: picture ? picture.src.replace(/\@\..*\./g, '@.') : null,
