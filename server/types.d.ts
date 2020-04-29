@@ -53,6 +53,14 @@ interface IMDBMedia {
 	gross: string | null,
 }
 
+interface IMDBPeople {
+	id: string | null,
+	firstname: string | null,
+	lastname: string | null,
+	picture: string | null,
+	role: string | null
+}
+
 interface IMDBPerson {
 	id: string | null,
 	name: string | null
