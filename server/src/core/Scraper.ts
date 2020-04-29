@@ -1,8 +1,7 @@
 /** ****** SCRAPING ****** **/
 import puppeteer, { Browser, Page } from 'puppeteer'
-/** ****** FILES ****** **/
-import fs from 'fs'
-/** ****** LOG ****** **/
+/** ****** INTERNALS ****** **/
+import CreateIMDBDatasetService from '../services/CreateIMDBDatasetService'
 import { sLog, aLog } from './Log'
 
 class Scraper {
@@ -10,7 +9,7 @@ class Scraper {
 		'https://www.imdb.com/search/title/?title_type=feature,tv_movie'
 	private seriesEndpoint =
 		'https://www.imdb.com/search/title/?title_type=tv_series'
-	private peopleEndpoint =
+	private peoplesEndpoint =
 		'https://www.imdb.com/search/name/?gender=male,female'
 	private sampleItemsPerPage = 50
 	private samplePagesToScrape = 2
@@ -21,35 +20,33 @@ class Scraper {
 	private nbItemsWritten = 0
 	private browser!: Browser
 	private page!: Page
-	private envSrc = process.env.NODE_ENV === 'production' ? '.dist/' : 'src/'
+
 	// @ts-ignore: Can't let property uninitialized
 	private spinner: Ora
 
 	/** * BOOT SCRAPING ON START * **/
 	public async boot(level: string = 'sample'): Promise<void | string> {
 		try {
-			// 1st param : the type of the data to scrape ("movies", "series", "people")
-			// 2nd param : the size of data requested ("sample" for 100, "live" for 5000)
-			if (
-				!fs.existsSync(`${this.envSrc}database/imdb/imdb_movies_${level}.json`)
-			) {
+			if (!CreateIMDBDatasetService.genresExist(level)) {
+				sLog('Genres datas not found on your system')
+				aLog('').succeed('Enabled Genres generator')
+				CreateIMDBDatasetService.enableGenreListenner()
+			} else aLog('').succeed('Genres datas found')
+
+			if (!CreateIMDBDatasetService.moviesExist(level)) {
 				sLog('Movies datas not found on your system')
 				await this.scrape('movies', level)
 			} else aLog('').succeed('Movies datas found')
 
-			if (
-				!fs.existsSync(`${this.envSrc}database/imdb/imdb_series_${level}.json`)
-			) {
+			if (!CreateIMDBDatasetService.seriesExist(level)) {
 				sLog('Series datas not found on your system')
 				await this.scrape('series', level)
 			} else aLog('').succeed('Series datas found')
 
-			if (
-				!fs.existsSync(`${this.envSrc}database/imdb/imdb_people_${level}.json`)
-			) {
-				sLog('People datas not found on your system')
-				await this.scrape('people', level)
-			} else aLog('').succeed('People datas found')
+			if (!CreateIMDBDatasetService.peoplesExist(level)) {
+				sLog('Peoples datas not found on your system')
+				await this.scrape('peoples', level)
+			} else aLog('').succeed('Peoples datas found')
 		} catch (e) {
 			sLog(`Error while scrapping : ${e}`, '#FF0000')
 			return e
@@ -65,7 +62,7 @@ class Scraper {
 	/** * SCRAPE SAMPLE DATASET WITH FEW MEDIAS * **/
 	public async scrape(type: string, level: string): Promise<void> {
 		await this.setupScraper()
-		await this.insertDatabaseHeaders(type, level)
+		await CreateIMDBDatasetService.insertDatabaseHeaders(type, level)
 		this.spinner.text = `Scraping ${type} sample dataset ...`
 		let nextPage: string | null = null
 		let currentPage = 0
@@ -74,10 +71,18 @@ class Scraper {
 		// @ts-ignore: Unreachable context key
 		while (pagination && currentPage < this[level + 'PagesToScrape']) {
 			currentPage++
-			const currentPageData = type === 'people' ?
+			const currentPageData = type === 'peoples' ?
 				await this.scrapePagePeople(type, nextPage)
 				: await this.scrapePageMedias(type, nextPage)
-			await this.insertPageIntoDatabase(currentPageData, type, level)
+
+			this.nbItemsWritten = await CreateIMDBDatasetService.insertPageIntoDatabase(
+				currentPageData,
+				level === 'live' ? this.liveItemsPerPage : this.sampleItemsPerPage,
+				level === 'live' ? this.livePagesToScrape : this.samplePagesToScrape,
+				type,
+				level
+			)
+
 			const findNextPage = await this.scrapeNextPage()
 			//this.spinner.text = `Progress done : ${findNextPage.totalText}`
 
@@ -98,7 +103,7 @@ class Scraper {
 
 		this.spinner.succeed(`${level.toUpperCase()} ${type} Scraping complete.`)
 
-		await this.insertDatabaseFooters(type, level)
+		await CreateIMDBDatasetService.insertDatabaseFooters(type, level)
 		this.totalItems = null
 		this.totalPages = null
 		this.nbItemsWritten = 0
@@ -330,83 +335,6 @@ ${e}`)
         }, 100)
       })
     })()`)
-	}
-
-	/** * WRITE DATABASE HEADERS * **/
-	private async insertDatabaseHeaders(
-		type = 'movies',
-		level = 'sample',
-	): Promise<void> {
-		if (!fs.existsSync(`${this.envSrc}database/imdb`))
-			fs.mkdirSync(`${this.envSrc}database/imdb`)
-
-		fs.openSync(`${this.envSrc}database/imdb/imdb_${type}_${level}.json`, 'w')
-		fs.writeFile(
-			`${this.envSrc}database/imdb/imdb_${type}_${level}.json`,
-			'{\n"data": \n[',
-			'utf8',
-			err => {
-				if (err)
-					return this.spinner.info('Error while writing database headers')
-			},
-		)
-	}
-
-	/** * WRITE CURRENT SCRAPED PAGE INTO DATABASE * **/
-	private async insertPageIntoDatabase(
-		data: string,
-		type = 'movies',
-		level = 'sample',
-	): Promise<void> {
-		const parsedData = JSON.parse(data)
-		let dataString = ''
-		parsedData.medias.map((media: string | null) => {
-			this.nbItemsWritten++
-			let totalScrapeLevel: number
-			let singleMedia = JSON.stringify(media, null, 4)
-
-			if (level === 'live') {
-				totalScrapeLevel = this.liveItemsPerPage * this.livePagesToScrape
-				singleMedia += this.nbItemsWritten < totalScrapeLevel ? ',\n' : '\n'
-			} else {
-				totalScrapeLevel = this.sampleItemsPerPage * this.samplePagesToScrape
-				singleMedia += this.nbItemsWritten < totalScrapeLevel ? ',\n' : '\n'
-			}
-
-			dataString += singleMedia
-		})
-
-		await fs.appendFile(
-			`${this.envSrc}database/imdb/imdb_${type}_${level}.json`,
-			dataString,
-			'utf8',
-			err => {
-				if (err) {
-					this.spinner.fail('Error while writing to database')
-					return sLog(`${err}`, '#b20000')
-				}
-			},
-		)
-	}
-
-	/** * WRITE DATABASE FOOTERS * **/
-	private async insertDatabaseFooters(
-		type = 'movies',
-		level = 'sample',
-	): Promise<void> {
-		try {
-			await fs.appendFile(
-				`${this.envSrc}database/imdb/imdb_${type}_${level}.json`,
-				']}',
-				'utf8',
-				err => {
-					if (err)
-						return this.spinner.fail('Error while writing database footers')
-				},
-			)
-		} catch (error) {
-			this.spinner.fail(error)
-		}
 	}
 }
 
