@@ -10,6 +10,8 @@ class Scraper {
 		'https://www.imdb.com/search/title/?title_type=feature,tv_movie'
 	private seriesEndpoint =
 		'https://www.imdb.com/search/title/?title_type=tv_series'
+	private peopleEndpoint =
+		'https://www.imdb.com/search/name/?gender=male,female'
 	private sampleItemsPerPage = 50
 	private samplePagesToScrape = 2
 	private liveItemsPerPage = 50
@@ -26,7 +28,7 @@ class Scraper {
 	/** * BOOT SCRAPING ON START * **/
 	public async boot(level: string = 'sample'): Promise<void | string> {
 		try {
-			// 1st param : the type of the data to scrape ("movies" or "series")
+			// 1st param : the type of the data to scrape ("movies", "series", "people")
 			// 2nd param : the size of data requested ("sample" for 100, "live" for 5000)
 			if (
 				!fs.existsSync(`${this.envSrc}database/imdb/imdb_movies_${level}.json`)
@@ -40,7 +42,14 @@ class Scraper {
 			) {
 				sLog('Series datas not found on your system')
 				await this.scrape('series', level)
-			}
+			} else aLog('').succeed('Series datas found')
+
+			if (
+				!fs.existsSync(`${this.envSrc}database/imdb/imdb_people_${level}.json`)
+			) {
+				sLog('People datas not found on your system')
+				await this.scrape('people', level)
+			} else aLog('').succeed('People datas found')
 		} catch (e) {
 			sLog(`Error while scrapping : ${e}`, '#FF0000')
 			return e
@@ -65,7 +74,9 @@ class Scraper {
 		// @ts-ignore: Unreachable context key
 		while (pagination && currentPage < this[level + 'PagesToScrape']) {
 			currentPage++
-			const currentPageData = await this.scrapePageMedias(type, nextPage)
+			const currentPageData = type === 'people' ?
+				await this.scrapePagePeople(type, nextPage)
+				: await this.scrapePageMedias(type, nextPage)
 			await this.insertPageIntoDatabase(currentPageData, type, level)
 			const findNextPage = await this.scrapeNextPage()
 			//this.spinner.text = `Progress done : ${findNextPage.totalText}`
@@ -211,6 +222,62 @@ class Scraper {
 				return { medias }
 			}, this.sampleItemsPerPage)
 
+			return JSON.stringify(data)
+		} catch (e) {
+			this.spinner.fail(`Error when attempting to browse ${
+				// @ts-ignore: Unreachable context key
+				nextPage ?? this[type + 'Endpoint']
+			}
+${e}`)
+			return e
+		}
+	}
+
+	/** * SCRAPING ONE PAGE PEOPLES * **/
+	private async scrapePagePeople(
+		type: string,
+		nextPage: string | null = null,
+	): Promise<string> {
+		// @ts-ignore: Unreachable context key
+		await this.page.goto(nextPage ?? this[type + 'Endpoint'], {
+			waitUntil: 'networkidle2',
+		})
+		await this.page.setViewport({ width: 1200, height: 800 })
+		await this.autoScroll(this.page)
+
+		try {
+			const data = await this.page.evaluate(sampleItemsPerPage => {
+				const medias: IMDBPeople[] = []
+				const itemsList: ArrayLike<MediaElement> = document.querySelectorAll(
+					'.lister-item',
+				)
+
+				Array.from(itemsList, (item: MediaElement, index) => {
+					if (index < sampleItemsPerPage) {
+						const id: MediaElement | null = item.querySelector(
+							'.lister-item .lister-item-image a',
+						)
+						const name: MediaElement | null = item.querySelector(
+							'h3.lister-item-header .lister-item-index + a',
+						)
+						const picture: MediaElement | null = item.querySelector(
+							'.lister-item-image a img',
+						)
+						const role: MediaElement | null = item.querySelector(
+							'h3 + p.text-small',
+						)
+
+						return medias.push({
+							id: id ? id.href.split('/')[4] : null,
+							firstname: name ? name.innerText.trim().split(' ')[0] : null,
+							lastname: name ? name.innerText.trim().split(' ')[1] : null,
+							picture: picture ? picture.src.replace(/\@\..*\./g, '@.') : null,
+							role: role ? role.innerText.split(' | ')[0] : null,
+						})
+					}
+				})
+				return { medias }
+			}, this.sampleItemsPerPage)
 			return JSON.stringify(data)
 		} catch (e) {
 			this.spinner.fail(`Error when attempting to browse ${
