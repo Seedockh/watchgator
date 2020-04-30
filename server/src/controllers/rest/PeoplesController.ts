@@ -35,7 +35,8 @@ class PeoplesController {
     const keys = { ...req.body }
     const matchCase = keys.matchCase ? '' : 'i'
 
-    let filters = {}
+    let filters: any
+    // @ts-ignore: unreachable filters keys
     Object.entries(keys).forEach(key => filters[key[0]] = new RegExp(key[1], matchCase))
 
     let results = _.filter(
@@ -44,6 +45,7 @@ class PeoplesController {
         IMDBDatasetService.samplePeoples.data,
       movie => {
         for (const key in filters) {
+          // @ts-ignore: unreachable filters keys
           if (filters[key].test(movie[key])) return true
         }
       }
