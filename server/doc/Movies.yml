@@ -8,28 +8,75 @@ servers:
     description: Main endpoint
 
 path:
- /movies/all/:
-   get:
-     summary: Get all Movies, chunked by arrays of 20 movies arrays. For example, 100 Movies return 5 arrays
-     tags: [Movies]
-     responses:
-       "200":
-         description: List of all movies, chunked by pages of 20 movies.
-         content:
-           array:
-             schema:
-               $ref: '#/components/schemas/MoviesList'
- /movies/all/{page}:
-   get:
-     summary: Get the {page} chunk containing 20 movies
-     tags: [Movies]
-     responses:
-       "200":
-         description: List of all movies for page n.{page}
-         content:
-           application/json:
-             schema:
-               $ref: '#/components/schemas/MoviesChunk'
+  /movies/all/:
+    get:
+      summary: Get all Movies, chunked by arrays of 20 movies arrays. For example, 100 Movies return 5 arrays
+      tags: [Movie]
+      responses:
+        "200":
+          description: List of all movies, chunked by pages of 20 movies.
+          content:
+            array:
+              schema:
+                $ref: '#/components/schemas/MoviesList'
+  /movies/all/{page}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: The movie id
+    get:
+      summary: Get the {page} chunk containing 20 movies
+      tags: [Movie]
+      responses:
+        "200":
+          description: List of all movies for page n.{page}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MoviesChunk'
+  /movies/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: The movie id
+    get:
+      summary: Get the movie with the id {id}
+      tags: [Movie]
+      responses:
+        "200":
+          description: Get the {id} movie
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+  /movies/find:
+    parameters:
+      - in: query
+        name: title
+        schema:
+          type: string
+        description: The movie title
+    post:
+      summary: Find Movies by key
+      tags: [Movie]
+      requestBody:
+        description: Any Movie key to search on
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovieFind'
+      responses:
+        "200":
+          description: Find movies by searching (case-insensitive RegExp) with specified body keys
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MoviesChunk'
 
 components:
  schemas:
@@ -47,6 +94,14 @@ components:
      maxItems: 20
      uniqueItems: true
 
+   MovieFind:
+     type: object
+     properties:
+       key:
+         type: string | int | float
+     example:
+       title: "paras"
+
    Movie:
      type: object
      properties:
@@ -54,25 +109,25 @@ components:
          type: string
          description: title of the movie
        year:
-         type: string
+         type: int
          description: year of release
        rating:
-         type: string
+         type: float
          description: IMDB rating
        nbRatings:
-         type: string
+         type: int
          description: number of ppl that rated the movie
        metaScore:
-         type: string
+         type: int
          description: IMDB popularity score
        certificate:
          type: string
          description: for which public is addressed the movie
        runtime:
-         type: string
+         type: int
          description: duration of the movie
        genre:
-         type: string
+         type: array
          description: category(ies) of the movie
        description:
          type: string
@@ -80,31 +135,55 @@ components:
        picture:
          type: string
          description: picture URL
-       director:
-         type: string
+       directors:
+         type: array
          description: main director name
-       casting:
-         type: array<string>
+       actors:
+         type: array
          description: list of the actors
        gross:
          type: string
          description: total budget of the movie
      example:
-           title: "Parasite"
-           year: "2019"
-           rating: "8.6"
-           nbRatings: "382,763"
-           metaScore: "96"
-           certificate: "R"
-           runtime: "132 min"
-           genre: "Comedy, Drama, Thriller"
-           description: "Greed and class discrimination threaten the newly formed symbiotic relationship between the wealthy Park family and the destitute Kim clan."
-           picture: "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@.jpg"
-           director: "Bong Joon Ho"
-           casting: [
-               Kang-ho Song,
-               Sun-kyun Lee,
-               Yeo-jeong Jo,
-               Woo-sik Choi
-           ]
-           gross: "$53.37M"
+       title: "Parasite"
+       year: 2019
+       rating: 8.6
+       nbRatings: 382763
+       metaScore: 96
+       certificate: "R"
+       runtime: 132
+       genre: [
+        {
+          name: "Action"
+        },
+        {
+          name: "Thriller"
+        }
+       ]
+       description: "Greed and class discrimination threaten the newly formed symbiotic relationship between the wealthy Park family and the destitute Kim clan."
+       picture: "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@.jpg"
+       directors: [
+        {
+          id: "nm1092087",
+          name: "Sam Hargrave"
+        }
+       ]
+       actors": [
+        {
+          id: "nm1165110",
+          name: "Chris Hemsworth"
+        },
+        {
+          id: "nm0267042",
+          name: "Golshifteh Farahani"
+        },
+        {
+          id: "nm7287299",
+          name: "Rudhraksh Jaiswal"
+        },
+        {
+          id: "nm2534972",
+          name: "Shivam Vichare"
+        }
+       ]
+       gross: "$53.37M"

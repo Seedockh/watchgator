@@ -9,7 +9,7 @@ import ExpressServer from './core/ExpressServer'
 
 (async () => {
 	await Database.boot()
-	await Scraper.boot('sample')
+	if (process.env.NODE_ENV !== 'production') await Scraper.boot('sample')
 	await UserRepository.init()
 	await IMDBDatasetService.init()
 	await ExpressServer.run()
