@@ -33,22 +33,27 @@ class PeoplesController {
 
   static findByKeys(req: Request, res: Response) {
     const keys = { ...req.body }
+    const matchCase = keys.matchCase ? '' : 'i'
 
     let filters = {}
-    Object.entries(keys).forEach(key => filters[key[0]] = new RegExp(key[1], 'i'))
+    Object.entries(keys).forEach(key => filters[key[0]] = new RegExp(key[1], matchCase))
 
-    res.json({ results: _.chunk(
-      _.filter(
-        process.env.NODE_ENV === 'production' ?
-          IMDBDatasetService.livePeoples.data :
-          IMDBDatasetService.samplePeoples.data,
-        movie => {
-          for (const key in filters) {
-            if (filters[key].test(movie[key])) return true
-          }
+    let results = _.filter(
+      process.env.NODE_ENV === 'production' ?
+        IMDBDatasetService.livePeoples.data :
+        IMDBDatasetService.samplePeoples.data,
+      movie => {
+        for (const key in filters) {
+          if (filters[key].test(movie[key])) return true
         }
-      ), 20)
-    })
+      }
+    )
+
+    if (keys.firstname) _.sortBy(results, ['firstname', 'lastname'])
+    else if (keys.lastname) _.sortBy(results, ['lastname', 'firstname'])
+    else if (keys.role) _.sortBy(results, ['role', 'lastname'])
+
+    res.json({ results: _.chunk(results, 20) })
   }
 }
 

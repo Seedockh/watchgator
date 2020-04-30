@@ -33,22 +33,33 @@ class SeriesController {
 
   static findByKeys(req: Request, res: Response) {
     const keys = { ...req.body }
+    const matchCase = keys.matchCase ? '' : 'i'
 
     let filters = {}
-    Object.entries(keys).forEach(key => filters[key[0]] = new RegExp(key[1], 'i'))
+    Object.entries(keys).forEach(key => filters[key[0]] = new RegExp(key[1], matchCase))
 
-    res.json({ results: _.chunk(
-      _.filter(
-        process.env.NODE_ENV === 'production' ?
-          IMDBDatasetService.livePeoples.data :
-          IMDBDatasetService.samplePeoples.data,
-        movie => {
-          for (const key in filters) {
-            if (filters[key].test(movie[key])) return true
-          }
+    let results = _.filter(
+      process.env.NODE_ENV === 'production' ?
+        IMDBDatasetService.liveSeries.data :
+        IMDBDatasetService.sampleSeries.data,
+      movie => {
+        for (const key in filters) {
+          if (filters[key].test(movie[key])) return true
         }
-      ), 20)
-    })
+      }
+    )
+
+    if (keys.title) _.sortBy(results, ['title', 'rating'])
+    else if (keys.description) _.sortBy(results, ['description', 'rating'])
+    else if (keys.rating) _.sortBy(results, ['rating', 'title'])
+    else if (keys.metaScore) _.sortBy(results, ['metaScore', 'rating'])
+    else if (keys.year) _.sortBy(results, ['year', 'rating'])
+    else if (keys.runtime) _.sortBy(results, ['runtime', 'rating'])
+    else if (keys.gross) _.sortBy(results, ['gross', 'rating'])
+    else if (keys.nbRatings) _.sortBy(results, ['nbRatings', 'rating'])
+    else if (keys.certificate) _.sortBy(results, ['certificate', 'rating'])
+
+    res.json({ results: _.chunk(results, 20) })
   }
 }
 
