@@ -14,28 +14,45 @@ class IMDBDatasetService {
 	static liveMovies: Dataset
 
 	static async init(): Promise<void> {
-		const spinner = aLog('Initializing Movies datas ...')
-		this.sampleMovies = this.readSampleMovies()
-		this.liveMovies = await this.readLiveMovies()
-		spinner.succeed('Movies initialized')
+		const moviesSpinner = aLog('Initializing Movies datas ...')
+		this.sampleMovies = this.readSample('movies')
+		this.liveMovies = await this.readLive('movies')
+		moviesSpinner.succeed('Movies initialized')
+
+		const seriesSpinner = aLog('Initializing Series datas ...')
+		this.sampleSeries = this.readSample('series')
+		this.liveSeries = await this.readLive('series')
+		seriesSpinner.succeed('Series initialized')
+
+		const peoplesSpinner = aLog('Initializing Peoples datas ...')
+		this.samplePeoples = this.readSample('peoples')
+		this.livePeoples = await this.readLive('peoples')
+		peoplesSpinner.succeed('Peoples initialized')
+
+		const genresSpinner = aLog('Initializing Genres datas ...')
+		this.sampleGenres = this.readSample('genres')
+		this.liveGenres = await this.readLive('genres')
+		genresSpinner.succeed('Genres initialized')
 	}
 
-	static readSampleMovies(): Dataset {
-		const moviesFile: Buffer = fs.readFileSync(
-			'src/database/imdb/imdb_movies_sample.json',
+	static readSample(type: string): Dataset {
+		const sampleFile: Buffer = fs.readFileSync(
+			`src/database/imdb/imdb_${type}_sample.json`,
 		)
 		// @ts-ignore: JSON.parse() unreachable Buffer param
-		return JSON.parse(moviesFile)
+		return JSON.parse(sampleFile)
 	}
 
-	static readLiveMovies(): Promise<Dataset> {
-		return fetch(
-			'https://mahara-bucket.s3.eu-west-3.amazonaws.com/watchgator/imdb_movies_live.json',
-			{ method: 'GET' },
+	static readLive(type: string): Promise<Dataset> {
+		return (
+			fetch(
+				`https://mahara-bucket.s3.eu-west-3.amazonaws.com/watchgator/imdb_${type}_live.json`,
+				{ method: 'GET' },
+			)
+				.then(response => response.json())
+				// @ts-ignore: JSON.parse() unreachable Buffer param
+				.then(liveFile => JSON.parse(JSON.stringify(liveFile)))
 		)
-			.then(response => response.json())
-			// @ts-ignore: JSON.parse() unreachable Buffer param
-			.then(movies => JSON.parse(JSON.stringify(movies)))
 	}
 
 	static enableGenreListenner(): boolean {
