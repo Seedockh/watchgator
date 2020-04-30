@@ -1,12 +1,69 @@
 /** ****** NODE ****** **/
 import fs from 'fs'
 import _ from 'lodash'
+import fetch from 'node-fetch'
+/** ****** INTERNALS ****** **/
+import { aLog } from '../core/Log'
 
-class CreateIMDBDatasetService {
+class IMDBDatasetService {
 	static envSrc = process.env.NODE_ENV === 'production' ? '.dist/' : 'src/'
 	static itemsWritten = 0
 	static listenGenres = false
 	static genresMap: (string | null)[] = []
+	static sampleMovies: Dataset
+	static liveMovies: Dataset
+	static sampleSeries: Dataset
+	static liveSeries: Dataset
+	static samplePeoples: Dataset
+	static livePeoples: Dataset
+	static sampleGenres: Dataset
+	static liveGenres: Dataset
+
+	static async init(): Promise<void> {
+		const moviesSpinner = aLog('Initializing Movies datas ...')
+		if (process.env.NODE_ENV !== 'production')
+			this.sampleMovies = this.readSample('movies')
+		this.liveMovies = await this.readLive('movies')
+		moviesSpinner.succeed('Movies initialized')
+
+		const seriesSpinner = aLog('Initializing Series datas ...')
+		if (process.env.NODE_ENV !== 'production')
+			this.sampleSeries = this.readSample('series')
+		this.liveSeries = await this.readLive('series')
+		seriesSpinner.succeed('Series initialized')
+
+		const peoplesSpinner = aLog('Initializing Peoples datas ...')
+		if (process.env.NODE_ENV !== 'production')
+			this.samplePeoples = this.readSample('peoples')
+		this.livePeoples = await this.readLive('peoples')
+		peoplesSpinner.succeed('Peoples initialized')
+
+		const genresSpinner = aLog('Initializing Genres datas ...')
+		if (process.env.NODE_ENV !== 'production')
+			this.sampleGenres = this.readSample('genres')
+		this.liveGenres = await this.readLive('genres')
+		genresSpinner.succeed('Genres initialized')
+	}
+
+	static readSample(type: string): Dataset {
+		const sampleFile: Buffer = fs.readFileSync(
+			`src/database/imdb/imdb_${type}_sample.json`,
+		)
+		// @ts-ignore: JSON.parse() unreachable Buffer param
+		return JSON.parse(sampleFile)
+	}
+
+	static readLive(type: string): Promise<Dataset> {
+		return (
+			fetch(
+				`https://mahara-bucket.s3.eu-west-3.amazonaws.com/watchgator/imdb_${type}_live.json`,
+				{ method: 'GET' },
+			)
+				.then(response => response.json())
+				// @ts-ignore: JSON.parse() unreachable Buffer param
+				.then(liveFile => JSON.parse(JSON.stringify(liveFile)))
+		)
+	}
 
 	static enableGenreListenner(): boolean {
 		return (this.listenGenres = true)
@@ -37,7 +94,7 @@ class CreateIMDBDatasetService {
 	}
 
 	/** * WRITE DATABASE HEADERS * **/
-	static async insertDatabaseHeaders(
+	static async insertDatasetHeaders(
 		type = 'movies',
 		level = 'sample',
 	): Promise<void> {
@@ -56,7 +113,7 @@ class CreateIMDBDatasetService {
 	}
 
 	/** * WRITE CURRENT SCRAPED PAGE INTO DATABASE * **/
-	static async insertPageIntoDatabase(
+	static async insertPageIntoDataset(
 		data: string,
 		itemsPerPage: number,
 		pagesToScrape: number,
@@ -65,10 +122,11 @@ class CreateIMDBDatasetService {
 	): Promise<number> {
 		const parsedData = JSON.parse(data)
 		let dataString = ''
+		let backupItemsWritten = 0
 
-		await parsedData.medias.map(async (media: IMDBMedia | null) => {
+		parsedData.medias.map((media: IMDBMedia | null) => {
 			this.itemsWritten++
-			if (type === 'movies') this.addGenres(media)
+			if (type !== 'peoples') this.addGenres(media)
 
 			const totalScrapeLevel = itemsPerPage * pagesToScrape
 			let singleMedia = JSON.stringify(media, null, 4)
@@ -76,8 +134,9 @@ class CreateIMDBDatasetService {
 			if (this.itemsWritten < totalScrapeLevel) singleMedia += ',\n'
 			else {
 				singleMedia += '\n'
+				backupItemsWritten = this.itemsWritten
 				this.itemsWritten = 0
-				await this.writeGenresDatabase(level)
+				this.writeGenresDataset(level)
 			}
 
 			dataString += singleMedia
@@ -91,11 +150,11 @@ class CreateIMDBDatasetService {
 				if (err) throw err
 			},
 		)
-		return this.itemsWritten
+		return backupItemsWritten
 	}
 
 	/** * WRITE DATABASE FOOTERS * **/
-	static async insertDatabaseFooters(
+	static async insertDatasetFooters(
 		type = 'movies',
 		level = 'sample',
 	): Promise<void> {
@@ -129,14 +188,14 @@ class CreateIMDBDatasetService {
 	}
 
 	/** * WRITE GENRES DATA * **/
-	static async writeGenresDatabase(level: string): Promise<void> {
+	static writeGenresDataset(level: string): void {
 		if (!fs.existsSync(`${this.envSrc}database/imdb`))
 			fs.mkdirSync(`${this.envSrc}database/imdb`)
 
 		const genres = JSON.stringify({ data: this.genresMap }, null, 4)
 
 		fs.openSync(`${this.envSrc}database/imdb/imdb_genres_${level}.json`, 'w')
-		await fs.writeFile(
+		fs.writeFile(
 			`${this.envSrc}database/imdb/imdb_genres_${level}.json`,
 			genres,
 			'utf8',
@@ -147,4 +206,4 @@ class CreateIMDBDatasetService {
 	}
 }
 
-export default CreateIMDBDatasetService
+export default IMDBDatasetService

@@ -45,9 +45,11 @@ const Middleware = (app: Application): void => {
 			basePath: '/',
 		},
 		apis: [
-			'./src/database/models/User.ts',
-			'./src/controllers/rest/AuthController.ts',
-			'./src/controllers/rest/UserController.ts',
+			'./doc/Movies.yml',
+			'./doc/Series.yml',
+			'./doc/Peoples.yml',
+			'./doc/Genres.yml',
+			'./doc/Users.yml',
 		],
 	}
 	const specs = swaggerJsdoc(options)
