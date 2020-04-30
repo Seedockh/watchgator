@@ -20,8 +20,6 @@ class Scraper {
 	private nbItemsWritten = 0
 	private browser!: Browser
 	private page!: Page
-
-	// @ts-ignore: Can't let property uninitialized
 	private spinner: Ora
 
 	/** * BOOT SCRAPING ON START * **/
@@ -171,8 +169,6 @@ class Scraper {
 						genresArray.map((genre: string | null) =>
 							genres.push({ name: genre ?? null }),
 						)
-						Array.from(directorsList, (director: MediaElement) => {
-							if (director.localName === 'span') isDirector = false
 
 						const id: MediaElement | null = item.querySelector(
 							'.lister-item .lister-top-right .ribbonize',
