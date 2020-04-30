@@ -28,8 +28,8 @@ class IMDBDatasetService {
 		return JSON.parse(moviesFile)
 	}
 
-	static async readLiveMovies(): Promise<Dataset> {
-		return await fetch(
+	static readLiveMovies(): Promise<Dataset> {
+		return fetch(
 			'https://mahara-bucket.s3.eu-west-3.amazonaws.com/watchgator/imdb_movies_live.json',
 			{ method: 'GET' },
 		)
@@ -95,10 +95,11 @@ class IMDBDatasetService {
 	): Promise<number> {
 		const parsedData = JSON.parse(data)
 		let dataString = ''
+		let backupItemsWritten = 0
 
-		await parsedData.medias.map(async (media: IMDBMedia | null) => {
+		parsedData.medias.map((media: IMDBMedia | null) => {
 			this.itemsWritten++
-			if (type === 'movies') this.addGenres(media)
+			if (type !== 'peoples') this.addGenres(media)
 
 			const totalScrapeLevel = itemsPerPage * pagesToScrape
 			let singleMedia = JSON.stringify(media, null, 4)
@@ -106,8 +107,9 @@ class IMDBDatasetService {
 			if (this.itemsWritten < totalScrapeLevel) singleMedia += ',\n'
 			else {
 				singleMedia += '\n'
+				backupItemsWritten = this.itemsWritten
 				this.itemsWritten = 0
-				await this.writeGenresDataset(level)
+				this.writeGenresDataset(level)
 			}
 
 			dataString += singleMedia
@@ -121,7 +123,7 @@ class IMDBDatasetService {
 				if (err) throw err
 			},
 		)
-		return this.itemsWritten
+		return backupItemsWritten
 	}
 
 	/** * WRITE DATABASE FOOTERS * **/
@@ -159,14 +161,14 @@ class IMDBDatasetService {
 	}
 
 	/** * WRITE GENRES DATA * **/
-	static async writeGenresDataset(level: string): Promise<void> {
+	static writeGenresDataset(level: string): void {
 		if (!fs.existsSync(`${this.envSrc}database/imdb`))
 			fs.mkdirSync(`${this.envSrc}database/imdb`)
 
 		const genres = JSON.stringify({ data: this.genresMap }, null, 4)
 
 		fs.openSync(`${this.envSrc}database/imdb/imdb_genres_${level}.json`, 'w')
-		await fs.writeFile(
+		fs.writeFile(
 			`${this.envSrc}database/imdb/imdb_genres_${level}.json`,
 			genres,
 			'utf8',

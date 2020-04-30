@@ -76,7 +76,7 @@ class Scraper {
 					? await this.scrapePagePeople(type, nextPage)
 					: await this.scrapePageMedias(type, nextPage)
 
-			this.nbItemsWritten = await CreateIMDBDatasetService.insertPageIntoDataset(
+			this.nbItemsWritten = await IMDBDatasetService.insertPageIntoDataset(
 				currentPageData,
 				level === 'live' ? this.liveItemsPerPage : this.sampleItemsPerPage,
 				level === 'live' ? this.livePagesToScrape : this.samplePagesToScrape,
@@ -85,7 +85,6 @@ class Scraper {
 			)
 
 			const findNextPage = await this.scrapeNextPage()
-			//this.spinner.text = `Progress done : ${findNextPage.totalText}`
 
 			if (this.totalItems === null) {
 				this.totalItems =
