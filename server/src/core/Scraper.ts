@@ -1,7 +1,7 @@
 /** ****** SCRAPING ****** **/
 import puppeteer, { Browser, Page } from 'puppeteer'
 /** ****** INTERNALS ****** **/
-import CreateIMDBDatasetService from '../services/CreateIMDBDatasetService'
+import IMDBDatasetService from '../services/IMDBDatasetService'
 import { sLog, aLog } from './Log'
 
 class Scraper {
@@ -27,26 +27,26 @@ class Scraper {
 	/** * BOOT SCRAPING ON START * **/
 	public async boot(level: string = 'sample'): Promise<void | string> {
 		try {
-			if (!CreateIMDBDatasetService.genresExist(level)) {
+			if (!IMDBDatasetService.genresExist(level)) {
 				sLog('Genres datas not found on your system')
 				aLog('').succeed('Enabled Genres generator')
-				CreateIMDBDatasetService.enableGenreListenner()
-			} else aLog('').succeed('Genres datas found')
+				IMDBDatasetService.enableGenreListenner()
+			}
 
-			if (!CreateIMDBDatasetService.moviesExist(level)) {
+			if (!IMDBDatasetService.moviesExist(level)) {
 				sLog('Movies datas not found on your system')
 				await this.scrape('movies', level)
 			}
 
-			if (!CreateIMDBDatasetService.seriesExist(level)) {
+			if (!IMDBDatasetService.seriesExist(level)) {
 				sLog('Series datas not found on your system')
 				await this.scrape('series', level)
-			} else aLog('').succeed('Series datas found')
+			}
 
-			if (!CreateIMDBDatasetService.peoplesExist(level)) {
+			if (!IMDBDatasetService.peoplesExist(level)) {
 				sLog('Peoples datas not found on your system')
 				await this.scrape('peoples', level)
-			} else aLog('').succeed('Peoples datas found')
+			}
 		} catch (e) {
 			sLog(`Error while scrapping : ${e}`, '#FF0000')
 			return e
@@ -62,7 +62,7 @@ class Scraper {
 	/** * SCRAPE SAMPLE DATASET WITH FEW MEDIAS * **/
 	public async scrape(type: string, level: string): Promise<void> {
 		await this.setupScraper()
-		await CreateIMDBDatasetService.insertDatabaseHeaders(type, level)
+		await IMDBDatasetService.insertDatasetHeaders(type, level)
 		this.spinner.text = `Scraping ${type} sample dataset ...`
 		let nextPage: string | null = null
 		let currentPage = 0
@@ -76,7 +76,7 @@ class Scraper {
 					? await this.scrapePagePeople(type, nextPage)
 					: await this.scrapePageMedias(type, nextPage)
 
-			this.nbItemsWritten = await CreateIMDBDatasetService.insertPageIntoDatabase(
+			this.nbItemsWritten = await CreateIMDBDatasetService.insertPageIntoDataset(
 				currentPageData,
 				level === 'live' ? this.liveItemsPerPage : this.sampleItemsPerPage,
 				level === 'live' ? this.livePagesToScrape : this.samplePagesToScrape,
@@ -104,7 +104,7 @@ class Scraper {
 
 		this.spinner.succeed(`${level.toUpperCase()} ${type} Scraping complete.`)
 
-		await CreateIMDBDatasetService.insertDatabaseFooters(type, level)
+		await IMDBDatasetService.insertDatasetFooters(type, level)
 		this.totalItems = null
 		this.totalPages = null
 		this.nbItemsWritten = 0

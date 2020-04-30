@@ -1,12 +1,42 @@
 /** ****** NODE ****** **/
 import fs from 'fs'
 import _ from 'lodash'
+import fetch from 'node-fetch'
+/** ****** INTERNALS ****** **/
+import { aLog } from '../core/Log'
 
-class CreateIMDBDatasetService {
+class IMDBDatasetService {
 	static envSrc = process.env.NODE_ENV === 'production' ? '.dist/' : 'src/'
 	static itemsWritten = 0
 	static listenGenres = false
 	static genresMap: (string | null)[] = []
+	static sampleMovies: Dataset
+	static liveMovies: Dataset
+
+	static async init(): Promise<void> {
+		const spinner = aLog('Initializing Movies datas ...')
+		this.sampleMovies = this.readSampleMovies()
+		this.liveMovies = await this.readLiveMovies()
+		spinner.succeed('Movies initialized')
+	}
+
+	static readSampleMovies(): Dataset {
+		const moviesFile: Buffer = fs.readFileSync(
+			'src/database/imdb/imdb_movies_sample.json',
+		)
+		// @ts-ignore: JSON.parse() unreachable Buffer param
+		return JSON.parse(moviesFile)
+	}
+
+	static async readLiveMovies(): Promise<Dataset> {
+		return await fetch(
+			'https://mahara-bucket.s3.eu-west-3.amazonaws.com/watchgator/imdb_movies_live.json',
+			{ method: 'GET' },
+		)
+			.then(response => response.json())
+			// @ts-ignore: JSON.parse() unreachable Buffer param
+			.then(movies => JSON.parse(JSON.stringify(movies)))
+	}
 
 	static enableGenreListenner(): boolean {
 		return (this.listenGenres = true)
@@ -37,7 +67,7 @@ class CreateIMDBDatasetService {
 	}
 
 	/** * WRITE DATABASE HEADERS * **/
-	static async insertDatabaseHeaders(
+	static async insertDatasetHeaders(
 		type = 'movies',
 		level = 'sample',
 	): Promise<void> {
@@ -56,7 +86,7 @@ class CreateIMDBDatasetService {
 	}
 
 	/** * WRITE CURRENT SCRAPED PAGE INTO DATABASE * **/
-	static async insertPageIntoDatabase(
+	static async insertPageIntoDataset(
 		data: string,
 		itemsPerPage: number,
 		pagesToScrape: number,
@@ -77,7 +107,7 @@ class CreateIMDBDatasetService {
 			else {
 				singleMedia += '\n'
 				this.itemsWritten = 0
-				await this.writeGenresDatabase(level)
+				await this.writeGenresDataset(level)
 			}
 
 			dataString += singleMedia
@@ -95,7 +125,7 @@ class CreateIMDBDatasetService {
 	}
 
 	/** * WRITE DATABASE FOOTERS * **/
-	static async insertDatabaseFooters(
+	static async insertDatasetFooters(
 		type = 'movies',
 		level = 'sample',
 	): Promise<void> {
@@ -129,7 +159,7 @@ class CreateIMDBDatasetService {
 	}
 
 	/** * WRITE GENRES DATA * **/
-	static async writeGenresDatabase(level: string): Promise<void> {
+	static async writeGenresDataset(level: string): Promise<void> {
 		if (!fs.existsSync(`${this.envSrc}database/imdb`))
 			fs.mkdirSync(`${this.envSrc}database/imdb`)
 
@@ -147,4 +177,4 @@ class CreateIMDBDatasetService {
 	}
 }
 
-export default CreateIMDBDatasetService
+export default IMDBDatasetService

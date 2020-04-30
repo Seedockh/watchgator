@@ -3,7 +3,7 @@ import { Request, Response, RequestHandler } from 'express'
 /** ****** NODE ****** **/
 import _ from 'lodash'
 /** ****** INTERNALS ****** **/
-import IMDBService from '../../services/IMDBService'
+import IMDBDatasetService from '../../services/IMDBDatasetService'
 
 class MoviesController {
 <<<<<<< HEAD
@@ -16,8 +16,8 @@ class MoviesController {
   static async getAll(req: Request, res: Response) {
 >>>>>>> add getAll and getAllByPage movies routes
     res.json(process.env.NODE_ENV === 'production' ?
-      _.chunk(IMDBService.liveMovies.data, 20) :
-      _.chunk(IMDBService.sampleMovies.data, 20)
+      _.chunk(IMDBDatasetService.liveMovies.data, 20) :
+      _.chunk(IMDBDatasetService.sampleMovies.data, 20)
     )
   }
 
@@ -31,8 +31,8 @@ class MoviesController {
     const end = start + 20
 
     res.json(process.env.NODE_ENV === 'production' ?
-      _.slice(IMDBService.liveMovies.data, start, end) :
-      _.slice(IMDBService.sampleMovies.data, start, end)
+      _.slice(IMDBDatasetService.liveMovies.data, start, end) :
+      _.slice(IMDBDatasetService.sampleMovies.data, start, end)
     )
   }
 
@@ -43,8 +43,8 @@ class MoviesController {
     res.json({ results: _.chunk(
       _.filter(
         process.env.NODE_ENV === 'production' ?
-          IMDBService.liveMovies.data :
-          IMDBService.sampleMovies.data,
+          IMDBDatasetService.liveMovies.data :
+          IMDBDatasetService.sampleMovies.data,
         keys
       ), 20)
     })
