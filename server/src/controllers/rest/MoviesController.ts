@@ -35,7 +35,7 @@ class MoviesController {
     const keys = { ...req.body }
     const matchCase = keys.matchCase ? '' : 'i'
 
-    let filters: any
+    let filters: any = {}
     // @ts-ignore: unreachable filters keys
     Object.entries(keys).forEach((key: string[]) => filters[key[0]] = new RegExp(key[1], matchCase))
 

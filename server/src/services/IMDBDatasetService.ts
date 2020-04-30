@@ -21,22 +21,26 @@ class IMDBDatasetService {
 
 	static async init(): Promise<void> {
 		const moviesSpinner = aLog('Initializing Movies datas ...')
-		this.sampleMovies = this.readSample('movies')
+		if (process.env.NODE_ENV !== 'production')
+			this.sampleMovies = this.readSample('movies')
 		this.liveMovies = await this.readLive('movies')
 		moviesSpinner.succeed('Movies initialized')
 
 		const seriesSpinner = aLog('Initializing Series datas ...')
-		this.sampleSeries = this.readSample('series')
+		if (process.env.NODE_ENV !== 'production')
+			this.sampleSeries = this.readSample('series')
 		this.liveSeries = await this.readLive('series')
 		seriesSpinner.succeed('Series initialized')
 
 		const peoplesSpinner = aLog('Initializing Peoples datas ...')
-		this.samplePeoples = this.readSample('peoples')
+		if (process.env.NODE_ENV !== 'production')
+			this.samplePeoples = this.readSample('peoples')
 		this.livePeoples = await this.readLive('peoples')
 		peoplesSpinner.succeed('Peoples initialized')
 
 		const genresSpinner = aLog('Initializing Genres datas ...')
-		this.sampleGenres = this.readSample('genres')
+		if (process.env.NODE_ENV !== 'production') 
+			this.sampleGenres = this.readSample('genres')
 		this.liveGenres = await this.readLive('genres')
 		genresSpinner.succeed('Genres initialized')
 	}
