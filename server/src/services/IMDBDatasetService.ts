@@ -12,6 +12,12 @@ class IMDBDatasetService {
 	static genresMap: (string | null)[] = []
 	static sampleMovies: Dataset
 	static liveMovies: Dataset
+	static sampleSeries: Dataset
+	static liveSeries: Dataset
+	static samplePeoples: Dataset
+	static livePeoples: Dataset
+	static sampleGenres: Dataset
+	static liveGenres: Dataset
 
 	static async init(): Promise<void> {
 		const moviesSpinner = aLog('Initializing Movies datas ...')

@@ -20,7 +20,7 @@ class Scraper {
 	private nbItemsWritten = 0
 	private browser!: Browser
 	private page!: Page
-	private spinner: Ora
+	private spinner: Ora = aLog('')
 
 	/** * BOOT SCRAPING ON START * **/
 	public async boot(level: string = 'sample'): Promise<void | string> {
