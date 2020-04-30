@@ -10,8 +10,8 @@ servers:
 path:
   /movies/all/:
     get:
-      summary: Get all Movies, chunked by arrays of 20 movies arrays. For example, 100 Movies return 5 arrays
-      tags: [Movie]
+      summary: Get all Movies, chunked by arrays of 20 movies. For example, 100 Movies return 5 arrays
+      tags: [Movies]
       responses:
         "200":
           description: List of all movies, chunked by pages of 20 movies.
@@ -22,13 +22,13 @@ path:
   /movies/all/{page}:
     parameters:
       - in: path
-        name: id
+        name: page
         schema:
           type: integer
-        description: The movie id
+        description: The chunk index to display
     get:
       summary: Get the {page} chunk containing 20 movies
-      tags: [Movie]
+      tags: [Movies]
       responses:
         "200":
           description: List of all movies for page n.{page}
@@ -45,7 +45,7 @@ path:
         description: The movie id
     get:
       summary: Get the movie with the id {id}
-      tags: [Movie]
+      tags: [Movies]
       responses:
         "200":
           description: Get the {id} movie
@@ -54,18 +54,12 @@ path:
               schema:
                 $ref: '#/components/schemas/Movie'
   /movies/find:
-    parameters:
-      - in: query
-        name: title
-        schema:
-          type: string
-        description: The movie title
     post:
       summary: Find Movies by key
-      tags: [Movie]
+      tags: [Movies]
       requestBody:
         description: Any Movie key to search on
-        required: true
+        required: false
         content:
           application/json:
             schema:
@@ -99,12 +93,18 @@ components:
      properties:
        key:
          type: string | int | float
+       matchCase:
+         type: bool
      example:
        title: "paras"
+       matchCase: false
 
    Movie:
      type: object
      properties:
+       id:
+         type: string
+         description: Movie's ID
        title:
          type: string
          description: title of the movie
@@ -145,6 +145,7 @@ components:
          type: string
          description: total budget of the movie
      example:
+       id: "tt6751668"
        title: "Parasite"
        year: 2019
        rating: 8.6

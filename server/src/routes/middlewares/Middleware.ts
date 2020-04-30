@@ -46,6 +46,8 @@ const Middleware = (app: Application): void => {
 		},
 		apis: [
 			'./doc/Movies.yml',
+			'./doc/Series.yml',
+			'./doc/Peoples.yml',
 			'./doc/Users.yml',
 		],
 	}
