@@ -171,6 +171,8 @@ class Scraper {
 						genresArray.map((genre: string | null) =>
 							genres.push({ name: genre ?? null }),
 						)
+						Array.from(directorsList, (director: MediaElement) => {
+							if (director.localName === 'span') isDirector = false
 
 						const id: MediaElement | null = item.querySelector(
 							'.lister-item .lister-top-right .ribbonize',
