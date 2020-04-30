@@ -20,7 +20,8 @@ class Scraper {
 	private nbItemsWritten = 0
 	private browser!: Browser
 	private page!: Page
-	private spinner: Ora = aLog('')
+	// @ts-ignore: Can't let property uninitialized
+	private spinner: Ora
 
 	/** * BOOT SCRAPING ON START * **/
 	public async boot(level: string = 'sample'): Promise<void | string> {
