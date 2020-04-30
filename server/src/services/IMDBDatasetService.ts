@@ -39,7 +39,7 @@ class IMDBDatasetService {
 		peoplesSpinner.succeed('Peoples initialized')
 
 		const genresSpinner = aLog('Initializing Genres datas ...')
-		if (process.env.NODE_ENV !== 'production') 
+		if (process.env.NODE_ENV !== 'production')
 			this.sampleGenres = this.readSample('genres')
 		this.liveGenres = await this.readLive('genres')
 		genresSpinner.succeed('Genres initialized')
