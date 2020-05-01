@@ -1,0 +1,195 @@
+openapi: 3.0.0
+info:
+  title: WatchGator API
+  description: Movies / Series fast and reliable search engine
+  version: 1.0.0
+servers:
+  - url: https://watchgator-server.herokuapp.com/api
+    description: Main endpoint
+
+path:
+  /auth/signup:
+    post:
+      summary: Create a new user
+      tags: [Users]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+    responses:
+      "201":
+        description: New user created
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResponseUserRegistered'
+      "400":
+        description: Incorrect input data - User not created
+
+  /auth/signin:
+    post:
+      summary: Create a new user
+      tags: [Users]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserToSignIn'
+    responses:
+      "200":
+        description: User logged
+        content:
+          application/json:
+            schema:
+              type: array
+              $ref: '#/components/schemas/ResponseUserRegistered'
+      "400":
+        description: Incorrect input data - User not logged
+
+  /user/add-avatar/:
+    post:
+      summary: Update avatar of user specified by uuid in body
+      tags: [Users]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AvatarToAdd'
+        parameters:
+          - in: header
+            name: Authorization
+            description: Bearer + TOKEN
+            schema:
+              type: string
+              format: token
+            required: true
+          - in: formData
+            name: file
+            type: file
+            description: file to upload
+            required: true
+        responses:
+          "200":
+            description: User id updated
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ResponseUserWithAvatar'
+          "422":
+            description: Incorrect image data
+          "500":
+            description: Internal error
+
+  /user/remove-avatar/:fileKey:
+    delete:
+      summary: Delete avatar from AWS S3 by id
+      tags: [Users]
+      parameters:
+        - in: path
+          name: fileKey
+          description: id of AWS file
+          schema:
+            type: integer
+          required: true
+        - in: header
+          name: Authorization
+          description: Bearer + TOKEN
+          schema:
+            type: string
+            format: token
+          required: true
+      responses:
+        "200":
+          description: Image correctly deleted
+          content:
+            application/json:
+              message:
+        "500":
+          description: Image cannot be deleted
+          content:
+            application/json:
+              message:
+
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - nickname
+        - email
+        - password
+      properties:
+        nickname:
+          type: string
+          description: needs to be unique
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: min. 4 characters
+      example:
+        nickname: Luc
+        email: luc@gmail.com
+        password: luc1
+
+    UserToSignIn:
+      type: object
+      required:
+        - nickname
+        - password
+      properties:
+        nickname:
+          type: string
+          description: needs to be unique
+        password:
+          type: string
+          format: min. 4 characters
+      example:
+        nickname: Luc
+        email: luc@gmail.com
+        password: luc1
+
+    ResponseUserRegistered:
+      type: object
+      example:
+        data:
+          user:
+            uuid: UUID
+            nickname: Luc
+            email: luc@gmail.com
+            password: luc1
+            avatar:
+            meta:
+              token: TOKEN
+
+    AvatarToAdd:
+      type: object
+      required:
+        - uuid
+        - file
+      properties:
+        uuid:
+          type: integer
+          description: uuid of user we want to add avatar
+        file:
+          type: image
+          format: jpeg-jpd-png
+      example:
+        uuid: 1234
+        file: image.png
+
+    ResponseUserWithAvatar:
+      type: object
+      example:
+        user:
+          uuid: 4c2d544a-803f-4668-b4ed-410a1f
+          nickname: Bob1
+          email: bob1@gmail.com
+          password: bob1
+          birthDate: 01/01/2000
+          avatar:

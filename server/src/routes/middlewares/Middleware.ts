@@ -44,7 +44,13 @@ const Middleware = (app: Application): void => {
 			],
 			basePath: '/',
 		},
-		apis: ['./doc/User.yml'],
+		apis: [
+			'./doc/Movies.yml',
+			'./doc/Series.yml',
+			'./doc/Peoples.yml',
+			'./doc/Genres.yml',
+			'./doc/Users.yml',
+		],
 	}
 	const specs = swaggerJsdoc(options)
 	app.use('/doc', swaggerUi.serve)

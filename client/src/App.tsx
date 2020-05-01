@@ -3,7 +3,7 @@ import { Route } from 'react-router-dom'
 import 'rsuite/dist/styles/rsuite-dark.css';
 
 import { Login, Home } from './pages'
-import User from './core/user';
+import User from './core/user'
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 

@@ -6,6 +6,12 @@ Startup week project : Movies / Series search engine
 - Client: https://watchgator-client.herokuapp.com/
 - Server: https://watchgator-server.herokuapp.com/
 
+# API
+
+### Documentation
+
+https://watchgator-server.herokuapp.com/doc/  
+
 # Heroku Deploys
 
 All commands are inspired from [this article](https://medium.com/@shalandy/deploy-git-subdirectory-to-heroku-ea05e95fce1f).
