@@ -48,33 +48,37 @@ interface Dataset {
 	data: [IMDBMedia]
 }
 
+interface Dataset {
+	data: [IMDBMedia]
+}
+
 interface IMDBMedia {
-	id: string | null,
-	title: string | null,
-	year: number | null,
-	rating: number | null,
-	nbRatings: number | null,
-	metaScore: number | null,
-	certificate: string | null,
-	runtime: number | null,
-	genres: (IMDBCategory | null)[],
-	description: string | null,
-	picture: string | null,
-	directors: (IMDBPerson | null)[],
-	actors: (IMDBPerson | null)[],
-	gross: string | null,
+	id: string | null
+	title: string | null
+	year: number | null
+	rating: number | null
+	nbRatings: number | null
+	metaScore: number | null
+	certificate: string | null
+	runtime: number | null
+	genres: (IMDBCategory | null)[]
+	description: string | null
+	picture: string | null
+	directors: (IMDBPerson | null)[]
+	actors: (IMDBPerson | null)[]
+	gross: string | null
 }
 
 interface IMDBPeople {
-	id: string | null,
-	firstname: string | null,
-	lastname: string | null,
-	picture: string | null,
+	id: string | null
+	firstname: string | null
+	lastname: string | null
+	picture: string | null
 	role: string | null
 }
 
 interface IMDBPerson {
-	id: string | null,
+	id: string | null
 	name: string | null
 }
 
@@ -83,22 +87,22 @@ interface IMDBCategory {
 }
 
 interface IMDBFilter {
-	id: string | null,
-	title: string | null,
-	year: number | null,
-	rating: number | null,
-	nbRatings: number | null,
-	metaScore: number | null,
-	certificate: string | null,
-	runtime: number | null,
-	genres: (IMDBCategory | null)[],
-	description: string | null,
-	picture: string | null,
-	directors: (IMDBPerson | null)[],
-	actors: (IMDBPerson | null)[],
-	gross: string | null,
-	firstname: string | null,
-	lastname: string | null,
+	id: string | null
+	title: string | null
+	year: number | null
+	rating: number | null
+	nbRatings: number | null
+	metaScore: number | null
+	certificate: string | null
+	runtime: number | null
+	genres: (IMDBCategory | null)[]
+	description: string | null
+	picture: string | null
+	directors: (IMDBPerson | null)[]
+	actors: (IMDBPerson | null)[]
+	gross: string | null
+	firstname: string | null
+	lastname: string | null
 	role: string | null
 }
 
