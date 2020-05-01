@@ -5,6 +5,8 @@ import * as jwt from 'jsonwebtoken'
 import passport from 'passport'
 import { validate, ValidationError } from 'class-validator'
 import { Context } from 'graphql-passport/lib/buildContext'
+/** ****** TYPEORM ****** **/
+import { QueryFailedError } from 'typeorm'
 /** ****** INTERNALS ****** **/
 import { User } from '../database/models/User'
 import UserRepository from '../database/repositories/UserRepository'
@@ -46,6 +48,8 @@ class AuthenticateService {
 				meta: { token: this.token },
 			}
 		} catch (error) {
+			if (error instanceof QueryFailedError)
+				throw new DatabaseError(error.message, 400, undefined, error)
 			throw new DatabaseError('Unexpected error', 400)
 		}
 	}
