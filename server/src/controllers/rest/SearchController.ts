@@ -6,19 +6,20 @@ import _ from 'lodash'
 import IMDBDatasetService from '../../services/IMDBDatasetService'
 
 class SearchController {
+
   /** * @TODO: Refactoring for filters * **/
   static search(req: Request, res: Response) {
     const level: string = process.env.NODE_ENV === 'production' ? 'live' : 'sample'
     let { names, filters } = req.body
-    let movies: any[]
-    let series: any[]
+    let movies: IMDBMedia[]
+    let series: IMDBMedia[]
 
     if (names) {
       names = JSON.parse(names)
 
       if (names.title) {
         movies = _.filter(
-          // @ts-ignore: unreachable key
+
           IMDBDatasetService[`${level}Movies`].data,
           movie => (new RegExp(names.title, 'i')).test(movie.title)
         )
@@ -58,14 +59,14 @@ class SearchController {
 
 
       if (names.genres) {
-        names.genres.forEach((genre: string) => {
+        names.genres.forEach((genre: IMDBCategory) => {
           movies = _.filter(
             // @ts-ignore: unreachable key
             movies ? movies : IMDBDatasetService[`${level}Movies`].data,
             movie => _.some(movie.genres, { name: genre.name })
           )
         })
-        names.genres.forEach((genre: string) => {
+        names.genres.forEach((genre: IMDBCategory) => {
           series = _.filter(
             // @ts-ignore: unreachable key
             series ? series : IMDBDatasetService[`${level}Series`].data,
@@ -115,6 +116,11 @@ class SearchController {
           series ? series : IMDBDatasetService[`${level}Series`].data,
           serie => serie.metaScore >= filters.metaScore.min && serie.metaScore <= filters.metaScore.max
         )
+      }
+
+      if (filters.nbRatings) {
+        // nbRatings: {min: 0, max: 1000000},
+        /** @TODO */
       }
 
       if (filters.certificate) {

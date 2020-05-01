@@ -86,26 +86,6 @@ interface IMDBCategory {
 	name: string | null
 }
 
-interface IMDBFilter {
-	id: string | null
-	title: string | null
-	year: number | null
-	rating: number | null
-	nbRatings: number | null
-	metaScore: number | null
-	certificate: string | null
-	runtime: number | null
-	genres: (IMDBCategory | null)[]
-	description: string | null
-	picture: string | null
-	directors: (IMDBPerson | null)[]
-	actors: (IMDBPerson | null)[]
-	gross: string | null
-	firstname: string | null
-	lastname: string | null
-	role: string | null
-}
-
 /********************
  * Extended Express types *
  ********************/
