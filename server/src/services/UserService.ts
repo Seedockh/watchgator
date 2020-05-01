@@ -2,8 +2,9 @@
 import { User } from '../database/models/User'
 import UserRepository from '../database/repositories/UserRepository'
 import { DatabaseError, EndpointAccessError } from '../core/CustomErrors'
-import { QueryFailedError } from 'typeorm'
-import { validate, ValidationError } from 'class-validator'
+import { QueryFailedError, UpdateResult } from 'typeorm'
+import { ValidationError } from 'class-validator'
+import { transformAndValidate } from 'class-transformer-validator'
 
 class UserService {
 	static throwIfManipulateSomeoneElse(
@@ -46,43 +47,28 @@ class UserService {
 	 */
 	static async updateUser(
 		token: string | undefined,
-		partialUser: User,
+		partialUser: Partial<User>,
 	): Promise<boolean> {
 		const { uuid, password, ...dataToUpdate } = partialUser
+
 		if (typeof uuid == 'undefined') return false
 
 		this.throwIfManipulateSomeoneElse(token, uuid)
 
-		try {
-			// Simulate updated user to check if new datas are well formatted
-			const userToUpdate = await UserRepository.get({ uuid })
-
-			if (typeof userToUpdate === 'undefined')
-				throw new DatabaseError('User not found', 400)
-
-			for (const key in { ...dataToUpdate }) {
-				if (
-					key in userToUpdate &&
-					typeof { ...dataToUpdate }[key] !== 'undefined'
-				)
-					userToUpdate[key] = { ...dataToUpdate }[key]
-			}
-
-			// Throw if incorrect format
-			userToUpdate.password = 'fake' // otherwise validation test consider encrypted pwd too long
-			const errors: ValidationError[] = await validate(userToUpdate)
-			if (errors.length > 0)
-				throw new DatabaseError('Incorrect data', 400, undefined, errors)
-
-			// Update user if correct format
-			const res = await UserRepository.update({ uuid }, { ...dataToUpdate })
-			return res.affected != 0
-		} catch (error) {
-			if (error instanceof DatabaseError) throw error
-			if (error instanceof QueryFailedError)
-				throw new DatabaseError(error.message, 400, error.stack, error)
-			return false
-		}
+		return transformAndValidate(User, partialUser, {
+			validator: { skipMissingProperties: true },
+		})
+			.then(
+				(): Promise<UpdateResult> =>
+					UserRepository.update({ uuid }, { ...dataToUpdate }),
+			)
+			.then((res): boolean => res.affected != 0)
+			.catch(error => {
+				if (error instanceof DatabaseError) throw error
+				if (error instanceof QueryFailedError)
+					throw new DatabaseError(error.message, 400, error.stack, error)
+				throw error
+			})
 	}
 
 	/**
@@ -94,32 +80,30 @@ class UserService {
 		currentPwd: string,
 		newPwd: string,
 	): Promise<boolean> {
-		if (typeof uuid == 'undefined') return false
+		if (typeof uuid === 'undefined') return false
 
 		this.throwIfManipulateSomeoneElse(token, uuid)
-		let userToUpdate: User | undefined
-		try {
-			userToUpdate = await UserRepository.get({ uuid })
 
+		try {
 			// Check provided current password
-			if (!userToUpdate?.checkIfUnencryptedPasswordIsValid(currentPwd))
+			const userToUpdate = await UserRepository.get({ uuid })
+			if (userToUpdate === undefined)
+				throw new DatabaseError('User not found', 404)
+			if (!User.checkIfUnencryptedPasswordIsValid(userToUpdate, currentPwd))
 				throw new DatabaseError('Wrong current password', 403)
 
-			// Prepare pwd update if well formatted
+			// Check format of new password
 			userToUpdate.password = newPwd
-			const errors: ValidationError[] = await validate(userToUpdate)
-			if (errors.length > 0) {
-				userToUpdate.password = currentPwd
-				throw new DatabaseError(
-					'Wrong format for new password',
-					400,
-					undefined,
-					errors,
-				)
-			}
-			userToUpdate.hashPassword()
+			await transformAndValidate(
+				User,
+				{ password: newPwd },
+				{
+					validator: { skipMissingProperties: true },
+				},
+			)
 
-			// Exec user update
+			// Hash and update correct password
+			User.hashPassword(userToUpdate)
 			const res = await UserRepository.update(
 				{ uuid },
 				{ password: userToUpdate.password },
@@ -127,11 +111,9 @@ class UserService {
 			return res.affected != 0
 		} catch (error) {
 			if (error instanceof DatabaseError) throw error
-			if (error instanceof QueryFailedError) {
-				if (userToUpdate !== undefined) userToUpdate.password = currentPwd
-				throw new DatabaseError(error.message, 400, error.stack, error)
-			}
-			return false
+			if (error instanceof ValidationError)
+				throw new DatabaseError('Invalid format of new password', 400)
+			throw error
 		}
 	}
 

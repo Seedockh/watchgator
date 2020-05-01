@@ -1,6 +1,6 @@
 /** ****** ORM ****** **/
 import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm'
-import { Length, IsNotEmpty, IsEmail } from 'class-validator'
+import { Length, IsNotEmpty, IsEmail, ValidationSchema } from 'class-validator'
 /** ****** ENCRYPT ****** **/
 import * as bcrypt from 'bcryptjs'
 import * as jwt from 'jsonwebtoken'
@@ -10,7 +10,7 @@ import IStorageService from 'src/services/IStorageService'
 
 @Entity()
 @Unique(['nickname'])
-export class User {
+export class User implements IUser {
 	@PrimaryGeneratedColumn('uuid')
 	uuid!: string
 
@@ -31,12 +31,15 @@ export class User {
 	@Column('text', { nullable: true })
 	avatar?: string
 
-	hashPassword(): void {
-		this.password = bcrypt.hashSync(this.password, 8)
+	static hashPassword(user: User): void {
+		user.password = bcrypt.hashSync(user.password, 8)
 	}
 
-	checkIfUnencryptedPasswordIsValid(unencryptedPassword: string): boolean {
-		return bcrypt.compareSync(unencryptedPassword, this.password)
+	static checkIfUnencryptedPasswordIsValid(
+		user: User,
+		unencryptedPassword: string,
+	): boolean {
+		return bcrypt.compareSync(unencryptedPassword, user.password)
 	}
 
 	static get storageService(): IStorageService {

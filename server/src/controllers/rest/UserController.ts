@@ -121,21 +121,23 @@ class UserController {
 	}
 
 	static async updateUser(req: Request, res: Response): Promise<Response> {
-		const { uuid } = req.body
-		if (typeof uuid == 'undefined')
+		const { ...userProperties }: User = req.body
+
+		if (typeof userProperties.uuid == 'undefined')
 			return res
 				.status(400)
 				.json({ error: 'Uuid is required to edit any user' })
 
 		try {
-			const response = await UserService.updateUser(getTokenFromHeader(req), {
-				...req.body,
-			})
+			const response = await UserService.updateUser(
+				getTokenFromHeader(req),
+				userProperties,
+			)
 
 			if (response)
-				return res
-					.status(200)
-					.json({ success: `User with uuid ${uuid} succesfully updated` })
+				return res.status(200).json({
+					success: `User with uuid ${userProperties.uuid} succesfully updated`,
+				})
 			throw new Error('Incorrect keys in body')
 		} catch (error) {
 			if (error instanceof EndpointAccessError)
@@ -147,7 +149,7 @@ class UserController {
 					.status(error.status)
 					.json({ error: { message: error.message, details: error.details } })
 			return res.status(500).json({
-				error: `Unexpected error: User with uuid ${uuid} cannot be updated`,
+				error: `Unexpected error: User with uuid ${userProperties.uuid} cannot be updated`,
 				details: error.message || error,
 			})
 		}

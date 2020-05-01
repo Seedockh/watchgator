@@ -35,7 +35,7 @@ class AuthenticateService {
 			throw new DatabaseError('Incorrect data', 400, undefined, errors)
 
 		try {
-			user.hashPassword()
+			User.hashPassword(user)
 			// Add user to DB
 			const createdUser = await UserRepository.create(user)
 

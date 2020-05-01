@@ -87,5 +87,9 @@
 		"typeorm": "^0.2.24",
 		"typescript": "^3.8.3"
 	},
-	"devDependencies": {}
+	"devDependencies": {
+		"class-transformer": "^0.2.3",
+		"class-transformer-validator": "^0.8.0",
+		"reflect-metadata": "^0.1.13"
+	}
 }

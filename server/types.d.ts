@@ -9,6 +9,14 @@ interface Token {
 	token: string
 }
 
+interface IUser {
+	uuid: string
+	nickname: string
+	email: string
+	password: string
+	avatar?: string | undefined
+}
+
 interface AuthServiceResponse extends BaseResponse {
 	data: {
 		user: IUser
@@ -18,7 +26,7 @@ interface AuthServiceResponse extends BaseResponse {
 
 interface UserServiceResponse extends BaseResponse {
 	data: {
-		user: IUser
+		user?: IUser
 	}
 }
 
