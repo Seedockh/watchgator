@@ -23,7 +23,7 @@ passport.use(
 
 				if (!user) return next('User does not exist')
 
-				if (!user.checkIfUnencryptedPasswordIsValid(password))
+				if (!User.checkIfUnencryptedPasswordIsValid(user, password))
 					return next('Password does not match')
 
 				return next(false, user)
@@ -47,7 +47,7 @@ passport.use(
 				})
 
 				if (!user) return next(null, false)
-				if (!user.checkIfUnencryptedPasswordIsValid(password))
+				if (!User.checkIfUnencryptedPasswordIsValid(user, password))
 					return next(null, false)
 
 				return next(false, user)

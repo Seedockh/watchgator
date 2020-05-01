@@ -6,11 +6,11 @@ import IMDBDatasetService from './services/IMDBDatasetService'
 import Database from './database/Database'
 import UserRepository from './database/repositories/UserRepository'
 import ExpressServer from './core/ExpressServer'
-
-(async () => {
+import 'reflect-metadata'
+;(async () => {
 	await Database.boot()
 	if (process.env.NODE_ENV !== 'production') await Scraper.boot('sample')
-	await UserRepository.init()
+	UserRepository.init()
 	await IMDBDatasetService.init()
-	await ExpressServer.run()
+	ExpressServer.run()
 })()

@@ -6,12 +6,13 @@ import _ from 'lodash'
 import IMDBDatasetService from '../../services/IMDBDatasetService'
 
 class PeoplesController {
-  static getAll(req: Request, res: Response) {
-    res.json(process.env.NODE_ENV === 'production' ?
-      IMDBDatasetService.liveGenres.data :
-      IMDBDatasetService.sampleGenres.data
-    )
-  }
+	static getAll(req: Request, res: Response) {
+		res.json(
+			process.env.NODE_ENV === 'production'
+				? IMDBDatasetService.liveGenres.data
+				: IMDBDatasetService.sampleGenres.data,
+		)
+	}
 }
 
 export default PeoplesController

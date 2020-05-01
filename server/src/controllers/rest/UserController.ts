@@ -50,7 +50,7 @@ class UserController {
 				getTokenFromHeader(req),
 				req.body.uuid,
 				req.params.fileKey,
-			) // TODO: Delete from user also!!
+			)
 			if (!result) throw new Error()
 			return res.status(200).json({
 				message: 'Success - Image deleted from S3 or not existing',
@@ -91,7 +91,7 @@ class UserController {
 	static async deleteUser(req: Request, res: Response): Promise<Response> {
 		const { uuid } = req.params
 
-		if (uuid == null || uuid == null)
+		if (typeof uuid == 'undefined')
 			return res
 				.status(400)
 				.json({ error: 'Uuid is required to delete any user' })
@@ -101,7 +101,7 @@ class UserController {
 				getTokenFromHeader(req),
 				uuid,
 			)
-			return response == true
+			return response
 				? res
 						.status(200)
 						.json({ success: `User with uuid ${uuid} succesfully deleted` })
@@ -116,6 +116,81 @@ class UserController {
 			return res.status(500).json({
 				error: `Unexpected error: User with uuid ${uuid} cannot be deleted`,
 				details: error,
+			})
+		}
+	}
+
+	static async updateUser(req: Request, res: Response): Promise<Response> {
+		const { ...userProperties }: User = req.body
+
+		if (typeof userProperties.uuid == 'undefined')
+			return res
+				.status(400)
+				.json({ error: 'Uuid is required to edit any user' })
+
+		try {
+			const response = await UserService.updateUser(
+				getTokenFromHeader(req),
+				userProperties,
+			)
+
+			if (response)
+				return res.status(200).json({
+					success: `User with uuid ${userProperties.uuid} succesfully updated`,
+				})
+			throw new Error('Incorrect keys in body')
+		} catch (error) {
+			if (error instanceof EndpointAccessError)
+				return res
+					.status(error.status)
+					.json({ error: { message: error.message } })
+			if (error instanceof DatabaseError)
+				return res
+					.status(error.status)
+					.json({ error: { message: error.message, details: error.details } })
+			return res.status(500).json({
+				error: `Unexpected error: User with uuid ${userProperties.uuid} cannot be updated`,
+				details: error.message || error,
+			})
+		}
+	}
+
+	static async updateUserPwd(req: Request, res: Response): Promise<Response> {
+		const { uuid, currentPwd, newPwd } = req.body
+		if (
+			typeof uuid === 'undefined' ||
+			typeof currentPwd === 'undefined' ||
+			typeof newPwd === 'undefined'
+		)
+			return res
+				.status(400)
+				.json({ error: 'Uuid - currentPw and newPwd are required in body' })
+
+		try {
+			const response = await UserService.updateUserPwd(
+				getTokenFromHeader(req),
+				uuid,
+				currentPwd,
+				newPwd,
+			)
+
+			if (response)
+				return res.status(200).json({
+					success: `Password of user with uuid ${uuid} succesfully updated`,
+				})
+			throw new Error('Incorrect keys in body')
+		} catch (error) {
+			if (error instanceof EndpointAccessError)
+				return res
+					.status(error.status)
+					.json({ error: { message: error.message } })
+			if (error instanceof DatabaseError)
+				return res
+					.status(error.status)
+					.json({ error: { message: error.message, details: error.details } })
+			return res.status(500).json({
+				error: `Unexpected error: Password of user with uuid ${uuid} cannot be updated`,
+				details: error.message || error,
 			})
 		}
 	}

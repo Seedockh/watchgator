@@ -7,10 +7,12 @@ import {
 	UpdateResult,
 	Connection,
 } from 'typeorm'
+import { QueryPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
+import { validate, ValidationError } from 'class-validator'
 /** ****** INTERNALS ****** **/
 import { User } from '../models/User'
 import { aLog } from '../../core/Log'
-import { QueryPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
+import { DatabaseError } from '../../core/CustomErrors'
 
 class UserRepository {
 	static repository: Repository<User>

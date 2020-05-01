@@ -2,6 +2,9 @@
 import { User } from '../database/models/User'
 import UserRepository from '../database/repositories/UserRepository'
 import { DatabaseError, EndpointAccessError } from '../core/CustomErrors'
+import { QueryFailedError, UpdateResult } from 'typeorm'
+import { ValidationError } from 'class-validator'
+import { transformAndValidate } from 'class-transformer-validator'
 
 class UserService {
 	static throwIfManipulateSomeoneElse(
@@ -21,7 +24,7 @@ class UserService {
 
 		const user = await UserRepository.get({ uuid })
 		if (user == undefined)
-			throw new DatabaseError(`User with uuid ${uuid} not found`, 404)
+			throw new DatabaseError(`Uuid ${uuid} : user not found`, 404)
 		return { status: 200, data: { user } }
 	}
 
@@ -39,7 +42,82 @@ class UserService {
 		}
 	}
 
-	/*
+	/**
+	 * Update everything from user except uuid and password
+	 */
+	static async updateUser(
+		token: string | undefined,
+		partialUser: Partial<User>,
+	): Promise<boolean> {
+		const { uuid, password, ...dataToUpdate } = partialUser
+
+		if (typeof uuid == 'undefined') return false
+
+		this.throwIfManipulateSomeoneElse(token, uuid)
+
+		return transformAndValidate(User, partialUser, {
+			validator: { skipMissingProperties: true },
+		})
+			.then(
+				(): Promise<UpdateResult> =>
+					UserRepository.update({ uuid }, { ...dataToUpdate }),
+			)
+			.then((res): boolean => res.affected != 0)
+			.catch(error => {
+				if (error instanceof DatabaseError) throw error
+				if (error instanceof QueryFailedError)
+					throw new DatabaseError(error.message, 400, error.stack, error)
+				throw error
+			})
+	}
+
+	/**
+	 * Update user password only
+	 */
+	static async updateUserPwd(
+		token: string | undefined,
+		uuid: string,
+		currentPwd: string,
+		newPwd: string,
+	): Promise<boolean> {
+		if (typeof uuid === 'undefined') return false
+
+		this.throwIfManipulateSomeoneElse(token, uuid)
+
+		try {
+			// Check provided current password
+			const userToUpdate = await UserRepository.get({ uuid })
+			if (userToUpdate === undefined)
+				throw new DatabaseError('User not found', 404)
+			if (!User.checkIfUnencryptedPasswordIsValid(userToUpdate, currentPwd))
+				throw new DatabaseError('Wrong current password', 403)
+
+			// Check format of new password
+			userToUpdate.password = newPwd
+			await transformAndValidate(
+				User,
+				{ password: newPwd },
+				{
+					validator: { skipMissingProperties: true },
+				},
+			)
+
+			// Hash and update correct password
+			User.hashPassword(userToUpdate)
+			const res = await UserRepository.update(
+				{ uuid },
+				{ password: userToUpdate.password },
+			)
+			return res.affected != 0
+		} catch (error) {
+			if (error instanceof DatabaseError) throw error
+			if (error instanceof ValidationError)
+				throw new DatabaseError('Invalid format of new password', 400)
+			throw error
+		}
+	}
+
+	/**
 	Update user avatar and remove previous from AWS
 	*/
 	static async updateAvatar(
@@ -95,7 +173,8 @@ class UserService {
 		this.throwIfManipulateSomeoneElse(token, uuid)
 
 		try {
-			await User.storageService.deleteImg(fileKey) // Delete from user also!!
+			await UserRepository.update({ uuid }, { avatar: undefined })
+			await User.storageService.deleteImg(fileKey)
 			return true
 		} catch (error) {
 			return false
