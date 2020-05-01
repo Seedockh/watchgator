@@ -45,6 +45,7 @@ const Middleware = (app: Application): void => {
 			basePath: '/',
 		},
 		apis: [
+			'./doc/Search.yml',
 			'./doc/Movies.yml',
 			'./doc/Series.yml',
 			'./doc/Peoples.yml',
