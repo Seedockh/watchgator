@@ -19,7 +19,7 @@ class SearchController {
 
       if (names.title) {
         movies = _.filter(
-
+          // @ts-ignore: unreachable key
           IMDBDatasetService[`${level}Movies`].data,
           movie => (new RegExp(names.title, 'i')).test(movie.title)
         )
@@ -147,9 +147,13 @@ class SearchController {
       }
     }
 
+    // @ts-ignore: unreachable key
     const totalMovies = movies ? movies.length : IMDBDatasetService[`${level}Movies`].data.length
+    // @ts-ignore: unreachable key
     const totalSeries = series ? series.length : IMDBDatasetService[`${level}Series`].data.length
+    // @ts-ignore: unreachable key
     const resultMovies = _.chunk(movies ? movies : IMDBDatasetService[`${level}Movies`].data, 20)
+    // @ts-ignore: unreachable key
     const resultSeries = _.chunk(series ? series : IMDBDatasetService[`${level}Series`].data, 20)
     res.json({
       total: totalMovies + totalSeries,
@@ -158,9 +162,7 @@ class SearchController {
       moviesPages: resultMovies.length,
       seriesPages: resultSeries.length,
       results: {
-        // @ts-ignore: unreachable key
         movies: resultMovies,
-        // @ts-ignore: unreachable key
         series: resultSeries
       }
     })
