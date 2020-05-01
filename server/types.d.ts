@@ -1,3 +1,5 @@
+import { IMDBMediaImpl } from 'src/database/models/IMDBMediaImpl'
+
 /********************************
  * Define Server Response types *
  ********************************/

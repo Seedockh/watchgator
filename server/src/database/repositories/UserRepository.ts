@@ -8,21 +8,16 @@ import {
 	Connection,
 } from 'typeorm'
 import { QueryPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
-import { validate, ValidationError } from 'class-validator'
 /** ****** INTERNALS ****** **/
 import { User } from '../models/User'
 import { aLog } from '../../core/Log'
-import { DatabaseError } from '../../core/CustomErrors'
+import BaseRepository from './BaseRepository'
 
-class UserRepository {
+class UserRepository extends BaseRepository {
 	static repository: Repository<User>
 
-	static getConnection(): Connection {
-		return getConnection('main')
-	}
-
 	static init(): void {
-		this.repository = getConnection('main').getRepository(User)
+		this.repository = BaseRepository.getConnection().getRepository(User)
 		aLog('').succeed('Users initialized')
 	}
 
@@ -34,6 +29,7 @@ class UserRepository {
 		return await this.repository?.findOne(user)
 	}
 
+	// TODO: see if Partial type is possible
 	static async update(
 		criteria: FindConditions<User>,
 		partialEntity: QueryPartialEntity<User>,
