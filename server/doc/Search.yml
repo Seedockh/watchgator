@@ -1,0 +1,145 @@
+openapi: 3.0.0
+info:
+  title: WatchGator API
+  description: Movies / Series fast and reliable search engine
+  version: 1.0.0
+servers:
+  - url: https://watchgator-server.herokuapp.com/api
+    description: Main endpoint
+
+path:
+  /search:
+    post:
+      summary: Exhaustive search with names and filters payloads
+      tags: [Search]
+      requestBody:
+        description: Can have "names" (title, actors, directors, genres) and "filters" (year, rating, metaScore, runtime). If neither "names" or "filters" is specified, will return all Movies & Series (10k items)
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovieFind'
+      responses:
+        "200":
+          description: Find movies by searching (case-insensitive RegExp) with specified body keys
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MoviesChunk'
+
+components:
+ schemas:
+   MediasList:
+     type: array
+     items:
+       $ref: '#/components/schemas/MediasChunk'
+     uniqueItems: true
+
+   MoviesChunk:
+     type: array
+     items:
+       $ref: '#/components/schemas/Movie'
+     minItems: 1
+     maxItems: 20
+     uniqueItems: true
+
+   MovieFind:
+     type: object
+     properties:
+       key:
+         type: string | int | float
+       matchCase:
+         type: bool
+     example:
+       title: "paras"
+       matchCase: false
+
+   Media:
+     type: object
+     properties:
+       id:
+         type: string
+         description: Movie's ID
+       title:
+         type: string
+         description: title of the movie
+       year:
+         type: int
+         description: year of release
+       rating:
+         type: float
+         description: IMDB rating
+       nbRatings:
+         type: int
+         description: number of ppl that rated the movie
+       metaScore:
+         type: int
+         description: IMDB popularity score
+       certificate:
+         type: string
+         description: for which public is addressed the movie
+       runtime:
+         type: int
+         description: duration of the movie
+       genre:
+         type: array
+         description: category(ies) of the movie
+       description:
+         type: string
+         description: short synopsis
+       picture:
+         type: string
+         description: picture URL
+       directors:
+         type: array
+         description: main director name
+       actors:
+         type: array
+         description: list of the actors
+       gross:
+         type: string
+         description: total budget of the movie
+     example:
+       id: "tt6751668"
+       title: "Parasite"
+       year: 2019
+       rating: 8.6
+       nbRatings: 382763
+       metaScore: 96
+       certificate: "R"
+       runtime: 132
+       genre: [
+        {
+          name: "Action"
+        },
+        {
+          name: "Thriller"
+        }
+       ]
+       description: "Greed and class discrimination threaten the newly formed symbiotic relationship between the wealthy Park family and the destitute Kim clan."
+       picture: "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@.jpg"
+       directors: [
+        {
+          id: "nm1092087",
+          name: "Sam Hargrave"
+        }
+       ]
+       actors": [
+        {
+          id: "nm1165110",
+          name: "Chris Hemsworth"
+        },
+        {
+          id: "nm0267042",
+          name: "Golshifteh Farahani"
+        },
+        {
+          id: "nm7287299",
+          name: "Rudhraksh Jaiswal"
+        },
+        {
+          id: "nm2534972",
+          name: "Shivam Vichare"
+        }
+       ]
+       gross: "$53.37M"
