@@ -6,6 +6,7 @@ import _ from 'lodash'
 import IMDBDatasetService from '../../services/IMDBDatasetService'
 
 class SearchController {
+  /** * @TODO: Refactoring for filters * **/
   static search(req: Request, res: Response) {
     const level: string = process.env.NODE_ENV === 'production' ? 'live' : 'sample'
     let { names, filters } = req.body
@@ -54,44 +55,89 @@ class SearchController {
           )
         })
       }
+
+
+      if (names.genres) {
+        names.genres.forEach((genre: string) => {
+          movies = _.filter(
+            // @ts-ignore: unreachable key
+            movies ? movies : IMDBDatasetService[`${level}Movies`].data,
+            movie => _.some(movie.genres, { name: genre.name })
+          )
+        })
+        names.genres.forEach((genre: string) => {
+          series = _.filter(
+            // @ts-ignore: unreachable key
+            series ? series : IMDBDatasetService[`${level}Series`].data,
+            serie => _.some(serie.genres, { name: genre.name })
+          )
+        })
+      }
     }
 
     if (filters) {
       filters = JSON.parse(filters)
 
       if (filters.year) {
-        // year: { min: 1950, max: 2020 },
-
+        movies = _.filter(
+          // @ts-ignore: unreachable key
+          movies ? movies : IMDBDatasetService[`${level}Movies`].data,
+          movie => movie.year >= filters.year.min && movie.year <= filters.year.max
+        )
+        series = _.filter(
+          // @ts-ignore: unreachable key
+          series ? series : IMDBDatasetService[`${level}Series`].data,
+          serie => serie.year >= filters.year.min && serie.year <= filters.year.max
+        )
       }
 
       if (filters.rating) {
-        // rating: { min: 0, max: 10 },
-
+        movies = _.filter(
+          // @ts-ignore: unreachable key
+          movies ? movies : IMDBDatasetService[`${level}Movies`].data,
+          movie => movie.rating >= filters.rating.min && movie.rating <= filters.rating.max
+        )
+        series = _.filter(
+          // @ts-ignore: unreachable key
+          series ? series : IMDBDatasetService[`${level}Series`].data,
+          serie => serie.rating >= filters.rating.min && serie.rating <= filters.rating.max
+        )
       }
 
       if (filters.metaScore) {
-        // metaScore: { min: 0, max: 100 },
-
+        movies = _.filter(
+          // @ts-ignore: unreachable key
+          movies ? movies : IMDBDatasetService[`${level}Movies`].data,
+          movie => movie.metaScore >= filters.metaScore.min && movie.metaScore <= filters.metaScore.max
+        )
+        series = _.filter(
+          // @ts-ignore: unreachable key
+          series ? series : IMDBDatasetService[`${level}Series`].data,
+          serie => serie.metaScore >= filters.metaScore.min && serie.metaScore <= filters.metaScore.max
+        )
       }
 
       if (filters.certificate) {
         // certificate: ["Tous Publics", "Tous Publics (avec avertissement)", "0+", "6+", "9+", "10", "12", "14+", "16", "18", "X"],
-
+        /** @TODO */
       }
 
       if (filters.runtime) {
-        // runtime: { min: 5, max 500 },
-
-      }
-
-      if (filters.genres) {
-        // genres: Genres,
-
+        movies = _.filter(
+          // @ts-ignore: unreachable key
+          movies ? movies : IMDBDatasetService[`${level}Movies`].data,
+          movie => movie.runtime >= filters.runtime.min && movie.runtime <= filters.runtime.max
+        )
+        series = _.filter(
+          // @ts-ignore: unreachable key
+          series ? series : IMDBDatasetService[`${level}Series`].data,
+          serie => serie.runtime >= filters.runtime.min && serie.runtime <= filters.metaScore.max
+        )
       }
 
       if (filters.gross) {
         // gross: { min: 0, max: ""$1000M" }
-
+        /** @TODO */
       }
     }
 
