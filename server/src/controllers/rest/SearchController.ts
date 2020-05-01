@@ -147,12 +147,21 @@ class SearchController {
       }
     }
 
+    const totalMovies = movies ? movies.length : IMDBDatasetService[`${level}Movies`].data.length
+    const totalSeries = series ? series.length : IMDBDatasetService[`${level}Series`].data.length
+    const resultMovies = _.chunk(movies ? movies : IMDBDatasetService[`${level}Movies`].data, 20)
+    const resultSeries = _.chunk(series ? series : IMDBDatasetService[`${level}Series`].data, 20)
     res.json({
+      total: totalMovies + totalSeries,
+      totalMovies: totalMovies,
+      totalSeries: totalSeries,
+      moviesPages: resultMovies.length,
+      seriesPages: resultSeries.length,
       results: {
         // @ts-ignore: unreachable key
-        movies: _.chunk(movies ? movies : IMDBDatasetService[`${level}Movies`].data, 20),
+        movies: resultMovies,
         // @ts-ignore: unreachable key
-        series: _.chunk(series ? series : IMDBDatasetService[`${level}Series`].data, 20)
+        series: resultSeries
       }
     })
   }
