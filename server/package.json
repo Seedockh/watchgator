@@ -38,6 +38,7 @@
 		"chai": "^4.2.0",
 		"chalk": "^3.0.0",
 		"class-validator": "^0.11.0",
+		"class-transformer-validator": "^0.8.0",
 		"cors": "^2.8.5",
 		"dotenv": "^8.2.0",
 		"eslint": "^6.8.0",
@@ -90,7 +91,6 @@
 		"@types/swagger-jsdoc": "^3.0.2",
 		"@types/swagger-ui-express": "^4.1.1",
 		"class-transformer": "^0.2.3",
-		"class-transformer-validator": "^0.8.0",
 		"reflect-metadata": "^0.1.13",
 		"typescript": "^3.8.3"
 	}
