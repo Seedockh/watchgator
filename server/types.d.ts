@@ -86,6 +86,28 @@ interface IMDBCategory {
 	name: string | null
 }
 
+interface IMDBNamesParam {
+	title: string,
+	actors: IMDBPerson[],
+	directors: IMDBPerson[],
+	genres: IMDBCategory[]
+}
+
+interface IMDBFiltersParam {
+	year: IMDBFilter,
+	rating: IMDBFilter,
+	nbRatings: IMDBFilter,
+	metaScore: IMDBFilter,
+	runtime: IMDBFilter,
+	certificate: string,
+	gross: IMDBFilter,
+}
+
+interface IMDBFilter {
+	min: int | float,
+	max: int | float
+}
+
 /********************
  * Extended Express types *
  ********************/
