@@ -5,33 +5,31 @@ import _ from 'lodash'
 /** ****** INTERNALS ****** **/
 import IMDBDatasetService from '../../services/IMDBDatasetService'
 
+const level: string = process.env.NODE_ENV === 'production' ? 'live' : 'sample'
+
 class SeriesController {
 	static getAll(req: Request, res: Response) {
-		res.json(
-			process.env.NODE_ENV === 'production'
-				? _.chunk(IMDBDatasetService.liveSeries.data, 20)
-				: _.chunk(IMDBDatasetService.sampleSeries.data, 20),
-		)
+		// @ts-ignore: unreachable key
+		const total = IMDBDatasetService[`${level}Series`].data.length
+		// @ts-ignore: unreachable key
+		const results = _.chunk(IMDBDatasetService[`${level}Series`].data, 20)
+
+		res.json({ total: total, pages: results.length, results: results })
 	}
 
 	static getAllByPage(req: Request, res: Response) {
-		const page = parseInt(req.params.page)
+		const page = parseInt(req.params.page) - 1
 		const start = 20 * page
 		const end = start + 20
+		// @ts-ignore: unreachable key
+		const result = _.slice(IMDBDatasetService[`${level}Series`].data, start, end)
 
-		res.json(
-			process.env.NODE_ENV === 'production'
-				? _.slice(IMDBDatasetService.liveSeries.data, start, end)
-				: _.slice(IMDBDatasetService.sampleSeries.data, start, end),
-		)
+		res.json({ total: result.length, page: page+1, results: result })
 	}
 
 	static getById(req: Request, res: Response) {
-		res.json(
-			process.env.NODE_ENV === 'production'
-				? _.find(IMDBDatasetService.liveSeries.data, { id: req.params.id })
-				: _.find(IMDBDatasetService.sampleSeries.data, { id: req.params.id }),
-		)
+		// @ts-ignore: unreachable key
+		res.json(_.find(IMDBDatasetService[`${level}Series`].data, { id: req.params.id }))
 	}
 
 	static findByKeys(req: Request, res: Response) {
@@ -42,32 +40,33 @@ class SeriesController {
 		// @ts-ignore: unreachable filters keys
 		Object.entries(keys).forEach(
 			// @ts-ignore: unreachable keys
-			key => (filters[key[0]] = new RegExp(key[1], matchCase)),
+			(key: string[]) => (filters[key[0]] = new RegExp(key[1], matchCase)),
 		)
 
-		const results = _.filter(
-			process.env.NODE_ENV === 'production'
-				? IMDBDatasetService.liveSeries.data
-				: IMDBDatasetService.sampleSeries.data,
-			movie => {
+		let results = _.filter(
+			// @ts-ignore: unreachable key
+			IMDBDatasetService[`${level}Series`].data,
+			serie => {
 				for (const key in filters) {
 					// @ts-ignore: unreachable filters keys
-					if (filters[key].test(movie[key])) return true
+					if (filters[key].test(serie[key])) return true
 				}
 			},
 		)
 
-		if (keys.title) _.sortBy(results, ['title', 'rating'])
-		else if (keys.description) _.sortBy(results, ['description', 'rating'])
-		else if (keys.rating) _.sortBy(results, ['rating', 'title'])
-		else if (keys.metaScore) _.sortBy(results, ['metaScore', 'rating'])
-		else if (keys.year) _.sortBy(results, ['year', 'rating'])
-		else if (keys.runtime) _.sortBy(results, ['runtime', 'rating'])
-		else if (keys.gross) _.sortBy(results, ['gross', 'rating'])
-		else if (keys.nbRatings) _.sortBy(results, ['nbRatings', 'rating'])
-		else if (keys.certificate) _.sortBy(results, ['certificate', 'rating'])
+		if (keys.title) results = _.orderBy(results, ['rating'], ['desc'])
+		else if (keys.description) results = _.orderBy(results, ['rating'], ['desc'])
+		else if (keys.rating) results = _.orderBy(results, ['rating'], ['desc'])
+		else if (keys.metaScore) results = _.orderBy(results, ['metaScore', 'rating'], ['desc', 'desc'])
+		else if (keys.year) results = _.orderBy(results, ['rating'], ['desc'])
+		else if (keys.runtime) results = _.orderBy(results, ['rating'], ['desc'])
+		// else if (keys.gross) results = _.sortBy(results, ['gross', 'rating'])
+		// else if (keys.nbRatings) results = _.sortBy(results, ['nbRatings', 'rating'])
+		// else if (keys.certificate) results = _.sortBy(results, ['certificate', 'rating'])
 
-		res.json({ results: _.chunk(results, 20) })
+		const total = results.length
+		results = _.chunk(results, 20)
+		res.json({ total: total, pages: results.length, results: results })
 	}
 }
 

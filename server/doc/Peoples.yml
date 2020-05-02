@@ -116,7 +116,7 @@ components:
          description: Photo of the People
        role:
          type: string
-         description: People role (Actor, Actress, Director)
+         description: People role (Actor, Actress, Director, Writer, Composer)
      example:
        id: "nm0000246"
        firstname: "Bruce"

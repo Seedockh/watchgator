@@ -86,24 +86,26 @@ interface IMDBCategory {
 	name: string | null
 }
 
+interface IMDBNamesParam {
+	title: string,
+	actors: IMDBPerson[],
+	directors: IMDBPerson[],
+	genres: IMDBCategory[]
+}
+
+interface IMDBFiltersParam {
+	year: IMDBFilter,
+	rating: IMDBFilter,
+	nbRatings: IMDBFilter,
+	metaScore: IMDBFilter,
+	runtime: IMDBFilter,
+	certificate: string,
+	gross: IMDBFilter,
+}
+
 interface IMDBFilter {
-	id: string | null
-	title: string | null
-	year: number | null
-	rating: number | null
-	nbRatings: number | null
-	metaScore: number | null
-	certificate: string | null
-	runtime: number | null
-	genres: (IMDBCategory | null)[]
-	description: string | null
-	picture: string | null
-	directors: (IMDBPerson | null)[]
-	actors: (IMDBPerson | null)[]
-	gross: string | null
-	firstname: string | null
-	lastname: string | null
-	role: string | null
+	min: int | float,
+	max: int | float
 }
 
 /********************
