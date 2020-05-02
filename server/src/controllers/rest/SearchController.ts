@@ -19,7 +19,8 @@ class SearchController {
 
     try {
       if (names) {
-        names = JSON.parse(names)
+        try { names = JSON.parse(names) }
+        catch { throw new Error('Invalid names parameter. It must be JSON.stringify() to be readable by server.') }
 
         if (names.title) {
           movies = _.filter(
@@ -81,7 +82,8 @@ class SearchController {
       }
 
       if (filters) {
-        filters = JSON.parse(filters)
+        try { filters = JSON.parse(filters) }
+        catch { throw new Error('Invalid filters parameter. It must be JSON.stringify() to be readable by server.') }
 
         if (filters.year) {
           movies = _.filter(
@@ -164,6 +166,7 @@ class SearchController {
       sLog(`[${(new Date).toLocaleDateString()}-${(new Date).toLocaleTimeString()}] Search reached ${totalMovies+totalSeries} results in ${time}ms`, 'FFA500')
       res.json({
         total: totalMovies + totalSeries,
+        time: time,
         totalMovies: totalMovies,
         totalSeries: totalSeries,
         moviesPages: resultMovies.length,
@@ -175,6 +178,7 @@ class SearchController {
       })
     } catch (error) {
       sLog(`[${(new Date).toLocaleDateString()}-${(new Date).toLocaleTimeString()}] Search error: ${error}`, 'FF0000')
+      res.json({ error: true, message: `${error}` })
     }
 
   }
