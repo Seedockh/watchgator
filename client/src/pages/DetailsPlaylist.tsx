@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { Container, Content, Panel, Divider, Badge, FlexboxGrid, Button } from 'rsuite'
-import Coverflow from 'react-coverflow'
 import { useHistory } from 'react-router-dom'
 
 import User from '../core/user'
@@ -41,7 +40,7 @@ const DetailsPlaylists = () => {
                                             <Divider />
                                             <p style={{marginBottom: 30}}>{movie.description}</p>
                                             <div style={{display: "flex", justifyContent: "center"}}>
-                                            <Button onClick={() => history.push(`/movie/${movie.id}`)}>View more</Button>
+                                            <Button onClick={() => history.push(`/movies/${movie.id}`)}>View more</Button>
                                             </div>
                                         </FlexboxGrid.Item>
                                     </FlexboxGrid>
