@@ -1,0 +1,129 @@
+openapi: 3.0.0
+info:
+  title: WatchGator API
+  description: Movies / Series fast and reliable search engine
+  version: 1.0.0
+servers:
+  - url: https://watchgator-server.herokuapp.com/api
+    description: Main endpoint
+
+path:
+  /search:
+    post:
+      summary: Exhaustive search with names and filters payloads
+      tags: [Search]
+      requestBody:
+        description: Can have "names" (title, [actors], [directors], [genres]) and "filters" (year, rating, metaScore, runtime). Each filter must have a "min" and a "max". If neither "names" or "filters" is specified, will return all Movies & Series (10k items)
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+      responses:
+        "200":
+          description: Returns results of each Movies and Series, ordered by popularity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResult'
+
+components:
+ schemas:
+   SearchRequest:
+     type: object
+     properties:
+       names:
+         type: object
+         properties:
+           title:
+             type: string
+             description: Any string to match Movies/Series titles
+           actors:
+             type: array
+             items:
+               $ref: '#/components/schemas/People'
+           directors:
+             type: array
+             items:
+               $ref: '#/components/schemas/People'
+           genres:
+             type: array
+             items:
+               $ref: '#/components/schemas/SearchGenres'
+         example:
+           actors: [
+             {
+               id: "nm0000206"
+             }
+           ]
+           genres: [
+             {
+               name: "Sci-Fi"
+             }
+           ]
+       filters:
+        type: object
+        properties:
+          year:
+            type: object
+            $ref: '#/components/schemas/SearchFilters'
+          rating:
+            type: object
+            $ref: '#/components/schemas/SearchFilters'
+          metaScore:
+            type: object
+            $ref: '#/components/schemas/SearchFilters'
+          runtime:
+            type: object
+            $ref: '#/components/schemas/SearchFilters'
+
+   SearchGenres:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Any Genre listed in /genres/all
+      example:
+        name: "Drama"
+
+   SearchFilters:
+      type: object
+      properties:
+        min:
+          type: float
+          description: Minimum value to search from
+        max:
+          type: float
+          description: Maximum value to search to
+      example:
+        min: 100
+        max: 200
+   SearchResult:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total amount of medias found
+        totalMovies:
+          type: integer
+          description: Total amount of Movies found
+        totalSeries:
+          type: integer
+          description: Total amount of Series found
+        moviesPages:
+          type: integer
+          description: Total amount of Movies chunks of 20
+        seriesPages:
+          type: integer
+          description: Total amount of Series chunks of 20
+        results:
+          type: object
+          properties:
+            movies:
+              type: array
+              items:
+                $ref: '#/components/schemas/MoviesList'
+            series:
+              type: array
+              items:
+                $ref: '#/components/schemas/SeriesList'

@@ -33,7 +33,7 @@ const Register = () => {
   } 
 
   return (
-    <Container style={{ marginTop: 200 }}>
+    <Container style={{ marginTop: "15%" }}>
       <Content>
         <FlexboxGrid justify="center">
           <FlexboxGrid.Item colspan={10}>
@@ -51,9 +51,9 @@ const Register = () => {
                   <ControlLabel>Password</ControlLabel>
                   <FormControl name="password" type="password" {...passwordBind} />
                 </FormGroup>
-                <FormGroup style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
+                <FormGroup className='flex flex-column flex-align-center'>
                   <Button appearance="primary" style={{ width: 150 }} onClick={() => history.push('/')}>Register</Button>
-                  <FormGroup style={{ display: "flex", flexDirection: "row", alignItems: "baseline", marginTop: 10 }}>
+                  <FormGroup className='flex mt-3' style={{ alignItems: "baseline"}}>
                     <ControlLabel> Already have a account ?</ControlLabel>
                     <Button onClick={redirectLogin} appearance="link"> Sign in</Button>
                   </FormGroup>

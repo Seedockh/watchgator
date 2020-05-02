@@ -1,0 +1,185 @@
+openapi: 3.0.0
+info:
+  title: WatchGator API
+  description: Movies / Series fast and reliable search engine
+  version: 1.0.0
+servers:
+  - url: https://watchgator-server.herokuapp.com/api
+    description: Main endpoint
+
+path:
+  /series/all/:
+    get:
+      summary: Get all Series, chunked by arrays of 20 movies. For example, 100 Series return 5 arrays
+      tags: [Series]
+      responses:
+        "200":
+          description: List of all Series, chunked by pages of 20 movies.
+          content:
+            array:
+              schema:
+                $ref: '#/components/schemas/SeriesList'
+  /series/all/{page}:
+    parameters:
+      - in: path
+        name: page
+        schema:
+          type: integer
+        description: The chunk index to display
+    get:
+      summary: Get the {page} chunk containing 20 Series
+      tags: [Series]
+      responses:
+        "200":
+          description: List of all Series for page n.{page}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeriesChunk'
+  /series/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: The Serie id
+    get:
+      summary: Get the Serie with the id {id}
+      tags: [Series]
+      responses:
+        "200":
+          description: Get the {id} Serie
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Serie'
+  /series/find:
+    post:
+      summary: Find Series by key
+      tags: [Series]
+      requestBody:
+        description: Any Serie key to search on
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SerieFind'
+      responses:
+        "200":
+          description: Find Series by searching (case-insensitive RegExp) with specified body keys
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeriesChunk'
+
+components:
+ schemas:
+   SeriesList:
+     type: array
+     items:
+       $ref: '#/components/schemas/SeriesChunk'
+     uniqueItems: true
+
+   SeriesChunk:
+     type: array
+     items:
+       $ref: '#/components/schemas/Serie'
+     minItems: 1
+     maxItems: 20
+     uniqueItems: true
+
+   SerieFind:
+     type: object
+     properties:
+       key:
+         type: string | int | float
+       matchCase:
+         type: bool
+     example:
+       title: "casa"
+       matchCase: false
+
+   Serie:
+     type: object
+     properties:
+       id:
+         type: string
+         description: Serie's ID
+       title:
+         type: string
+         description: title of the movie
+       year:
+         type: int
+         description: year of release
+       rating:
+         type: float
+         description: IMDB rating
+       nbRatings:
+         type: int
+         description: number of ppl that rated the movie
+       metaScore:
+         type: int
+         description: IMDB popularity score
+       certificate:
+         type: string
+         description: for which public is addressed the movie
+       runtime:
+         type: int
+         description: duration of the movie
+       genre:
+         type: array
+         description: category(ies) of the movie
+       description:
+         type: string
+         description: short synopsis
+       picture:
+         type: string
+         description: picture URL
+       directors:
+         type: array
+         description: for now, it's the current "actors" list !
+       gross:
+         type: string
+         description: total budget of the movie
+     example:
+         id: "tt0944947"
+         title: "Game of Thrones"
+         year: 2011
+         rating: 9.3
+         nbRatings: 1666
+         metaScore: null
+         certificate: "TV-MA"
+         runtime: 57
+         genres: [
+             {
+                 name: "Action"
+             },
+             {
+                 name: "Adventure"
+             },
+             {
+                 name: "Drama"
+             }
+         ]
+         description: "Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia."
+         picture: "https://m.media-amazon.com/images/M/MV5BYTRiNDQwYzAtMzVlZS00NTI5LWJjYjUtMzkwNTUzMWMxZTllXkEyXkFqcGdeQXVyNDIzMzcwNjc@.jpg"
+         directors: [
+             {
+                 id: "nm3592338",
+                 name: "Emilia Clarke"
+             },
+             {
+                 id: "nm0227759",
+                 name: "Peter Dinklage"
+             },
+             {
+                 id: "nm3229685",
+                 name: "Kit Harington"
+             },
+             {
+                 id: "nm0372176",
+                 name: "Lena Headey"
+             }
+         ]
+         actors: []
+         gross: null

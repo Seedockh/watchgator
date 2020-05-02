@@ -2,13 +2,15 @@
 import './prelude'
 import './postlude'
 import Scraper from './core/Scraper'
+import IMDBDatasetService from './services/IMDBDatasetService'
 import Database from './database/Database'
 import UserRepository from './database/repositories/UserRepository'
 import ExpressServer from './core/ExpressServer'
-
-(async () => {
-	await Scraper.boot('sample')
+import 'reflect-metadata'
+;(async () => {
 	await Database.boot()
-	await UserRepository.init()
-	await ExpressServer.run()
+	if (process.env.NODE_ENV !== 'production') await Scraper.boot('sample')
+	UserRepository.init()
+	await IMDBDatasetService.init()
+	ExpressServer.run()
 })()

@@ -1,84 +1,72 @@
-import React, { useEffect } from 'react'
-import User from '../core/user'
-import { useHistory } from 'react-router-dom'
-import { Container, Icon, Content, InputGroup, Input, Grid, Row, Col, Panel, Button } from 'rsuite'
+import React from 'react'
+import { Container, Content, Grid, Row, Col, Panel, Header } from 'rsuite'
 import { MovieCard } from '../widget/MovieCard'
 import { moviesList } from '../data/movies'
 import { Sidebar } from '../widget/sidebar/Sidebar'
+import { Searchbar } from '../widget/Searchbar'
 
 export const Home = () => {
 
   return (
-    <div className="sidebar-page">
+    <Container>
+      <Sidebar items={[
+        {
+          title: 'Categories',
+          icon: 'bookmark',
+          items: [
+            {
+              title: 'Action',
+              path: '/categories/action'
+            },
+            {
+              title: 'Science-fiction',
+              path: '/categories/science-fiction'
+            },
+            {
+              title: 'Policier',
+              path: '/categories/policier'
+            },
+            {
+              title: 'Animé',
+              path: '/categories/anime'
+            }
+          ]
+
+        },
+        {
+          title: 'Decade',
+          icon: 'calendar',
+          items: [
+            {
+              title: '80\'s',
+              path: '/decade/1980'
+            },
+            {
+              title: '90\'s',
+              path: '/decade/1990'
+            },
+            {
+              title: '2000\'s',
+              path: '/decade/2000'
+            },
+            {
+              title: '2010\'s',
+              path: '/decade/2010'
+            },
+          ]
+
+        }
+      ]} />
+
       <Container>
-        <Sidebar items={[
-          {
-            title: 'Categories',
-            icon: 'bookmark',
-            items: [
-              {
-                title: 'Action',
-                path: '/categories/action'
-              },
-              {
-                title: 'Science-fiction',
-                path: '/categories/science-fiction'
-              },
-              {
-                title: 'Policier',
-                path: '/categories/policier'
-              },
-              {
-                title: 'Animé',
-                path: '/categories/anime'
-              }
-            ]
-
-          },
-          {
-            title: 'Decade',
-            icon: 'calendar',
-            items: [
-              {
-                title: '80\'s',
-                path: '/decade/1980'
-              },
-              {
-                title: '90\'s',
-                path: '/decade/1990'
-              },
-              {
-                title: '2000\'s',
-                path: '/decade/2000'
-              },
-              {
-                title: '2010\'s',
-                path: '/decade/2010'
-              },
-            ]
-
-          }
-        ]} />
-
+        <Header className='p-4'>
+          <Searchbar />
+        </Header>
         <Content>
-          <Panel>
-            <Grid fluid>
+          <Panel className="mb-6">
+            <h1  className="ml-4">Movies</h1>
+            <Grid fluid >
               <Row>
-                <Col xs={24} md={12} mdOffset={6}>
-                  <InputGroup inside size="lg" style={{ width: '100%' }}>
-                    <Input />
-                    <InputGroup.Button>
-                      <Icon icon="search" size="lg" />
-                    </InputGroup.Button>
-                  </InputGroup>
-                </Col>
-              </Row>
-            </Grid>
-
-            <h1 style={{ marginTop: 32 }}>Movies</h1>
-
-            <Grid fluid>
-              <Row className="show-grid">
                 {moviesList.map((movie) => (
                   <Col xs={24} sm={12} md={6} lg={4} >
                     <MovieCard movie={movie} />
@@ -86,10 +74,9 @@ export const Home = () => {
                 ))}
               </Row>
             </Grid>
-
           </Panel>
         </Content>
       </Container>
-    </div>
+    </Container>
   );
 }

@@ -37,8 +37,8 @@ const MyPlaylist = () => {
                     {playlists.map((playlist) =>
                         (<Col xs={8} style={{ marginBottom: 20 }}>
                             <div className="grow" onClick={() => history.push(`/playlist/${playlist.id}`)}>
-                                <Panel style={{ height: 200, padding: 0 }} bodyFill bordered>
-                                    <img src={playlist.movies[0].imageUrl} style={{ width: "100%", }} />
+                                <Panel style={{ height: 200 }} bodyFill bordered>
+                                    <img src={playlist.movies[0].imageUrl} style={{ width: "100%" }} alt="Movie poster" />
                                 </Panel>
                                 <h5 style={{ margin: 5 }}>{playlist.name} <Badge content={playlist.movies.length} style={{ backgroundColor: "green", fontSize: 15 }} />
                                 </h5>

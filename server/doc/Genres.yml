@@ -1,0 +1,59 @@
+openapi: 3.0.0
+info:
+  title: WatchGator API
+  description: Movies / Series fast and reliable search engine
+  version: 1.0.0
+servers:
+  - url: https://watchgator-server.herokuapp.com/api
+    description: Main endpoint
+
+path:
+  /genres/all/:
+    get:
+      summary: Get all Genres
+      tags: [Genres]
+      responses:
+        "200":
+          description: List of all Genres
+          content:
+            array:
+              schema:
+                $ref: '#/components/schemas/GenresList'
+
+components:
+ schemas:
+   GenresList:
+     type: array
+     items:
+       $ref: '#/components/schemas/Genre'
+     uniqueItems: true
+
+   Genre:
+     type: array
+     items:
+       type: string
+     example:
+       [
+           "Action",
+           "Thriller",
+           "Drama",
+           "Comedy",
+           "Crime",
+           "Horror",
+           "Sci-Fi",
+           "Adventure",
+           "Animation",
+           "Musical",
+           "Romance",
+           "Biography",
+           "Fantasy",
+           "War",
+           "Mystery",
+           "Family",
+           "Music",
+           "Sport",
+           "Game-Show",
+           "Reality-TV",
+           "Documentary",
+           "History"
+       ]

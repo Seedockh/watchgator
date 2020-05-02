@@ -2177,6 +2177,21 @@ aws-sdk@^2.37.0:
     uuid "3.3.2"
     xml2js "0.4.19"
 
+aws-sdk@^2.666.0:
+  version "2.666.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.666.0.tgz#4cd4f6bea920e3ef3192bf113aa9c606a307a709"
+  integrity sha512-m4m4eHs/F7SRW0OnvxRWyrAyqcQE7kyVnfwyrhA7P0w92FOmmu+tw6JKI5LZNVBsaj2VBAfPn72V6nWzP3IIlw==
+  dependencies:
+    buffer "4.9.1"
+    events "1.1.1"
+    ieee754 "1.1.13"
+    jmespath "0.15.0"
+    querystring "0.2.0"
+    sax "1.2.1"
+    url "0.10.3"
+    uuid "3.3.2"
+    xml2js "0.4.19"
+
 aws-sign2@~0.7.0:
   version "0.7.0"
   resolved "https://registry.npmjs.org/aws-sign2/-/aws-sign2-0.7.0.tgz#b46e890934a9591f2d2f6f86d7e6a9f1b3fe76a8"
@@ -2640,6 +2655,16 @@ ci-info@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/ci-info/-/ci-info-2.0.0.tgz#67a9e964be31a51e15e5010d58e6f12834002f46"
   integrity sha512-5tK7EtrZ0N+OLFMthtqOj4fI2Jeb88C4CAZPu25LDVUgXJ0A3Js4PMGqrn0JU1W0Mh1/Z8wZzYPxqUrXeBboCQ==
+
+class-transformer-validator@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/class-transformer-validator/-/class-transformer-validator-0.8.0.tgz#4ce1f0993e578d25c9ec46f67a1a8ec0798a8c40"
+  integrity sha512-CPzLx3WIwMWcsrr0F2e/iDcYUcpNZVvkUn03F9ll8rHaD+QHB2XBE4za8So5xxENoXJ9wYJPZdYsPNDkLF09fA==
+
+class-transformer@^0.2.3:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/class-transformer/-/class-transformer-0.2.3.tgz#598c92ca71dcca73f91ccb875d74a3847ccfa32d"
+  integrity sha512-qsP+0xoavpOlJHuYsQJsN58HXSl8Jvveo+T37rEvCEeRfMWoytAyR0Ua/YsFgpM6AZYZ/og2PJwArwzJl1aXtQ==
 
 class-utils@^0.3.5:
   version "0.3.6"
@@ -5995,7 +6020,7 @@ node-environment-flags@^1.0.5:
     object.getownpropertydescriptors "^2.0.3"
     semver "^5.7.0"
 
-node-fetch@^2.1.2, node-fetch@^2.2.0:
+node-fetch@^2.1.2, node-fetch@^2.2.0, node-fetch@^2.6.0:
   version "2.6.0"
   resolved "https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.0.tgz#e633456386d4aa55863f676a7ab0daa8fdecb0fd"
   integrity sha512-8dG4H5ujfvFiqDmVu9fQ5bOHUC15JMjMY/Zumv26oOvvVJjM67KF8koCWIabKQ1GJIa9r2mMZscBq/TbdOcmNA==
@@ -6905,7 +6930,7 @@ referrer-policy@1.2.0:
 
 reflect-metadata@^0.1.13:
   version "0.1.13"
-  resolved "https://registry.npmjs.org/reflect-metadata/-/reflect-metadata-0.1.13.tgz#67ae3ca57c972a2aa1642b10fe363fe32d49dc08"
+  resolved "https://registry.yarnpkg.com/reflect-metadata/-/reflect-metadata-0.1.13.tgz#67ae3ca57c972a2aa1642b10fe363fe32d49dc08"
   integrity sha512-Ts1Y/anZELhSsjMcU605fU9RE4Oi3p5ORujwbIKXfWa+0Zxs510Qrmrce5/Jowq3cHSZSJqBjypxmHarc+vEWg==
 
 regenerate-unicode-properties@^8.2.0:

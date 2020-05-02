@@ -13,6 +13,7 @@
       "single"
     ],
     "ban-ts-ignore": false,
+    "no-non-null-assertion": false,
     "indent": false,
     "no-console": false,
     "semicolon": false,

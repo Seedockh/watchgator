@@ -1,0 +1,125 @@
+openapi: 3.0.0
+info:
+  title: WatchGator API
+  description: Movies / Series fast and reliable search engine
+  version: 1.0.0
+servers:
+  - url: https://watchgator-server.herokuapp.com/api
+    description: Main endpoint
+
+path:
+  /peoples/all/:
+    get:
+      summary: Get all Peoples, chunked by arrays of 20 Peoples. For example, 100 Peoples return 5 arrays
+      tags: [Peoples]
+      responses:
+        "200":
+          description: List of all Peoples, chunked by pages of 20 Peoples.
+          content:
+            array:
+              schema:
+                $ref: '#/components/schemas/PeoplesList'
+  /peoples/all/{page}:
+    parameters:
+      - in: path
+        name: page
+        schema:
+          type: integer
+        description: The chunk index to display
+    get:
+      summary: Get the {page} chunk containing 20 Peoples
+      tags: [Peoples]
+      responses:
+        "200":
+          description: List of all Peoples for page n.{page}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PeoplesChunk'
+  /peoples/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: The People id
+    get:
+      summary: Get the People with the id {id}
+      tags: [Peoples]
+      responses:
+        "200":
+          description: Get the {id} People
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/People'
+  /peoples/find:
+    post:
+      summary: Find Peoples by key
+      tags: [Peoples]
+      requestBody:
+        description: Any People key to search on
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PeopleFind'
+      responses:
+        "200":
+          description: Find Peoples by searching (case-insensitive RegExp) with specified body keys
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PeoplesChunk'
+
+components:
+ schemas:
+   PeoplesList:
+     type: array
+     items:
+       $ref: '#/components/schemas/PeoplesChunk'
+     uniqueItems: true
+
+   PeoplesChunk:
+     type: array
+     items:
+       $ref: '#/components/schemas/People'
+     minItems: 1
+     maxItems: 20
+     uniqueItems: true
+
+   PeopleFind:
+     type: object
+     properties:
+       key:
+         type: string | int | float
+       matchCase:
+         type: bool
+     example:
+       firsname: "bruce"
+       matchCase: false
+
+   People:
+     type: object
+     properties:
+       id:
+         type: string
+         description: People's ID
+       firsname:
+         type: string
+         description: People's firstname
+       lastname:
+         type: string
+         description: People's lastname
+       picture:
+         type: string
+         description: Photo of the People
+       role:
+         type: string
+         description: People role (Actor, Actress, Director, Writer, Composer)
+     example:
+       id: "nm0000246"
+       firstname: "Bruce"
+       lastname: "Willis"
+       picture: "https://m.media-amazon.com/images/M/MV5BMjA0MjMzMTE5OF5BMl5BanBnXkFtZTcwMzQ2ODE3Mw@@.jpg"
+       role: "Actor"

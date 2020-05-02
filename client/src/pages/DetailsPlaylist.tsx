@@ -15,43 +15,41 @@ const DetailsPlaylists = () => {
     }, [user])
 
     return (
-        <div className="sidebar-page">
-            <Container>
-                <Sidebar items={[
-                    {
-                        title: 'Playlists',
-                        icon: 'list-ul',
-                    }
-                ]} />
-                <Content style={{ marginRight: 100 }}>
-                    <Panel>
-                        <Content>
-                            <h3>{playlists[0].name} <Badge content={playlists[0].movies.length} style={{ backgroundColor: "green", fontSize: 15 }} /></h3>
-                            <Divider />
-                            {playlists[0].movies.map(movie => (
-                                <Panel bordered bodyFill style={{ marginBottom: 20 }}>
-                                    <FlexboxGrid>
-                                        <FlexboxGrid.Item colspan={4}>
-                                            <img src={movie.imageUrl} style={{ width: 200, height: 250 }}></img>
-                                        </FlexboxGrid.Item>
-                                        <FlexboxGrid.Item style={{ width: "80%" }}>
-                                            <h3 style={{ marginBottom: 10 }}>{movie.name}</h3>
-                                            <h5>Description</h5>
-                                            <Divider />
-                                            <p style={{marginBottom: 30}}>{movie.description}</p>
-                                            <div style={{display: "flex", justifyContent: "center"}}>
+        <Container>
+            <Sidebar items={[
+                {
+                    title: 'Playlists',
+                    icon: 'list-ul',
+                }
+            ]} />
+            <Content className="mr-5">
+                <Panel>
+                    <Content>
+                        <h3>{playlists[0].name} <Badge content={playlists[0].movies.length} style={{ backgroundColor: "green", fontSize: 15 }} /></h3>
+                        <Divider />
+                        {playlists[0].movies.map(movie => (
+                            <Panel bordered bodyFill className="mb-5">
+                                <FlexboxGrid>
+                                    <FlexboxGrid.Item colspan={4}>
+                                        <img src={movie.imageUrl} style={{ width: 200, height: 250 }}></img>
+                                    </FlexboxGrid.Item>
+                                    <FlexboxGrid.Item style={{ width: "80%" }}>
+                                        <h3 className="mb-3">{movie.name}</h3>
+                                        <h5>Description</h5>
+                                        <Divider />
+                                        <p className="mb-6" >{movie.description}</p>
+                                        <div className="flex flex-content-center">
                                             <Button onClick={() => history.push(`/movies/${movie.id}`)}>View more</Button>
-                                            </div>
-                                        </FlexboxGrid.Item>
-                                    </FlexboxGrid>
-                                </Panel>
-                            )
-                            )}
-                        </Content>
-                    </Panel>
-                </Content>
-            </Container>
-        </div>
+                                        </div>
+                                    </FlexboxGrid.Item>
+                                </FlexboxGrid>
+                            </Panel>
+                        )
+                        )}
+                    </Content>
+                </Panel>
+            </Content>
+        </Container>
     )
 }
 export default DetailsPlaylists;
