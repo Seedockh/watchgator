@@ -58,7 +58,9 @@ const Middleware = (app: Application): void => {
 	app.get(
 		'/doc',
 		swaggerUi.setup(specs, {
-			explorer: true,
+			explorer: false,
+			customCss: '.swagger-ui .topbar { display: none } .swagger-ui .wrapper + .wrapper { display: none }',
+			customSiteTitle: 'WatchGator API Documentation'
 		}),
 	)
 
