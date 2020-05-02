@@ -3,6 +3,7 @@ import { Repository, DeleteResult, UpdateResult } from 'typeorm'
 /** ****** INTERNALS ****** **/
 import { aLog } from '../../core/Log'
 import UserMovies from '../models/UserMovies'
+import User from '../models/User'
 import BaseRepository from './BaseRepository'
 
 class UserMoviesRepository extends BaseRepository<UserMovies> {
@@ -20,12 +21,12 @@ class UserMoviesRepository extends BaseRepository<UserMovies> {
 		aLog('').succeed('UserMovies initialized')
 	}
 
-	async create(user: User, movie: IMDBMedia): Promise<UserMovies> {
+	async add(user: User, movie: IMDBMedia): Promise<UserMovies> {
 		let userMovie: UserMovies = new UserMovies()
 		userMovie.user = user
-		userMovie.movie = movie.id
+		userMovie.movie = movie.id!
 
-		return await UserMoviesRepository.getConnection.manager.save(userMovie)
+		return await super.create(userMovie)
 	}
 
 	async get(media: Partial<UserMovies>): Promise<UserMovies | undefined> {

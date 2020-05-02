@@ -14,13 +14,13 @@ class UserMoviesService {
 	static async getCollection(
 		token: string | undefined,
 		userUuid: string,
-	): Promise<User | undefined> {
-		throwIfManipulateSomeoneElse(token, userUuid)
+	) {
+		/*throwIfManipulateSomeoneElse(token, userUuid)
 
 		if (typeof userUuid === undefined)
 			throw new Error('userUuid is not defined')
 
-		return await UserRepository.instance.getWithMovies(userUuid)
+		return await UserRepository.instance.get(userUuid)*/
 	}
 
 	static async add(
@@ -37,12 +37,13 @@ class UserMoviesService {
 		if (user === undefined) throw new DatabaseError('User not found', 400)
 
 		const movie = _.filter(
+			// @ts-ignore: unreachable key
 			IMDBDatasetService[`${this.env}Movies`].data,
 			{ id: movieId }
 		)[0]
 		if (movie === undefined) throw new DatabaseError('Movie not found', 400)
 
-		await UserMoviesRepository.instance.create(user, movie)
+		await UserMoviesRepository.instance.add(user, movie)
 	}
 }
 

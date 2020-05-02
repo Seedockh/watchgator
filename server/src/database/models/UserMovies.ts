@@ -8,8 +8,8 @@ export default class UserMovies {
 	@PrimaryGeneratedColumn()
 	id!: number
 
-	@ManyToOne(type => User, user => user.movies, {
-		cascade: ['delete']
+	@ManyToOne(type => User, (user: User) => user.movies, {
+		cascade: ['remove']
 	})
 	user!: User
 
