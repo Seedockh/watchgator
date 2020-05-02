@@ -7,9 +7,7 @@ import { IconNames } from 'rsuite/lib/Icon';
 import logo from '../../assets/logo.png';
 
 const headerStyles: CSSProperties = {
-    padding: '20px 10px',
-    overflow: 'hidden',
-    textAlign: 'center',
+    overflow: 'hidden'
 };
 
 const imageStyles: CSSProperties = {
@@ -54,7 +52,7 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ items }) => {
             >
                 <ExpandBtn expand={expand} onPress={handleToggle} />
                 <Sidenav.Header>
-                    <div style={headerStyles}>
+                    <div className='pt-5 pb-5 pl-3 pr-3 text-center' style={headerStyles}>
                         <img src={logo} alt="Watchgator" style={imageStyles} />
                         {expand && (
                             <>

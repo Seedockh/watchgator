@@ -8,7 +8,7 @@ import { Sidebar } from '../widget/sidebar/Sidebar'
 import { MovieCard } from '../widget/MovieCard'
 
 const Profile = () => {
-  const [{ user }, dispatch] = User.GlobalState()
+  const [{ user }] = User.GlobalState()
 
   useEffect(() => {
     console.log(`user: ${JSON.stringify(user)}`)

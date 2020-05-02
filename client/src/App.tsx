@@ -6,6 +6,7 @@ import { Login, Home } from './pages'
 import User from './core/user'
 import Register from './pages/Register';
 import Profile from './pages/Profile';
+import { MovieDetails } from './pages/MovieDetails';
 
 const user = localStorage.getItem('user')
 
@@ -30,15 +31,14 @@ const reducer = (prevState: UserState, action: UserAction): UserState => {
   }
 }
 
-function App(): JSX.Element {
-  return (
-    <User.Provider initialState={userInitialState} reducer={reducer}>
-      <Route exact path="/login" component={Login} />
-      <Route exact path="/" component={Home} />
-      <Route exact path="/register" component={Register} />
-      <Route exact path="/profile" component={Profile} />
-    </User.Provider>
-  )
-}
+const App = () => (
+  <User.Provider initialState={userInitialState} reducer={reducer}>
+    <Route exact path="/" component={Home} />
+    <Route exact path="/login" component={Login} />
+    <Route exact path="/register" component={Register} />
+    <Route exact path="/profile" component={Profile} />
+    <Route path="/movies/:movieId" component={MovieDetails} />
+  </User.Provider>
+)
 
 export default App
