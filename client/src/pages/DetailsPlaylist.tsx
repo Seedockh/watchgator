@@ -7,7 +7,7 @@ import User from '../core/user'
 import { Sidebar } from '../widget/sidebar/Sidebar'
 import { playlists } from '../data/playlists'
 
-const Playlists = () => {
+const DetailsPlaylists = () => {
     const [{ user }, dispatch] = User.GlobalState()
     const history = useHistory();
 
@@ -30,16 +30,6 @@ const Playlists = () => {
                             <Content>
                                 <h3>{playlist.name} <Badge content={playlist.movies.length} style={{ backgroundColor: "green", fontSize: 15 }} /></h3>
                                 <Divider />
-                                <Coverflow
-                                    displayQuantityOfSide={3}
-                                    navigation={true}
-                                    enableHeading={false}
-                                    enableScroll={false}
-                                >
-                                    {playlist.movies.map(movie => (
-                                        <img src={movie.imageUrl} alt='title or description' onClick={() => history.push(`/movie/${movie.id}`)} />
-                                    ))}
-                                </Coverflow>
                             </Content>
                         )
                         )}
@@ -49,4 +39,4 @@ const Playlists = () => {
         </div>
     )
 }
-export default Playlists;
+export default DetailsPlaylists;

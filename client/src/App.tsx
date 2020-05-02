@@ -7,6 +7,7 @@ import User from './core/user';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Playlists from './pages/Playlists';
+import DetailsPlaylists from './pages/DetailsPlaylist';
 
 const user = localStorage.getItem('user')
 
@@ -39,6 +40,7 @@ function App(): JSX.Element {
       <Route exact path="/register" component={Register} />
       <Route exact path="/profile" component={Profile} />
       <Route exact path="/playlists" component={Playlists} />
+      <Route exact path="/playlist" component={DetailsPlaylists} />
     </User.Provider>
   )
 }
