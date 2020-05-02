@@ -12,15 +12,15 @@ export function useApi<T>(route: string, method = 'GET', body?: string): ApiHook
         setFetchState({ ...fetchState, isLoading: true })
         const res = await fetch(`${process.env.REACT_APP_API_URI}${route}`, {
             method,
-            ...(body ? { body } : {})
+            ...(body ? { body } : {}),
+            headers: {
+                'Content-Type': 'application/json'
+            }
         });
 
         res.json()
             .then(res => setFetchState({ isLoading: false, data: res }))
-            .catch(err => {
-                console.log(err);
-                setFetchState({ isLoading: false, error: err })
-            });
+            .catch(err => setFetchState({ isLoading: false, error: err }));
     }
 
     useEffect(() => {
@@ -34,14 +34,12 @@ export function useApi<T>(route: string, method = 'GET', body?: string): ApiHook
 
 export const useAllCategories = (): ApiHook<string[]> => useApi<string[]>('/genres/all/');
 
-export const useSearchActors = (): ApiHookSearch<BaseResponse<Actor[]>> => {
+export const useSearchActors = (): ApiHookSearch<BaseResponse<Actor[][]>> => {
     const [query, setQuery] = useState('')
 
     return {
-        ...useApi<BaseResponse<Actor[]>>('/peoples/find', 'POST', JSON.stringify({
-            firstname: query,
-            lastname: query,
-            matchCase: false
+        ...useApi<BaseResponse<Actor[][]>>('/peoples/find', 'POST', JSON.stringify({
+            firstname: query
         })),
         search: setQuery
     }

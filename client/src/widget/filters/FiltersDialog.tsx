@@ -25,7 +25,7 @@ export const FiltersDialog: FunctionComponent<FiltersDialogProps> = ({ isOpen, o
 
     const actorsToInputData = (): ItemDataType[] => {
         if (!actors || !actors.results) return []
-        return actors.results.map((actor) => ({
+        return actors.results[0].map((actor) => ({
             value: actor.id,
             label: `${actor.firstname} ${actor.lastname}`
         }))
