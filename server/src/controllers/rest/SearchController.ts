@@ -2,7 +2,6 @@
 import { Request, Response, RequestHandler } from 'express'
 /** ****** NODE ****** **/
 import _ from 'lodash'
-import performance from 'performance'
 /** ****** INTERNALS ****** **/
 import IMDBDatasetService from '../../services/IMDBDatasetService'
 import { sLog } from '../../core/Log'
@@ -11,39 +10,41 @@ class SearchController {
 
   /** * @TODO: Refactoring for filters * **/
   static search(req: Request, res: Response) {
-    const t0 = new Date()
+    const t0: number = new Date().getTime()
     const level: string = process.env.NODE_ENV === 'production' ? 'live' : 'sample'
-    let { names, filters } = req.body
+    const { names, filters } = req.body
+    let namesParam: IMDBNamesParam
+    let filtersParam: IMDBFiltersParam
     let movies: IMDBMedia[]
     let series: IMDBMedia[]
 
     try {
       if (names) {
-        try { names = JSON.parse(names) }
+        try { namesParam = JSON.parse(names) }
         catch { throw new Error('Invalid names parameter. It must be JSON.stringify() to be readable by server.') }
 
-        if (names.title) {
+        if (namesParam.title) {
           movies = _.filter(
             // @ts-ignore: unreachable key
             IMDBDatasetService[`${level}Movies`].data,
-            movie => (new RegExp(names.title, 'i')).test(movie.title)
+            movie => (new RegExp(namesParam.title, 'i')).test(movie.title)
           )
           series = _.filter(
             // @ts-ignore: unreachable key
             IMDBDatasetService[`${level}Series`].data,
-            serie => (new RegExp(names.title, 'i')).test(serie.title)
+            serie => (new RegExp(namesParam.title, 'i')).test(serie.title)
           )
         }
 
-        if (names.actors) {
-          names.actors.forEach((actor: IMDBPerson) => {
+        if (namesParam.actors) {
+          namesParam.actors.forEach((actor: IMDBPerson) => {
             movies = _.filter(
               // @ts-ignore: unreachable key
               movies ? movies : IMDBDatasetService[`${level}Movies`].data,
               movie => _.some(movie.actors, { id: actor.id })
             )
           })
-          names.actors.forEach((actor: IMDBPerson) => {
+          namesParam.actors.forEach((actor: IMDBPerson) => {
             series = _.filter(
               // @ts-ignore: unreachable key
               series ? series : IMDBDatasetService[`${level}Series`].data,
@@ -52,8 +53,8 @@ class SearchController {
           })
         }
 
-        if (names.directors) {
-          names.directors.forEach((director: IMDBPerson) => {
+        if (namesParam.directors) {
+          namesParam.directors.forEach((director: IMDBPerson) => {
             movies = _.filter(
               // @ts-ignore: unreachable key
               movies ? movies : IMDBDatasetService[`${level}Movies`].data,
@@ -63,15 +64,15 @@ class SearchController {
         }
 
 
-        if (names.genres) {
-          names.genres.forEach((genre: IMDBCategory) => {
+        if (namesParam.genres) {
+          namesParam.genres.forEach((genre: IMDBCategory) => {
             movies = _.filter(
               // @ts-ignore: unreachable key
               movies ? movies : IMDBDatasetService[`${level}Movies`].data,
               movie => _.some(movie.genres, { name: genre.name })
             )
           })
-          names.genres.forEach((genre: IMDBCategory) => {
+          namesParam.genres.forEach((genre: IMDBCategory) => {
             series = _.filter(
               // @ts-ignore: unreachable key
               series ? series : IMDBDatasetService[`${level}Series`].data,
@@ -82,72 +83,72 @@ class SearchController {
       }
 
       if (filters) {
-        try { filters = JSON.parse(filters) }
+        try { filtersParam = JSON.parse(filters) }
         catch { throw new Error('Invalid filters parameter. It must be JSON.stringify() to be readable by server.') }
 
-        if (filters.year) {
+        if (filtersParam.year) {
           movies = _.filter(
             // @ts-ignore: unreachable key
             movies ? movies : IMDBDatasetService[`${level}Movies`].data,
-            movie => movie.year >= filters.year.min && movie.year <= filters.year.max
+            movie => movie.year >= filtersParam.year.min && movie.year <= filtersParam.year.max
           )
           series = _.filter(
             // @ts-ignore: unreachable key
             series ? series : IMDBDatasetService[`${level}Series`].data,
-            serie => serie.year >= filters.year.min && serie.year <= filters.year.max
+            serie => serie.year >= filtersParam.year.min! && serie.year <= filtersParam.year.max
           )
         }
 
-        if (filters.rating) {
+        if (filtersParam.rating) {
           movies = _.filter(
             // @ts-ignore: unreachable key
             movies ? movies : IMDBDatasetService[`${level}Movies`].data,
-            movie => movie.rating >= filters.rating.min && movie.rating <= filters.rating.max
+            movie => movie.rating >= filtersParam.rating.min && movie.rating <= filtersParam.rating.max
           )
           series = _.filter(
             // @ts-ignore: unreachable key
             series ? series : IMDBDatasetService[`${level}Series`].data,
-            serie => serie.rating >= filters.rating.min && serie.rating <= filters.rating.max
+            serie => serie.rating >= filtersParam.rating.min && serie.rating <= filtersParam.rating.max
           )
         }
 
-        if (filters.metaScore) {
+        if (filtersParam.metaScore) {
           movies = _.filter(
             // @ts-ignore: unreachable key
             movies ? movies : IMDBDatasetService[`${level}Movies`].data,
-            movie => movie.metaScore >= filters.metaScore.min && movie.metaScore <= filters.metaScore.max
+            movie => movie.metaScore >= filtersParam.metaScore.min && movie.metaScore <= filtersParam.metaScore.max
           )
           series = _.filter(
             // @ts-ignore: unreachable key
             series ? series : IMDBDatasetService[`${level}Series`].data,
-            serie => serie.metaScore >= filters.metaScore.min && serie.metaScore <= filters.metaScore.max
+            serie => serie.metaScore >= filtersParam.metaScore.min && serie.metaScore <= filtersParam.metaScore.max
           )
         }
 
-        if (filters.nbRatings) {
+        if (filtersParam.nbRatings) {
           // nbRatings: {min: 0, max: 1000000},
           /** @TODO */
         }
 
-        if (filters.certificate) {
+        if (filtersParam.certificate) {
           // certificate: ["Tous Publics", "Tous Publics (avec avertissement)", "0+", "6+", "9+", "10", "12", "14+", "16", "18", "X"],
           /** @TODO */
         }
 
-        if (filters.runtime) {
+        if (filtersParam.runtime) {
           movies = _.filter(
             // @ts-ignore: unreachable key
             movies ? movies : IMDBDatasetService[`${level}Movies`].data,
-            movie => movie.runtime >= filters.runtime.min && movie.runtime <= filters.runtime.max
+            movie => movie.runtime >= filtersParam.runtime.min && movie.runtime <= filtersParam.runtime.max
           )
           series = _.filter(
             // @ts-ignore: unreachable key
             series ? series : IMDBDatasetService[`${level}Series`].data,
-            serie => serie.runtime >= filters.runtime.min && serie.runtime <= filters.metaScore.max
+            serie => serie.runtime >= filtersParam.runtime.min && serie.runtime <= filtersParam.metaScore.max
           )
         }
 
-        if (filters.gross) {
+        if (filtersParam.gross) {
           // gross: { min: 0, max: ""$1000M" }
           /** @TODO */
         }
@@ -162,7 +163,7 @@ class SearchController {
       // @ts-ignore: unreachable key
       const resultSeries = _.chunk(series ? series : IMDBDatasetService[`${level}Series`].data, 20)
 
-      const time = new Date() - t0
+      const time: number = new Date().getTime() - t0
       sLog(`[${(new Date).toLocaleDateString()}-${(new Date).toLocaleTimeString()}] Search reached ${totalMovies+totalSeries} results in ${time}ms`, 'FFA500')
       res.json({
         total: totalMovies + totalSeries,
