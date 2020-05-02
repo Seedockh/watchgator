@@ -5,7 +5,7 @@ import UserFilmographyController from '../../controllers/rest/UserFilmographyCon
 
 const router = Router()
 
-// router.get('/get', UserFilmographyController.getCollection)
-router.put('/put/:mediaId', UserFilmographyController.addToCollection)
+router.get('/get', UserFilmographyController.getCollection)
+router.post('/post/:mediaId', UserFilmographyController.addToCollection)
 
 export default router
