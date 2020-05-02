@@ -2,72 +2,14 @@
 import { Request, Response } from 'express'
 /** ****** INTERNALS ****** **/
 import UserService from '../../services/UserService'
+import UserMoviesService from '../../services/UserMoviesService'
 import { DatabaseError, EndpointAccessError } from '../../core/CustomErrors'
 import User from '../../database/models/User'
 import { getTokenFromHeader } from './utils'
 
 class UserController {
-	static async updateAvatar(req: Request, res: Response): Promise<void> {
-		const imageUpload = User.storageService.uploadImg.single('file')
 
-		imageUpload(req, res, async (err: { message: any }) => {
-			if (err) {
-				return res.status(422).send({
-					error: 'Image Upload Error',
-					details: err.message,
-				})
-			}
-
-			const { uuid } = req.body
-			const avatar: string = req.file.location
-
-			try {
-				const response = await UserService.updateAvatar(
-					getTokenFromHeader(req),
-					uuid,
-					avatar,
-				)
-				return res.status(response.status).json({ user: response.data.user })
-			} catch (error) {
-				if (error instanceof DatabaseError)
-					return res
-						.status(error.status)
-						.json({ error: error.message, details: error.details })
-				if (error instanceof EndpointAccessError)
-					return res
-						.status(error.status)
-						.json({ error: { message: error.message } })
-				return res
-					.status(500)
-					.json({ error: 'Unexpected error', details: error })
-			}
-		})
-	}
-
-	static async deleteAvatar(req: Request, res: Response): Promise<Response> {
-		try {
-			const result = await UserService.deleteAvatar(
-				getTokenFromHeader(req),
-				req.body.uuid,
-				req.params.fileKey,
-			)
-			if (!result) throw new Error()
-			return res.status(200).json({
-				message: 'Success - Image deleted from S3 or not existing',
-			})
-		} catch (error) {
-			if (error instanceof DatabaseError)
-				return res
-					.status(error.status)
-					.json({ message: error.message, error: error.details })
-			if (error instanceof EndpointAccessError)
-				return res
-					.status(error.status)
-					.json({ error: { message: error.message } })
-			else return res.status(500).json({ message: 'error', error })
-		}
-	}
-
+	/** ****** GETs ****** **/
 	static async getUser(req: Request, res: Response): Promise<Response> {
 		try {
 			const response = await UserService.getUser(
@@ -88,38 +30,25 @@ class UserController {
 		}
 	}
 
-	static async deleteUser(req: Request, res: Response): Promise<Response> {
-		const { uuid } = req.params
-
-		if (typeof uuid == 'undefined')
-			return res
-				.status(400)
-				.json({ error: 'Uuid is required to delete any user' })
-
+	/** ****** POSTs ****** **/
+	static async addMovie(req: Request, res: Response): Promise<Response> {
+		const { user, movie } = req.body
 		try {
-			const response = await UserService.deleteUser(
-				getTokenFromHeader(req),
-				uuid,
-			)
-			return response
-				? res
-						.status(200)
-						.json({ success: `User with uuid ${uuid} succesfully deleted` })
-				: res.status(500).json({
-						message: `Error: User with uuid ${uuid} cannot be deleted`,
-				  })
+			await UserMoviesService.add(getTokenFromHeader(req), user, movie)
+
+			return res.status(200).json({ message: "Movie successfully added to user's collection" })
 		} catch (error) {
+			if (error instanceof DatabaseError)
+				return res.status(error.status).json({ error: error.message, details: error.details })
+
 			if (error instanceof EndpointAccessError)
-				return res
-					.status(error.status)
-					.json({ error: { message: error.message } })
-			return res.status(500).json({
-				error: `Unexpected error: User with uuid ${uuid} cannot be deleted`,
-				details: error,
-			})
+				return res.status(403).json({ error: { message: error.message } })
+
+			return res.status(500).json({ error: 'Unexpected error', details: `${error}` })
 		}
 	}
 
+	/** ****** PUTs ****** **/
 	static async updateUser(req: Request, res: Response): Promise<Response> {
 		const { ...userProperties }: User = req.body
 
@@ -194,6 +123,105 @@ class UserController {
 			})
 		}
 	}
+
+	static async updateAvatar(req: Request, res: Response): Promise<void> {
+		const imageUpload = User.storageService.uploadImg.single('file')
+
+		imageUpload(req, res, async (err: { message: any }) => {
+			if (err) {
+				return res.status(422).send({
+					error: 'Image Upload Error',
+					details: err.message,
+				})
+			}
+
+			const { uuid } = req.body
+			const avatar: string = req.file.location
+
+			try {
+				const response = await UserService.updateAvatar(
+					getTokenFromHeader(req),
+					uuid,
+					avatar,
+				)
+				return res.status(response.status).json({ user: response.data.user })
+			} catch (error) {
+				if (error instanceof DatabaseError)
+					return res
+						.status(error.status)
+						.json({ error: error.message, details: error.details })
+				if (error instanceof EndpointAccessError)
+					return res
+						.status(error.status)
+						.json({ error: { message: error.message } })
+				return res
+					.status(500)
+					.json({ error: 'Unexpected error', details: error })
+			}
+		})
+	}
+
+	/** ****** DELETEs ****** **/
+	static async deleteUser(req: Request, res: Response): Promise<Response> {
+		const { uuid } = req.params
+
+		if (typeof uuid == 'undefined')
+			return res
+				.status(400)
+				.json({ error: 'Uuid is required to delete any user' })
+
+		try {
+			const response = await UserService.deleteUser(
+				getTokenFromHeader(req),
+				uuid,
+			)
+			return response
+				? res
+						.status(200)
+						.json({ success: `User with uuid ${uuid} succesfully deleted` })
+				: res.status(500).json({
+						message: `Error: User with uuid ${uuid} cannot be deleted`,
+					})
+		} catch (error) {
+			if (error instanceof EndpointAccessError)
+				return res
+					.status(error.status)
+					.json({ error: { message: error.message } })
+			return res.status(500).json({
+				error: `Unexpected error: User with uuid ${uuid} cannot be deleted`,
+				details: error,
+			})
+		}
+	}
+
+	static async deleteAvatar(req: Request, res: Response): Promise<Response> {
+		try {
+			const result = await UserService.deleteAvatar(
+				getTokenFromHeader(req),
+				req.body.uuid,
+				req.params.fileKey,
+			)
+			if (!result) throw new Error()
+			return res.status(200).json({
+				message: 'Success - Image deleted from S3 or not existing',
+			})
+		} catch (error) {
+			if (error instanceof DatabaseError)
+				return res
+					.status(error.status)
+					.json({ message: error.message, error: error.details })
+			if (error instanceof EndpointAccessError)
+				return res
+					.status(error.status)
+					.json({ error: { message: error.message } })
+			else return res.status(500).json({ message: 'error', error })
+		}
+	}
+
+
+
+
+
 }
 
 export default UserController

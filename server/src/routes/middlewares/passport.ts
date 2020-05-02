@@ -17,10 +17,8 @@ passport.use(
 		},
 		async (nickname, password, next) => {
 			try {
-				const user: User | undefined = await UserRepository.instance.get({
-					nickname,
-				})
-
+				const user: User | undefined = await UserRepository.instance.get({ nickname	})
+				
 				if (!user) return next('User does not exist')
 
 				if (!User.checkIfUnencryptedPasswordIsValid(user, password))

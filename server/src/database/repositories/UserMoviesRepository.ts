@@ -20,23 +20,16 @@ class UserMoviesRepository extends BaseRepository<UserMovies> {
 		aLog('').succeed('UserMovies initialized')
 	}
 
-	async create(media: UserMovies): Promise<UserMovies> {
-		return await super.save(media)
+	async create(user: User, movie: IMDBMedia): Promise<UserMovies> {
+		let userMovie: UserMovies = new UserMovies()
+		userMovie.user = user
+		userMovie.movie = movie.id
+
+		return await UserMoviesRepository.getConnection.manager.save(userMovie)
 	}
 
 	async get(media: Partial<UserMovies>): Promise<UserMovies | undefined> {
 		return await super.get(media)
-	}
-
-	async getOrCreate(
-		media: Omit<UserMovies, 'uuid'>,
-	): Promise<UserMovies> {
-		let resMedia = await this.repository?.findOne({ id: media.id })
-		if (resMedia === undefined)
-			resMedia = await UserMoviesRepository.instance.create(
-				Object.assign(new UserMovies(), media),
-			)
-		return resMedia
 	}
 
 	async update(

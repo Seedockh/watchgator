@@ -22,20 +22,6 @@ class UserService {
 		return { status: 200, data: { user } }
 	}
 
-	static async deleteUser(
-		token: string | undefined,
-		uuid: string,
-	): Promise<boolean> {
-		throwIfManipulateSomeoneElse(token, uuid)
-
-		try {
-			const res = await UserRepository.instance.delete(uuid)
-			return res.affected != 0
-		} catch (error) {
-			return false
-		}
-	}
-
 	/**
 	 * Update everything from user except uuid and password
 	 */
@@ -156,6 +142,20 @@ class UserService {
 		} finally {
 			await queryRunner.release()
 			return { status: 200, data: { user: updatedUser } }
+		}
+	}
+
+	static async deleteUser(
+		token: string | undefined,
+		uuid: string,
+	): Promise<boolean> {
+		throwIfManipulateSomeoneElse(token, uuid)
+
+		try {
+			const res = await UserRepository.instance.delete(uuid)
+			return res.affected != 0
+		} catch (error) {
+			return false
 		}
 	}
 

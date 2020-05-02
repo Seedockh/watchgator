@@ -1,10 +1,16 @@
+/** * ****** LODASH ****** **/
+import _ from 'lodash'
 /** ****** INTERNALS ****** **/
 import UserRepository from '../database/repositories/UserRepository'
+import UserMoviesRepository from '../database/repositories/UserMoviesRepository'
+import IMDBDatasetService from './IMDBDatasetService'
 import { DatabaseError } from '../core/CustomErrors'
 import User from '../database/models/User'
 import { throwIfManipulateSomeoneElse } from './utils'
 
 class UserMoviesService {
+	static env: string = process.env.NODE_ENV === 'production' ? 'live' : 'sample'
+
 	static async getCollection(
 		token: string | undefined,
 		userUuid: string,
@@ -17,21 +23,26 @@ class UserMoviesService {
 		return await UserRepository.instance.getWithMovies(userUuid)
 	}
 
-	static async addToCollection(
+	static async add(
 		token: string | undefined,
-		userUuid: string,
-		mediaId: string,
+		uuid: string,
+		movieId: string,
 	): Promise<void> {
-		throwIfManipulateSomeoneElse(token, userUuid)
+		throwIfManipulateSomeoneElse(token, uuid)
 
-		if (typeof userUuid === undefined)
-			throw new Error('userUuid is not defined')
-		if (typeof mediaId === undefined) throw new Error('mediaId is not defined')
+		if (typeof uuid === undefined) throw new Error('User uuid is not defined')
+		if (typeof movieId === undefined) throw new Error('Movie id is not defined')
 
-		const user = await UserRepository.instance.getWithMovies(userUuid)
+		const user = await UserRepository.instance.get({ uuid: uuid })
 		if (user === undefined) throw new DatabaseError('User not found', 400)
 
-		await UserRepository.instance.pushMovie(user, mediaId)
+		const movie = _.filter(
+			IMDBDatasetService[`${this.env}Movies`].data,
+			{ id: movieId }
+		)[0]
+		if (movie === undefined) throw new DatabaseError('Movie not found', 400)
+
+		await UserMoviesRepository.instance.create(user, movie)
 	}
 }
 
