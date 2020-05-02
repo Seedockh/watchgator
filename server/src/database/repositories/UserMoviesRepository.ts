@@ -2,22 +2,22 @@
 import { Repository, DeleteResult, UpdateResult } from 'typeorm'
 /** ****** INTERNALS ****** **/
 import { aLog } from '../../core/Log'
-import { IMDBMediaImpl } from '../models/IMDBMediaImpl'
+import UserMovies from '../models/UserMovies'
 import BaseRepository from './BaseRepository'
 
-class IMDBRepository extends BaseRepository<IMDBMediaImpl> {
-	private static _instance: IMDBRepository
+class UserMoviesRepository extends BaseRepository<IMDBMediaImpl> {
+	private static _instance: IMDBMediaImpl
 
-	public static get instance(): IMDBRepository {
+	public static get instance(): IMDBMediaImpl {
 		return (this._instance =
-			this._instance != null ? this._instance : new IMDBRepository())
+			this._instance != null ? this._instance : new UserMoviesRepository())
 	}
 
 	repository!: Repository<IMDBMediaImpl>
 
 	init(): void {
-		this.repository = IMDBRepository.getConnection.getRepository(IMDBMediaImpl)
-		aLog('').succeed('IMDBMedia initialized')
+		this.repository = UserMoviesRepository.getConnection.getRepository(UserMovies)
+		aLog('').succeed('UserMovies initialized')
 	}
 
 	async create(media: IMDBMediaImpl): Promise<IMDBMediaImpl> {
@@ -33,8 +33,8 @@ class IMDBRepository extends BaseRepository<IMDBMediaImpl> {
 	): Promise<IMDBMediaImpl> {
 		let resMedia = await this.repository?.findOne({ id: media.id })
 		if (resMedia === undefined)
-			resMedia = await IMDBRepository.instance.create(
-				Object.assign(new IMDBMediaImpl(), media),
+			resMedia = await UserMoviesRepository.instance.create(
+				Object.assign(new UserMovies(), media),
 			)
 		return resMedia
 	}
@@ -51,4 +51,4 @@ class IMDBRepository extends BaseRepository<IMDBMediaImpl> {
 	}
 }
 
-export default IMDBRepository
+export default UserMoviesRepository

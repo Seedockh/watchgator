@@ -3,10 +3,10 @@ import { Repository, DeleteResult, UpdateResult } from 'typeorm'
 /** ****** LODASH ****** **/
 import _ from 'lodash'
 /** ****** INTERNALS ****** **/
-import { User } from '../models/User'
+import User from '../models/User'
 import { aLog } from '../../core/Log'
 import BaseRepository from './BaseRepository'
-import IMDBRepository from './IMDBRepository'
+import UserMoviesRepository from './UserMoviesRepository'
 
 class UserRepository extends BaseRepository<User> {
 	private static _instance: UserRepository
@@ -35,9 +35,9 @@ class UserRepository extends BaseRepository<User> {
 		return await super.get(user)
 	}
 
-	async getWithMedias(userUuid: string): Promise<User | undefined> {
+	async getWithMovies(userUuid: string): Promise<User | undefined> {
 		return await this.repository?.findOne({
-			relations: ['medias'],
+			relations: ['movies'],
 			where: { uuid: userUuid },
 		})
 	}
@@ -52,7 +52,7 @@ class UserRepository extends BaseRepository<User> {
 
 	/** Push media only if not already exists in user media collection */
 	async pushMedia(user: User, mediaId: string): Promise<void> {
-		const _media = await IMDBRepository.instance.getOrCreate({ id: mediaId })
+		const _media = await UserMoviesRepository.instance.getOrCreate({ id: mediaId })
 
 		const unicity = _.findIndex(user.medias, med => med.id === _media.id)
 		if (unicity === -1) user.medias.push(_media) // Add to prev medias

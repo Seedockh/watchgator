@@ -17,6 +17,12 @@ interface IUser {
 	avatar?: string | undefined
 }
 
+interface IUserMovies {
+	id: number
+	userId: string
+	movie: 
+}
+
 interface AuthServiceResponse extends BaseResponse {
 	data: {
 		user: IUser

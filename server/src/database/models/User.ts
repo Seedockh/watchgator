@@ -4,7 +4,7 @@ import {
 	PrimaryGeneratedColumn,
 	Column,
 	Unique,
-	ManyToMany,
+	OneToMany,
 	JoinTable,
 } from 'typeorm'
 import { Length, IsNotEmpty, IsEmail } from 'class-validator'
@@ -14,17 +14,16 @@ import * as jwt from 'jsonwebtoken'
 /** ****** INTERNALS ****** **/
 import S3 from '../../services/s3Services'
 import IStorageService from 'src/services/IStorageService'
-import { IMDBMediaImpl } from './IMDBMediaImpl'
+import UserMovies from './UserMovies'
 
 @Entity()
 @Unique(['nickname'])
-export class User implements IUser {
+export default class User implements IUser {
 	@PrimaryGeneratedColumn('uuid')
 	uuid!: string
 
-	@ManyToMany(type => IMDBMediaImpl)
-	@JoinTable()
-	medias!: IMDBMediaImpl[]
+	@OneToMany(type => UserMovies, movie => movie.user)
+	movies: UserMovies[]
 
 	@Column('text')
 	@IsNotEmpty()
