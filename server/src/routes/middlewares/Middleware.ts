@@ -50,7 +50,7 @@ const Middleware = (app: Application): void => {
 			'./doc/Series.yml',
 			'./doc/Peoples.yml',
 			'./doc/Genres.yml',
-			'./doc/User.yml',
+			'./doc/Users.yml',
 		],
 	}
 	const specs = swaggerJsdoc(options)
