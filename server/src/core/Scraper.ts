@@ -213,7 +213,7 @@ class Scraper {
 								: null,
 							rating: rating ? parseFloat(rating.innerText) : null,
 							nbRatings: nbRatings
-								? parseInt(nbRatings.innerText.replace(',', ''))
+								? parseInt(nbRatings.getAttribute('data-value'))
 								: null,
 							metaScore: metaScore ? parseInt(metaScore.innerText) : null,
 							certificate: certificate ? certificate.innerText : null,
