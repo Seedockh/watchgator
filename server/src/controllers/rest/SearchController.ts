@@ -2,6 +2,7 @@
 import { Request, Response, RequestHandler } from 'express'
 /** ****** NODE ****** **/
 import _ from 'lodash'
+import performance from 'performance'
 /** ****** INTERNALS ****** **/
 import IMDBDatasetService from '../../services/IMDBDatasetService'
 import { sLog } from '../../core/Log'
@@ -10,6 +11,7 @@ class SearchController {
 
   /** * @TODO: Refactoring for filters * **/
   static search(req: Request, res: Response) {
+    const t0 = new Date()
     const level: string = process.env.NODE_ENV === 'production' ? 'live' : 'sample'
     let { names, filters } = req.body
     let movies: IMDBMedia[]
@@ -158,7 +160,8 @@ class SearchController {
       // @ts-ignore: unreachable key
       const resultSeries = _.chunk(series ? series : IMDBDatasetService[`${level}Series`].data, 20)
 
-      sLog(`${(new Date).toLocaleDateString()}::${(new Date).toLocaleTimeString()}::: Search reached ${totalMovies+totalSeries} results`, 'FFA500')
+      const time = new Date() - t0
+      sLog(`[${(new Date).toLocaleDateString()}-${(new Date).toLocaleTimeString()}] Search reached ${totalMovies+totalSeries} results in ${time}ms`, 'FFA500')
       res.json({
         total: totalMovies + totalSeries,
         totalMovies: totalMovies,
@@ -171,7 +174,7 @@ class SearchController {
         }
       })
     } catch (error) {
-      sLog(`${(new Date).toLocaleDateString()}::${(new Date).toLocaleTimeString()}::: Search error: ${error}`, 'FF0000')
+      sLog(`[${(new Date).toLocaleDateString()}-${(new Date).toLocaleTimeString()}] Search error: ${error}`, 'FF0000')
     }
 
   }
