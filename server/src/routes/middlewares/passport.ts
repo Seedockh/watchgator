@@ -6,7 +6,7 @@ import { Strategy as LocalStrategy } from 'passport-local'
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt'
 import { GraphQLLocalStrategy } from 'graphql-passport'
 /** ****** INTERNALS ****** **/
-import { User } from '../../database/models/User'
+import User from '../../database/models/User'
 import UserRepository from '../../database/repositories/UserRepository'
 
 passport.use(

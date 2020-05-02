@@ -23,7 +23,7 @@ export default class User implements IUser {
 	uuid!: string
 
 	@OneToMany(type => UserMovies, movie => movie.user)
-	movies: UserMovies[]
+	movies!: IMDBMedia[]
 
 	@Column('text')
 	@IsNotEmpty()

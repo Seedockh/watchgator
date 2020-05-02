@@ -8,7 +8,7 @@ import { Context } from 'graphql-passport/lib/buildContext'
 /** ****** TYPEORM ****** **/
 import { QueryFailedError } from 'typeorm'
 /** ****** INTERNALS ****** **/
-import { User } from '../database/models/User'
+import User from '../database/models/User'
 import UserRepository from '../database/repositories/UserRepository'
 import { sLog } from '../core/Log'
 import { DatabaseError } from '../core/CustomErrors'

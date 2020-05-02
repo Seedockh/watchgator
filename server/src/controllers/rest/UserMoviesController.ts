@@ -2,15 +2,15 @@
 import { Request, Response } from 'express'
 /** ****** INTERNALS ****** **/
 import { DatabaseError, EndpointAccessError } from '../../core/CustomErrors'
-import UserFilmographyService from '../../services/UserFilmographyService'
+import UserMoviesService from '../../services/UserMoviesService'
 import { getTokenFromHeader } from './utils'
 
-class UserFilmographyController {
+class UserMoviesController {
 	static async getCollection(req: Request, res: Response): Promise<Response> {
 		const { userUuid } = req.body
 
 		try {
-			const user = await UserFilmographyService.getCollection(
+			const user = await UserMoviesService.getCollection(
 				getTokenFromHeader(req),
 				userUuid,
 			)
@@ -28,7 +28,7 @@ class UserFilmographyController {
 		const { userUuid } = req.body
 		const { mediaId } = req.params
 		try {
-			await UserFilmographyService.addToCollection(
+			await UserMoviesService.addToCollection(
 				getTokenFromHeader(req),
 				userUuid,
 				mediaId,
@@ -48,4 +48,4 @@ class UserFilmographyController {
 	}
 }
 
-export default UserFilmographyController
+export default UserMoviesController

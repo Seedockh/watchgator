@@ -4,7 +4,7 @@ import { QueryFailedError, UpdateResult } from 'typeorm'
 import { ValidationError } from 'class-validator'
 import { transformAndValidate } from 'class-transformer-validator'
 /** ****** INTERNALS ****** **/
-import { User } from '../database/models/User'
+import User from '../database/models/User'
 import UserRepository from '../database/repositories/UserRepository'
 import { DatabaseError } from '../core/CustomErrors'
 import { throwIfManipulateSomeoneElse } from './utils'
@@ -43,7 +43,7 @@ class UserService {
 		token: string | undefined,
 		partialUser: Partial<User>,
 	): Promise<boolean> {
-		const { uuid, password, medias, ...dataToUpdate } = partialUser
+		const { uuid, password, ...dataToUpdate } = partialUser
 
 		if (typeof uuid == 'undefined') return false
 

@@ -15,12 +15,13 @@ interface IUser {
 	email: string
 	password: string
 	avatar?: string | undefined
+	movies: IMDBMedia[]
 }
 
 interface IUserMovies {
 	id: number
 	userId: string
-	movie: 
+	movie: IMDBMedia[]
 }
 
 interface AuthServiceResponse extends BaseResponse {

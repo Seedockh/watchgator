@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 /** ****** INTERNALS ****** **/
 import UserService from '../../services/UserService'
 import { DatabaseError, EndpointAccessError } from '../../core/CustomErrors'
-import { User } from '../../database/models/User'
+import User from '../../database/models/User'
 import { getTokenFromHeader } from './utils'
 
 class UserController {

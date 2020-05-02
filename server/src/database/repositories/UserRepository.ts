@@ -51,8 +51,8 @@ class UserRepository extends BaseRepository<User> {
 	}
 
 	/** Push media only if not already exists in user media collection */
-	async pushMedia(user: User, mediaId: string): Promise<void> {
-		const _media = await UserMoviesRepository.instance.getOrCreate({ id: mediaId })
+	async pushMovie(user: User, mediaId: string): Promise<void> {
+	/*	const _media = await UserMoviesRepository.instance.getOrCreate({ id: mediaId })
 
 		const unicity = _.findIndex(user.medias, med => med.id === _media.id)
 		if (unicity === -1) user.medias.push(_media) // Add to prev medias
@@ -62,6 +62,7 @@ class UserRepository extends BaseRepository<User> {
 
 	async delete(uuid: string): Promise<DeleteResult> {
 		return await super.delete(uuid)
+		*/
 	}
 }
 

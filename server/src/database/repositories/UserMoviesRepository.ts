@@ -5,32 +5,32 @@ import { aLog } from '../../core/Log'
 import UserMovies from '../models/UserMovies'
 import BaseRepository from './BaseRepository'
 
-class UserMoviesRepository extends BaseRepository<IMDBMediaImpl> {
-	private static _instance: IMDBMediaImpl
+class UserMoviesRepository extends BaseRepository<UserMovies> {
+	private static _instance: UserMoviesRepository
 
-	public static get instance(): IMDBMediaImpl {
+	public static get instance(): UserMoviesRepository {
 		return (this._instance =
 			this._instance != null ? this._instance : new UserMoviesRepository())
 	}
 
-	repository!: Repository<IMDBMediaImpl>
+	repository!: Repository<UserMovies>
 
 	init(): void {
 		this.repository = UserMoviesRepository.getConnection.getRepository(UserMovies)
 		aLog('').succeed('UserMovies initialized')
 	}
 
-	async create(media: IMDBMediaImpl): Promise<IMDBMediaImpl> {
+	async create(media: UserMovies): Promise<UserMovies> {
 		return await super.save(media)
 	}
 
-	async get(media: Partial<IMDBMediaImpl>): Promise<IMDBMediaImpl | undefined> {
+	async get(media: Partial<UserMovies>): Promise<UserMovies | undefined> {
 		return await super.get(media)
 	}
 
 	async getOrCreate(
-		media: Omit<IMDBMediaImpl, 'uuid'>,
-	): Promise<IMDBMediaImpl> {
+		media: Omit<UserMovies, 'uuid'>,
+	): Promise<UserMovies> {
 		let resMedia = await this.repository?.findOne({ id: media.id })
 		if (resMedia === undefined)
 			resMedia = await UserMoviesRepository.instance.create(
@@ -40,8 +40,8 @@ class UserMoviesRepository extends BaseRepository<IMDBMediaImpl> {
 	}
 
 	async update(
-		criteria: Partial<IMDBMediaImpl>,
-		partialEntity: Partial<IMDBMediaImpl>,
+		criteria: Partial<UserMovies>,
+		partialEntity: Partial<UserMovies>,
 	): Promise<UpdateResult> {
 		return await super.update(criteria, partialEntity)
 	}
