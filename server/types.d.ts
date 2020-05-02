@@ -1,5 +1,3 @@
-import { IMDBMediaImpl } from 'src/database/models/IMDBMediaImpl'
-
 /********************************
  * Define Server Response types *
  ********************************/
@@ -54,7 +52,7 @@ interface Dataset {
 	data: [IMDBMedia]
 }
 
-interface IMDBMedia {
+interface IMDBMedia extends IMDBMediaBase {
 	id: string | null
 	title: string | null
 	year: number | null

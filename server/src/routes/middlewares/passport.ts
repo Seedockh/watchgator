@@ -17,7 +17,7 @@ passport.use(
 		},
 		async (nickname, password, next) => {
 			try {
-				const user: User | undefined = await UserRepository.get({
+				const user: User | undefined = await UserRepository.instance.get({
 					nickname,
 				})
 
@@ -42,7 +42,7 @@ passport.use(
 			next: (error: any, user?: any) => void,
 		) => {
 			try {
-				const user: User | undefined = await UserRepository.get({
+				const user: User | undefined = await UserRepository.instance.get({
 					nickname: username,
 				})
 
@@ -66,7 +66,7 @@ passport.use(
 		},
 		async (jwtPayload, next) => {
 			try {
-				const user: User | undefined = await UserRepository.get({
+				const user: User | undefined = await UserRepository.instance.get({
 					uuid: jwtPayload.uuid,
 				})
 

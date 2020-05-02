@@ -48,7 +48,7 @@ class Mock {
 	/** * MOCKING USEREPOSITORY CREATE SUCCESS * **/
 	static createUserSuccess() {
 		sinon
-			.stub(UserRepository, UserRepository.create.name)
+			.stub(UserRepository.instance, UserRepository.prototype.create.name)
 			.returns(Mock.successUser)
 
 		sinon
@@ -61,7 +61,7 @@ class Mock {
 	/** * MOCKING USEREPOSITORY CREATE FAILURE * **/
 	static createUserFailure() {
 		return sinon
-			.stub(UserRepository, UserRepository.create.name)
+			.stub(UserRepository.instance, UserRepository.prototype.create.name)
 			.throws(new DatabaseError('Mock', 400, undefined, []))
 	}
 }

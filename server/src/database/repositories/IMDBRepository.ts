@@ -1,57 +1,54 @@
 /** ****** ORM ****** **/
-import {
-	getConnection,
-	Repository,
-	FindConditions,
-	DeleteResult,
-	UpdateResult,
-	Connection,
-} from 'typeorm'
-import { QueryPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
-import { validate, ValidationError } from 'class-validator'
+import { Repository, DeleteResult, UpdateResult } from 'typeorm'
 /** ****** INTERNALS ****** **/
-import { User } from '../models/User'
 import { aLog } from '../../core/Log'
 import { IMDBMediaImpl } from '../models/IMDBMediaImpl'
 import BaseRepository from './BaseRepository'
 
-class IMDBRepository extends BaseRepository {
-	static repository: Repository<IMDBMediaImpl>
+class IMDBRepository extends BaseRepository<IMDBMediaImpl> {
+	private static _instance: IMDBRepository
 
-	static init(): void {
-		this.repository = IMDBRepository.getConnection().getRepository(
-			IMDBMediaImpl,
-		)
+	public static get instance(): IMDBRepository {
+		return (this._instance =
+			this._instance != null ? this._instance : new IMDBRepository())
+	}
+
+	repository!: Repository<IMDBMediaImpl>
+
+	init(): void {
+		this.repository = IMDBRepository.getConnection.getRepository(IMDBMediaImpl)
 		aLog('').succeed('IMDBMedia initialized')
 	}
 
-	static async create(media: IMDBMediaImpl): Promise<IMDBMediaImpl> {
-		return await this.repository?.save(media)
+	async create(media: IMDBMediaImpl): Promise<IMDBMediaImpl> {
+		return await super.save(media)
 	}
 
-	static async get(
-		media: FindConditions<IMDBMediaImpl>,
-	): Promise<IMDBMediaImpl | undefined> {
-		return await this.repository?.findOne(media)
+	async get(media: Partial<IMDBMediaImpl>): Promise<IMDBMediaImpl | undefined> {
+		return await super.get(media)
 	}
 
-	static async getOrCreate(media: IMDBMedia): Promise<IMDBMediaImpl> {
-		let _media = await this.repository?.findOne(media as IMDBMediaImpl)
-		if (_media === undefined)
-			_media = await IMDBRepository.create(media as IMDBMediaImpl)
-		return _media
+	async getOrCreate(
+		media: Omit<IMDBMediaImpl, 'uuid'>,
+	): Promise<IMDBMediaImpl> {
+		let resMedia = await this.repository?.findOne({ id: media.id })
+		if (resMedia === undefined)
+			resMedia = await IMDBRepository.instance.create(
+				Object.assign(new IMDBMediaImpl(), media),
+			)
+		return resMedia
 	}
 
-	static async update(
+	async update(
 		criteria: Partial<IMDBMediaImpl>,
 		partialEntity: Partial<IMDBMediaImpl>,
 	): Promise<UpdateResult> {
-		return await this.repository?.update(criteria, partialEntity)
+		return await super.update(criteria, partialEntity)
 	}
 
-	// static async delete(uuid: string): Promise<DeleteResult> {
-	// 	return await this.repository?.delete(uuid)
-	// }
+	async delete(id: string): Promise<DeleteResult> {
+		return await super.delete(id)
+	}
 }
 
 export default IMDBRepository

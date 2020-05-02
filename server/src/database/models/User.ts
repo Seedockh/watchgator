@@ -7,7 +7,7 @@ import {
 	ManyToMany,
 	JoinTable,
 } from 'typeorm'
-import { Length, IsNotEmpty, IsEmail, ValidationSchema } from 'class-validator'
+import { Length, IsNotEmpty, IsEmail } from 'class-validator'
 /** ****** ENCRYPT ****** **/
 import * as bcrypt from 'bcryptjs'
 import * as jwt from 'jsonwebtoken'
@@ -24,7 +24,7 @@ export class User implements IUser {
 
 	@ManyToMany(type => IMDBMediaImpl)
 	@JoinTable()
-	medias: IMDBMediaImpl[]
+	medias!: IMDBMediaImpl[]
 
 	@Column('text')
 	@IsNotEmpty()

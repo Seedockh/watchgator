@@ -39,7 +39,7 @@ class AuthenticateService {
 		try {
 			User.hashPassword(user)
 			// Add user to DB
-			const createdUser = await UserRepository.create(user)
+			const createdUser = await UserRepository.instance.create(user)
 
 			this.token = this.setToken(createdUser)
 			return {

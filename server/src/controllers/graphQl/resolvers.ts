@@ -11,7 +11,7 @@ export const resolvers = {
 		hello: (): string => 'Hello world!',
 	},
 	Mutation: {
-		signUp: async (_: any, args: User): Promise<User> => {
+		signUp: async (_: any, args: User): Promise<Omit<User, 'medias'>> => {
 			const { nickname, password, email } = args
 			try {
 				const result = await AuthenticateService.register(
@@ -30,7 +30,7 @@ export const resolvers = {
 			_: any,
 			args: User,
 			context: Context<User>,
-		): Promise<User> => {
+		): Promise<Omit<User, 'medias'>> => {
 			const { nickname, password } = args
 			try {
 				const result = await AuthenticateService.loginGraphQL(

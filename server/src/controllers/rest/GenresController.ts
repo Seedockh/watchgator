@@ -1,5 +1,5 @@
 /** ****** SERVER ****** **/
-import { Request, Response, RequestHandler } from 'express'
+import { Request, Response } from 'express'
 /** ****** NODE ****** **/
 import _ from 'lodash'
 /** ****** INTERNALS ****** **/

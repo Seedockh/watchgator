@@ -11,8 +11,8 @@ import 'reflect-metadata'
 ;(async () => {
 	await Database.boot()
 	if (process.env.NODE_ENV !== 'production') await Scraper.boot('sample')
-	UserRepository.init()
-	IMDBRepository.init()
+	UserRepository.instance.init()
+	IMDBRepository.instance.init()
 	await IMDBDatasetService.init()
 	ExpressServer.run()
 })()

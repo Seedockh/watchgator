@@ -22,7 +22,7 @@ class UserService {
 	): Promise<UserServiceResponse> {
 		this.throwIfManipulateSomeoneElse(token, uuid)
 
-		const user = await UserRepository.get({ uuid })
+		const user = await UserRepository.instance.get({ uuid })
 		if (user == undefined)
 			throw new DatabaseError(`Uuid ${uuid} : user not found`, 404)
 		return { status: 200, data: { user } }
@@ -35,7 +35,7 @@ class UserService {
 		this.throwIfManipulateSomeoneElse(token, uuid)
 
 		try {
-			const res = await UserRepository.delete(uuid)
+			const res = await UserRepository.instance.delete(uuid)
 			return res.affected != 0
 		} catch (error) {
 			return false
@@ -49,7 +49,7 @@ class UserService {
 		token: string | undefined,
 		partialUser: Partial<User>,
 	): Promise<boolean> {
-		const { uuid, password, ...dataToUpdate } = partialUser
+		const { uuid, password, medias, ...dataToUpdate } = partialUser
 
 		if (typeof uuid == 'undefined') return false
 
@@ -60,7 +60,7 @@ class UserService {
 		})
 			.then(
 				(): Promise<UpdateResult> =>
-					UserRepository.update({ uuid }, { ...dataToUpdate }),
+					UserRepository.instance.update({ uuid }, { ...dataToUpdate }),
 			)
 			.then((res): boolean => res.affected != 0)
 			.catch(error => {
@@ -86,7 +86,7 @@ class UserService {
 
 		try {
 			// Check provided current password
-			const userToUpdate = await UserRepository.get({ uuid })
+			const userToUpdate = await UserRepository.instance.get({ uuid })
 			if (userToUpdate === undefined)
 				throw new DatabaseError('User not found', 404)
 			if (!User.checkIfUnencryptedPasswordIsValid(userToUpdate, currentPwd))
@@ -104,7 +104,7 @@ class UserService {
 
 			// Hash and update correct password
 			User.hashPassword(userToUpdate)
-			const res = await UserRepository.update(
+			const res = await UserRepository.instance.update(
 				{ uuid },
 				{ password: userToUpdate.password },
 			)
@@ -127,7 +127,7 @@ class UserService {
 	): Promise<UserServiceResponse> {
 		this.throwIfManipulateSomeoneElse(token, uuid)
 
-		const connection = UserRepository.getConnection()
+		const connection = UserRepository.getConnection
 		let updatedUser: User | undefined = undefined
 
 		// Start sql transaction
@@ -136,7 +136,7 @@ class UserService {
 		await queryRunner.startTransaction()
 
 		try {
-			const initUser = await UserRepository.get({ uuid })
+			const initUser = await UserRepository.instance.get({ uuid })
 			if (initUser == undefined) throw new Error()
 
 			// Set updatedUser by cloning init without any reference
@@ -173,7 +173,7 @@ class UserService {
 		this.throwIfManipulateSomeoneElse(token, uuid)
 
 		try {
-			await UserRepository.update({ uuid }, { avatar: undefined })
+			await UserRepository.instance.update({ uuid }, { avatar: undefined })
 			await User.storageService.deleteImg(fileKey)
 			return true
 		} catch (error) {
