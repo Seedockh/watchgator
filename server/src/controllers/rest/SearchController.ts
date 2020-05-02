@@ -43,8 +43,6 @@ class SearchController {
               movies ? movies : IMDBDatasetService[`${level}Movies`].data,
               movie => _.some(movie.actors, { id: actor.id })
             )
-          })
-          namesParam.actors.forEach((actor: IMDBPerson) => {
             series = _.filter(
               // @ts-ignore: unreachable key
               series ? series : IMDBDatasetService[`${level}Series`].data,
@@ -71,8 +69,6 @@ class SearchController {
               movies ? movies : IMDBDatasetService[`${level}Movies`].data,
               movie => _.some(movie.genres, { name: genre.name })
             )
-          })
-          namesParam.genres.forEach((genre: IMDBCategory) => {
             series = _.filter(
               // @ts-ignore: unreachable key
               series ? series : IMDBDatasetService[`${level}Series`].data,
