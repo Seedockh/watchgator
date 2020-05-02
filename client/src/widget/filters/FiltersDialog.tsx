@@ -1,9 +1,9 @@
 import React, { FunctionComponent, useState } from 'react'
-import { Modal, Button, Grid, TagPicker } from 'rsuite'
+import { Modal, Button, Grid, TagPicker, Icon } from 'rsuite'
 import { MinMax } from '../../models/MinMax'
 import { FilterSection } from './FilterSection'
 import { FilterRangeSlider } from './FilterRangeSlider'
-import { useAllCategories } from '../../hooks/api/useApi'
+import { useAllCategories, useSearchActors } from '../../hooks/api/useApi'
 import { ItemDataType } from 'rsuite/lib/@types/common'
 
 type FiltersDialogProps = {
@@ -13,14 +13,22 @@ type FiltersDialogProps = {
 
 export const FiltersDialog: FunctionComponent<FiltersDialogProps> = ({ isOpen, onClose }) => {
     const { isLoading: categoriesLoading, data: categories } = useAllCategories();
+    const { isLoading: actorsLoading, data: actors, search: searchActor } = useSearchActors();
+
     const [rating, setRating] = useState<MinMax>({ min: 7, max: 10 })
     const [year, setYear] = useState<MinMax>({ min: 2000, max: 2020 })
 
     const categoriesToInputData = (): ItemDataType[] => {
-        console.log(categories);
         if (!categories) return []
-        
-        return categories.map((cat) => ({ value: cat, label: cat}))
+        return categories.map((cat) => ({ value: cat, label: cat }))
+    }
+
+    const actorsToInputData = (): ItemDataType[] => {
+        if (!actors || !actors.results) return []
+        return actors.results.map((actor) => ({
+            value: actor.id,
+            label: `${actor.firstname} ${actor.lastname}`
+        }))
     }
 
     return (
@@ -32,11 +40,17 @@ export const FiltersDialog: FunctionComponent<FiltersDialogProps> = ({ isOpen, o
                 <Grid fluid>
                     <FilterSection title="Categories">
                         <TagPicker
-                            className='mt-4'
+                            className='w-100 mt-4'
                             data={categoriesToInputData()}
                             placeholder='Select categories'
-                            
-                            style={{ width: '100%' }}
+                            renderMenu={menu => {
+                                if (categoriesLoading) {
+                                    return <p style={{ padding: 4, color: '#999', textAlign: 'center' }}>
+                                        <Icon icon="spinner" spin /> Loading...
+                                    </p>
+                                }
+                                return menu;
+                            }}
                         />
                     </FilterSection>
                     <FilterSection title="Year">
@@ -53,6 +67,22 @@ export const FiltersDialog: FunctionComponent<FiltersDialogProps> = ({ isOpen, o
                             range={{ min: 0, max: 10 }}
                             step={0.5}
                             onChange={setRating}
+                        />
+                    </FilterSection>
+                    <FilterSection title="Actors">
+                        <TagPicker
+                            className='w-100 mt-4'
+                            data={actorsToInputData()}
+                            placeholder='Select actors'
+                            onSearch={searchActor}
+                            renderMenu={menu => {
+                                if (actorsLoading) {
+                                    return <p style={{ padding: 4, color: '#999', textAlign: 'center' }}>
+                                        <Icon icon="spinner" spin /> Loading...
+                                    </p>
+                                }
+                                return menu;
+                            }}
                         />
                     </FilterSection>
                 </Grid>
