@@ -19,14 +19,14 @@ interface IUser {
 
 interface AuthServiceResponse extends BaseResponse {
 	data: {
-		user: IUser
+		user: Omit<IUser, 'password'>
 	}
 	meta: Token
 }
 
 interface UserServiceResponse extends BaseResponse {
 	data: {
-		user?: IUser
+		user?: Omit<IUser, 'password'>
 	}
 }
 
@@ -87,24 +87,24 @@ interface IMDBCategory {
 }
 
 interface IMDBNamesParam {
-	title: string,
-	actors: IMDBPerson[],
-	directors: IMDBPerson[],
+	title: string
+	actors: IMDBPerson[]
+	directors: IMDBPerson[]
 	genres: IMDBCategory[]
 }
 
 interface IMDBFiltersParam {
-	year: IMDBFilter,
-	rating: IMDBFilter,
-	nbRatings: IMDBFilter,
-	metaScore: IMDBFilter,
-	runtime: IMDBFilter,
-	certificate: string,
-	gross: IMDBFilter,
+	year: IMDBFilter
+	rating: IMDBFilter
+	nbRatings: IMDBFilter
+	metaScore: IMDBFilter
+	runtime: IMDBFilter
+	certificate: string
+	gross: IMDBFilter
 }
 
 interface IMDBFilter {
-	min: int | float,
+	min: int | float
 	max: int | float
 }
 
