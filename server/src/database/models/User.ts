@@ -22,8 +22,10 @@ export default class User implements IUser {
 	@PrimaryGeneratedColumn('uuid')
 	uuid!: string
 
-	@OneToMany(type => UserMovies, movie => movie.user)
-	movies!: IMDBMedia[]
+	@OneToMany(type => UserMovies, (movie: IUserMovies) => movie.user, {
+		cascade: ['remove']
+	})
+	movies!: IUserMovies[]
 
 	@Column('text')
 	@IsNotEmpty()

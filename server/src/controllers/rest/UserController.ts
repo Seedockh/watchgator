@@ -30,6 +30,23 @@ class UserController {
 		}
 	}
 
+	static async getMovies(req: Request, res: Response): Promise<Response> {
+		try {
+			const response = await UserMoviesService.getMovies(req.params.uuid)
+			return res.json({ movies: response })
+		} catch (error) {
+			if (error instanceof DatabaseError)
+				return res
+					.status(error.status)
+					.json({ message: error.message, error: error.details })
+			if (error instanceof EndpointAccessError)
+				return res
+					.status(error.status)
+					.json({ error: { message: error.message } })
+			else return res.status(500).json({ message: 'Unexpected error', error })
+		}
+	}
+
 	/** ****** POSTs ****** **/
 	static async addMovie(req: Request, res: Response): Promise<Response> {
 		const { user, movie } = req.body
@@ -218,10 +235,29 @@ class UserController {
 		}
 	}
 
-
-
-
-
+	static async deleteMovie(req: Request, res: Response): Promise<Response> {
+		try {
+			const result = await UserMoviesService.deleteMovie(
+				getTokenFromHeader(req),
+				req.body.uuid,
+				req.params.id,
+			)
+			if (!result) throw new Error('Error when deleting the Movie.')
+			return res.status(200).json({
+				message: 'Success - Movie deleted successfully',
+			})
+		} catch (error) {
+			if (error instanceof DatabaseError)
+				return res
+					.status(error.status)
+					.json({ message: error.message, error: error.details })
+			if (error instanceof EndpointAccessError)
+				return res
+					.status(error.status)
+					.json({ error: { message: error.message } })
+			else return res.status(500).json({ message: 'error', error })
+		}
+	}
 }
 
 export default UserController

@@ -29,6 +29,10 @@ class UserMoviesRepository extends BaseRepository<UserMovies> {
 		return await super.create(userMovie)
 	}
 
+	async getAll(user: User): Promise<UserMovies[]> {
+		return await this.repository?.find({ where: user })
+	}
+
 	async get(media: Partial<UserMovies>): Promise<UserMovies | undefined> {
 		return await super.get(media)
 	}
