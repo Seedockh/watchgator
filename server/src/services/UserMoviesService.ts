@@ -17,13 +17,15 @@ class UserMoviesService {
 		const user = await UserRepository.instance.get({ uuid: uuid })
 		if (user === undefined) throw new DatabaseError('User not found', 400)
 
-		let movies: IMDBMedia[] = []
+		const movies: IMDBMedia[] = []
 		user.movies.map((userMovie: IUserMovies) => {
-			movies.push(_.find(
-				// @ts-ignore: unreachable key
-				IMDBDatasetService[`${this.env}Movies`].data,
-				{ id: userMovie.movie }
-			))
+			movies.push(
+				_.find(
+					// @ts-ignore: unreachable key
+					IMDBDatasetService[`${this.env}Movies`].data,
+					{ id: userMovie.movie },
+				),
+			)
 		})
 
 		return movies
@@ -42,14 +44,18 @@ class UserMoviesService {
 		if (user === undefined) throw new DatabaseError('User not found', 400)
 		else {
 			user.movies.map((movie: IUserMovies) => {
-				if (movie.movie === movieId) throw new DatabaseError('This movie is already saved for this User.', 400)
+				if (movie.movie === movieId)
+					throw new DatabaseError(
+						'This movie is already saved for this User.',
+						400,
+					)
 			})
 		}
 
 		const movie: IMDBMedia = _.filter(
 			// @ts-ignore: unreachable key
 			IMDBDatasetService[`${this.env}Movies`].data,
-			{ id: movieId }
+			{ id: movieId },
 		)[0]
 		if (movie === undefined) throw new DatabaseError('Movie not found', 400)
 
