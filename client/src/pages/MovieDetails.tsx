@@ -1,8 +1,7 @@
 import React, { FunctionComponent, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Container, Icon, Content, Grid, Row, Col, Panel, Nav, Button, Avatar } from 'rsuite'
+import { Container, Icon, Content, Grid, Row, Col, Panel, Nav, Button, Avatar, Rate } from 'rsuite'
 import { TagList } from '../widget/TagList'
-import { RatingStars } from '../widget/RatingStars'
 import { Searchbar } from '../widget/Searchbar'
 import PlaceholderParagraph from 'rsuite/lib/Placeholder/PlaceholderParagraph'
 
@@ -54,7 +53,7 @@ export const MovieDetails: FunctionComponent<MovieDetailsProps> = (props) => {
                             <div className='flex flex-align-center' style={{ marginTop: 24 }}>
                                 <div className='text-center'>
                                     <h4>4.5/5</h4>
-                                    <RatingStars rating={4.5} />
+                                    <Rate readOnly={true} max={10} allowHalf={true} value={4.5} />
                                 </div>
                                 <div className='text-center' style={{ marginLeft: 64 }}>
                                     <Icon icon='clock-o' size='2x' />

@@ -52,6 +52,47 @@
 .pb-5 { padding-bottom: 24px; }
 .pb-6 { padding-bottom: 32px; }
 
+/* Margin helpers */
+.m-0 { margin: 0px; }
+.m-1 { margin: 4px; }
+.m-2 { margin: 8px; }
+.m-3 { margin: 12px; }
+.m-4 { margin: 16px; }
+.m-5 { margin: 24px; }
+.m-6 { margin: 32px; }
+
+.mt-0 { margin-top: 0px; }
+.mt-1 { margin-top: 4px; }
+.mt-2 { margin-top: 8px; }
+.mt-3 { margin-top: 12px; }
+.mt-4 { margin-top: 16px; }
+.mt-5 { margin-top: 24px; }
+.mt-6 { margin-top: 32px; }
+
+.ml-0 { margin-left: 0px; }
+.ml-1 { margin-left: 4px; }
+.ml-2 { margin-left: 8px; }
+.ml-3 { margin-left: 12px; }
+.ml-4 { margin-left: 16px; }
+.ml-5 { margin-left: 24px; }
+.ml-6 { margin-left: 32px; }
+
+.mr-0 { margin-right: 0px; }
+.mr-1 { margin-right: 4px; }
+.mr-2 { margin-right: 8px; }
+.mr-3 { margin-right: 12px; }
+.mr-4 { margin-right: 16px; }
+.mr-5 { margin-right: 24px; }
+.mr-6 { margin-right: 32px; }
+
+.mb-0 { margin-bottom: 0px; }
+.mb-1 { margin-bottom: 4px; }
+.mb-2 { margin-bottom: 8px; }
+.mb-3 { margin-bottom: 12px; }
+.mb-4 { margin-bottom: 16px; }
+.mb-5 { margin-bottom: 24px; }
+.mb-6 { margin-bottom: 32px; }
+
 /* Display helpers */
 .flex {
     display: flex
@@ -66,4 +107,9 @@
 /* Align helpers */
 .text-center {
     text-align: center;
+}
+.bottomRightFixed {
+    position: fixed !important;
+    right: 32px;
+    bottom: 32px;
 }

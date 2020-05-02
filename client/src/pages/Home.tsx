@@ -1,11 +1,21 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Container, Content, Grid, Row, Col, Panel, Header } from 'rsuite'
 import { MovieCard } from '../widget/MovieCard'
 import { moviesList } from '../data/movies'
 import { Sidebar } from '../widget/sidebar/Sidebar'
 import { Searchbar } from '../widget/Searchbar'
+import { FiltersDialog } from '../widget/filters/FiltersDialog'
+import { FilterButton } from '../widget/filters/FilterButton'
 
 export const Home = () => {
+  const [isFiltersOpen, setFiltersOpen] = useState(false)
+
+  const close = () => {
+    setFiltersOpen(false)
+  }
+  const open = () => {
+    setFiltersOpen(true)
+  }
 
   return (
     <Container>
@@ -77,6 +87,9 @@ export const Home = () => {
           </Panel>
         </Content>
       </Container>
+
+      <FilterButton onClick={open} />
+      <FiltersDialog isOpen={isFiltersOpen} onClose={close} />
     </Container>
   );
 }
