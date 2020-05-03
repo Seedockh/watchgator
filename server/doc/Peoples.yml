@@ -95,9 +95,12 @@ components:
          type: string | int | float
        matchCase:
          type: bool
+         description: If you want the string to match case. Default: false
+       fullname:
+         type: string
+         description: Any string that matches with People names (first and last)
      example:
-       firsname: "bruce"
-       matchCase: false
+       fullname: "bru wil"
 
    People:
      type: object
@@ -117,9 +120,6 @@ components:
        role:
          type: string
          description: People role (Actor, Actress, Director, Writer, Composer)
-       fullname:
-         type: string
-         description: Any string that matches with People names (first and last)
      example:
        id: "nm0000246"
        firstname: "Bruce"
