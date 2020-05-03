@@ -193,14 +193,20 @@ class SearchController {
 				}
 			}
 
+			const totalMovies = typeSelected <= 1 ?
+				// @ts-ignore: unreachable key
+				(movies ? movies.length : IMDBDatasetService[`${level}Movies`].data.length) : 0
 			// @ts-ignore: unreachable key
-			const totalMovies = movies ? movies.length : IMDBDatasetService[`${level}Movies`].data.length
-			// @ts-ignore: unreachable key
-			const totalSeries = series ? series.length : IMDBDatasetService[`${level}Series`].data.length
-			// @ts-ignore: unreachable key
-			const resultMovies = _.chunk(movies ?	movies : IMDBDatasetService[`${level}Movies`].data,	pagination)
-			// @ts-ignore: unreachable key
-			const resultSeries = _.chunk(series ? series : IMDBDatasetService[`${level}Series`].data,	pagination)
+			const totalSeries = typeSelected >= 1 ?
+				(series ? series.length : IMDBDatasetService[`${level}Series`].data.length) : 0
+			const resultMovies = typeSelected <= 1 ?
+				// @ts-ignore: unreachable key
+				_.chunk(movies ?	movies : IMDBDatasetService[`${level}Movies`].data,	pagination) :
+				[]
+			const resultSeries = typeSelected >= 1 ?
+				// @ts-ignore: unreachable key
+				_.chunk(series ? series : IMDBDatasetService[`${level}Series`].data,	pagination) :
+				[]
 
 			const time: number = new Date().getTime() - t0
 			sLog(
