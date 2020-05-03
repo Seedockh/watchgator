@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react'
 import { RangeSlider } from 'rsuite'
-import { MinMax } from '../../models/MinMax'
+import { MinMax } from '../../models/api/MinMax'
 
 type FilterRangeSliderProps = {
     range: MinMax;

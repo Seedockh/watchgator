@@ -4,7 +4,7 @@ export interface ApiHook<T> {
     error?: any;
 }
 
-export interface ApiHookSearch<T> extends ApiHook<T> {
-    search: (query: string) => void;
-    query: string;
+export interface ApiHookSearch<T, U> extends ApiHook<T> {
+    search: (query: U) => void;
+    query: U;
 }
