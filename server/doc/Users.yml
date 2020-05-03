@@ -619,16 +619,15 @@ components:
     Auth_User_To_Login:
       type: object
       required:
-        - nickname
+        - email
         - password
       properties:
-        nickname:
+        email:
           type: string
         password:
           type: string
-          format: min. 4 characters
       example:
-        nickname: Luc
+        email: luc@gmail.com
         password: luc1
     #############################
     Auth_Response_Success:
