@@ -1,4 +1,4 @@
-import { MinMax } from './MinMax';
+import { MinMax } from './api/MinMax';
 import { Actor } from './Actor';
 
 export interface MovieFilter {

@@ -30,12 +30,12 @@ const Profile = () => {
             <Divider />
             <Grid fluid>
               <Row className="show-grid" gutter={30}>
-                {moviesList.map((movie) => (
+                {/* {moviesList.map((movie) => (
                     <Col xs={24} sm={12} md={6} lg={4} style={{ width: 240 }} >
                       <MovieCard movie={movie} />
                     </Col>
                   )
-                )}
+                )} */}
               </Row>
             </Grid>
           </Panel>
