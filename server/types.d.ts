@@ -42,6 +42,34 @@ interface UserServiceResponse extends BaseResponse {
  ********************/
 type Ora = import('ora').Ora
 
+/******************************
+ * Define SearchPayload types *
+ ******************************/
+interface SearchPayload {
+	names: SearchNamesPayload
+	filters: SearchFiltersPayload
+	pageMovies: number
+	pageSeries: number
+	type: string
+}
+
+interface SearchNamesPayload {
+	title: string
+	actors: IMDBPerson[]
+	directors: IMDBPerson[]
+	genres: IMDBCategory[]
+}
+
+interface SearchFiltersPayload {
+	year: IMDBFilter
+	rating: IMDBFilter
+	metaScore: IMDBFilter
+	runtime: IMDBFilter
+	nbRatings: IMDBFilter
+	certificate: IMDBFilter
+	gross: IMDBFilter
+}
+
 /************************
  * Define IMDB types *
  ************************/
@@ -91,23 +119,6 @@ interface IMDBPerson {
 
 interface IMDBCategory {
 	name: string | null
-}
-
-interface IMDBNamesParam {
-	title: string
-	actors: IMDBPerson[]
-	directors: IMDBPerson[]
-	genres: IMDBCategory[]
-}
-
-interface IMDBFiltersParam {
-	year: IMDBFilter
-	rating: IMDBFilter
-	nbRatings: IMDBFilter
-	metaScore: IMDBFilter
-	runtime: IMDBFilter
-	certificate: string
-	gross: IMDBFilter
 }
 
 interface IMDBFilter {
