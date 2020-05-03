@@ -40,11 +40,12 @@ class AuthenticateService {
 			User.hashPassword(user)
 			// Add user to DB
 			const createdUser = await UserRepository.instance.create(user)
+			const { password, ...userToReturn } = createdUser
 
 			this.token = this.setToken(createdUser)
 			return {
 				status: 201,
-				data: { user: createdUser },
+				data: { user: userToReturn },
 				meta: { token: this.token },
 			}
 		} catch (error) {
@@ -64,9 +65,11 @@ class AuthenticateService {
 					if (!error) {
 						this.token = this.setToken(user)
 
+						const { password, ...userToReturn } = user
+
 						return resolve({
 							status: 200,
-							data: { user },
+							data: { user: userToReturn },
 							meta: { token: this.token },
 						})
 					}
@@ -78,13 +81,13 @@ class AuthenticateService {
 
 	static async loginGraphQL(
 		nickname: string,
-		password: string,
+		pwd: string,
 		context: Context<User>,
 	): Promise<AuthServiceResponse> {
 		try {
 			const { user } = await context.authenticate('graphql-local', {
 				username: nickname,
-				password,
+				password: pwd,
 			})
 
 			if (user === undefined) {
@@ -96,7 +99,13 @@ class AuthenticateService {
 			}
 
 			this.token = this.setToken(user)
-			return { status: 200, data: { user }, meta: { token: this.token } }
+			const { password, ...userToReturn } = user
+
+			return {
+				status: 200,
+				data: { user: userToReturn },
+				meta: { token: this.token },
+			}
 		} catch (error) {
 			if (error instanceof DatabaseError) throw error
 			throw new DatabaseError('Unexpected error', 500, undefined, error)

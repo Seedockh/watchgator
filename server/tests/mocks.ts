@@ -7,23 +7,25 @@ import UserRepository from '../src/database/repositories/UserRepository'
 
 class Mock {
 	private static successToken = '1234'
-	static successUser = {
+	static successUserResponse = {
 		uuid: '1',
 		nickname: 'john',
 		email: 'johndoe@gmail.com',
-		password: 'johndoe',
 		avatar: null,
 	}
+
+	static successUserEntry = {...Mock.successUserResponse, password: 'johndoe'}
 	static successUserToken = {
 		token: Mock.successToken,
 	}
-	static failUser = {
+	static failUserResponse = {
 		uuid: '1',
 		nickname: 'j',
 		email: 'johndoe',
-		password: '',
 		avatar: null,
 	}
+
+	static failUserEntry = {...Mock.failUserResponse, password: ''}
 
 	/** * MOCKING AUTHSERVICE REGISTER SUCCESSFUL * **/
 	static registerSuccess() {
@@ -32,7 +34,7 @@ class Mock {
 			.returns({
 				status: 201,
 				data: {
-					user: this.successUser,
+					user: this.successUserResponse,
 				},
 				meta: { token: '123' },
 			})

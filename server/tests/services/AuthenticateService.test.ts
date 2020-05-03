@@ -9,13 +9,13 @@ import { DatabaseError } from '../../src/core/CustomErrors'
 describe('Register queries', (): void => {
 	it('Successfull register', async () => {
 		const mock = Mock.createUserSuccess()
-		const { nickname, password, email } = Mock.successUser
+		const { nickname, password, email } = Mock.successUserEntry
 
 		const actual = await AuthenticateService.register(nickname, password, email)
 		expect(actual).to.deep.equal({
 			status: 201,
 			data: {
-				user: Mock.successUser,
+				user: Mock.successUserResponse,
 			},
 			meta: Mock.successUserToken,
 		})
@@ -25,7 +25,7 @@ describe('Register queries', (): void => {
 
 	it('Failed registration', async () => {
 		const mock = Mock.createUserFailure()
-		const { nickname, password, email } = Mock.failUser
+		const { nickname, password, email } = Mock.failUserEntry
 
 		try {
 			await AuthenticateService.register(nickname, password, email)

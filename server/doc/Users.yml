@@ -20,20 +20,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Auth_User_To_Register'
+              $ref: "#/components/schemas/Auth_User_To_Register"
       responses:
-        '201':
+        "201":
           description: New user created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Auth_Response_Success'
-        '400':
+                $ref: "#/components/schemas/Auth_Response_Success"
+        "400":
           description: Incorrect input data - User not created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User_Error_Format'
+                $ref: "#/components/schemas/User_Error_Format"
   #############################
   /auth/signin:
     post:
@@ -44,15 +44,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Auth_User_To_Register'
+              $ref: "#/components/schemas/Auth_User_To_Register"
       responses:
-        '200':
+        "200":
           description: User logged
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Auth_Response_Success'
-        '400':
+                $ref: "#/components/schemas/Auth_Response_Success"
+        "400":
           description: Incorrect input data - User not logged
 
   #############################
@@ -69,22 +69,22 @@ paths:
           schema:
             type: string
           required: true
-        - $ref: '#/components/parameters/Bearer_Token'
+        - $ref: "#/components/parameters/Bearer_Token"
       responses:
-        '200':
+        "200":
           description: User found
           content:
             application/json:
               schema:
                 type: array
-                $ref: '#/components/schemas/User_Response_With_Avatar'
-        '403':
+                $ref: "#/components/schemas/User_Response_With_Avatar"
+        "403":
           description: Only operations on its own user are allowed
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User_Error_Unauthorized'
-        '404':
+                $ref: "#/components/schemas/User_Error_Unauthorized"
+        "404":
           description: User cannot be found
           content:
             application/json:
@@ -93,7 +93,7 @@ paths:
                 properties:
                   message:
                     type: string
-        '500':
+        "500":
           description: Unexpected error
           content:
             application/json:
@@ -249,9 +249,9 @@ paths:
                 nickname: Bill
                 email: bill@gmail.com
       parameters:
-        - $ref: '#/components/parameters/Bearer_Token'
+        - $ref: "#/components/parameters/Bearer_Token"
       responses:
-        '200':
+        "200":
           description: User found
           content:
             application/json:
@@ -260,7 +260,7 @@ paths:
                 properties:
                   success:
                     type: string
-        '400':
+        "400":
           description: Format error
           content:
             application/json:
@@ -271,13 +271,13 @@ paths:
                     type: string
                   details:
                     type: object
-        '403':
+        "403":
           description: Only operations on its own user are allowed
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User_Error_Unauthorized'
-        '500':
+                $ref: "#/components/schemas/User_Error_Unauthorized"
+        "500":
           description: Unexpected error
           content:
             application/json:
@@ -318,9 +318,9 @@ paths:
                 currentPwd: 1234
                 newPwd: 1234
       parameters:
-        - $ref: '#/components/parameters/Bearer_Token'
+        - $ref: "#/components/parameters/Bearer_Token"
       responses:
-        '200':
+        "200":
           description: Password updated
           content:
             application/json:
@@ -329,7 +329,7 @@ paths:
                 properties:
                   success:
                     type: string
-        '400':
+        "400":
           description: Format error
           content:
             application/json:
@@ -345,19 +345,19 @@ paths:
                         type: array
                         items:
                           type: object
-        '403':
+        "403":
           description: Only operations on its own user are allowed
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User_Error_Unauthorized'
-        '404':
+                $ref: "#/components/schemas/User_Error_Unauthorized"
+        "404":
           description: User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User_Error_Unauthorized'
-        '500':
+                $ref: "#/components/schemas/User_Error_Unauthorized"
+        "500":
           description: Unexpected error
           content:
             application/json:
@@ -388,23 +388,23 @@ paths:
                   type: string
                   format: binary
       parameters:
-        - $ref: '#/components/parameters/Bearer_Token'
+        - $ref: "#/components/parameters/Bearer_Token"
       responses:
-        '200':
+        "200":
           description: User id updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User_Response_With_Avatar'
-        '403':
+                $ref: "#/components/schemas/User_Response_With_Avatar"
+        "403":
           description: Only operations on its own user are allowed
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User_Error_Unauthorized'
-        '422':
+                $ref: "#/components/schemas/User_Error_Unauthorized"
+        "422":
           description: Incorrect image data
-        '500':
+        "500":
           description: Internal error
     #############################
   /user/delete/:uuid:
@@ -418,9 +418,9 @@ paths:
           schema:
             type: string
           required: true
-        - $ref: '#/components/parameters/Bearer_Token'
+        - $ref: "#/components/parameters/Bearer_Token"
       responses:
-        '200':
+        "200":
           description: User found
           content:
             application/json:
@@ -429,7 +429,7 @@ paths:
                 properties:
                   success:
                     type: string
-        '400':
+        "400":
           description: Uuid required
           content:
             application/json:
@@ -438,13 +438,13 @@ paths:
                 properties:
                   error:
                     type: string
-        '403':
+        "403":
           description: Only operations on its own user are allowed
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User_Error_Unauthorized'
-        '500':
+                $ref: "#/components/schemas/User_Error_Unauthorized"
+        "500":
           description: Unexpected error
           content:
             application/json:
@@ -465,7 +465,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User_Request_Body_Only_Uuid'
+              $ref: "#/components/schemas/User_Request_Body_Only_Uuid"
       parameters:
         - in: path
           name: fileKey
@@ -473,9 +473,9 @@ paths:
           schema:
             type: integer
           required: true
-        - $ref: '#/components/parameters/Bearer_Token'
+        - $ref: "#/components/parameters/Bearer_Token"
       responses:
-        '200':
+        "200":
           description: Image correctly deleted
           content:
             application/json:
@@ -484,13 +484,13 @@ paths:
                 properties:
                   message:
                     type: string
-        '403':
+        "403":
           description: Only operations on its own user are allowed
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User_Error_Unauthorized'
-        '500':
+                $ref: "#/components/schemas/User_Error_Unauthorized"
+        "500":
           description: Image cannot be deleted
           content:
             application/json:
@@ -575,8 +575,6 @@ components:
           type: string
         email:
           type: string
-        password:
-          type: string
         avatar:
           type: string
       example:
@@ -584,7 +582,6 @@ components:
           uuid: 4c2d544a-803f-4668-b4ed-410a1f
           nickname: Luc
           email: luc@gmail.com
-          password: luc1
           avatar: 123456
     #############################
     User_Request_Body_Only_Uuid:
@@ -593,7 +590,7 @@ components:
         - uuid
       properties:
         uuid:
-          type: integer
+          type: string
           description: uuid of user we want to remove avatar
       example:
         uuid: 1234
@@ -623,17 +620,15 @@ components:
       type: object
       properties:
         uuid:
-          type: integer
+          type: string
         movies:
           type: array
           items:
             $ref: '#/components/schemas/UserMovie'
         nickname:
-          type: integer
+          type: string
         email:
-          type: integer
-        password:
-          type: integer
+          type: string
         avatar:
           type: string
       example:
@@ -642,7 +637,6 @@ components:
             uuid: UUID
             nickname: Luc
             email: luc@gmail.com
-            password: luc1
             avatar:
         meta:
           token: TOKEN

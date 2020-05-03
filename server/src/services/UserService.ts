@@ -16,9 +16,10 @@ class UserService {
 	): Promise<UserServiceResponse> {
 		throwIfManipulateSomeoneElse(token, uuid)
 
-		const user = await UserRepository.instance.get({ uuid })
-		if (user == undefined)
+		const res = await UserRepository.instance.get({ uuid })
+		if (res == undefined)
 			throw new DatabaseError(`Uuid ${uuid} : user not found`, 404)
+		const { password, ...user } = res
 		return { status: 200, data: { user } }
 	}
 
@@ -141,7 +142,8 @@ class UserService {
 			throw new DatabaseError('Failed to update avatar', 500)
 		} finally {
 			await queryRunner.release()
-			return { status: 200, data: { user: updatedUser } }
+			const { password, ...userToReturn } = updatedUser!
+			return { status: 200, data: { user: userToReturn } }
 		}
 	}
 
