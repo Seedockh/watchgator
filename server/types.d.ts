@@ -48,7 +48,8 @@ type Ora = import('ora').Ora
 interface SearchPayload {
 	names: SearchNamesPayload
 	filters: SearchFiltersPayload
-	page: number
+	pageMovies: number
+	pageSeries: number
 	type: string
 }
 
