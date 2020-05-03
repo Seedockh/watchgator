@@ -31,10 +31,10 @@ export const resolvers = {
 			args: User,
 			context: Context<User>,
 		): Promise<Omit<User, 'password'>> => {
-			const { nickname, password } = args
+			const { email, password } = args
 			try {
 				const result = await AuthenticateService.loginGraphQL(
-					nickname,
+					email,
 					password,
 					context,
 				)

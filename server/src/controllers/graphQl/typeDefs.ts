@@ -7,7 +7,11 @@ export const typeDefs = gql`
 	}
 	type Mutation {
 		signUp(nickname: String!, email: String!, password: String!): UserWithoutPwd
-		signIn(nickname: String!, email: String!, password: String!): UserWithoutPwd!
+		signIn(
+			nickname: String!
+			email: String!
+			password: String!
+		): UserWithoutPwd!
 	}
 	type UserWithoutPwd {
 		uuid: String!
