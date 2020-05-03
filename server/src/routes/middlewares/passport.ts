@@ -12,13 +12,15 @@ import UserRepository from '../../database/repositories/UserRepository'
 passport.use(
 	new LocalStrategy(
 		{
-			usernameField: 'nickname',
+			usernameField: 'email',
 			passwordField: 'password',
 		},
-		async (nickname, password, next) => {
+		async (email, password, next) => {
 			try {
-				const user: User | undefined = await UserRepository.instance.get({ nickname	})
-				
+				const user: User | undefined = await UserRepository.instance.get({
+					email,
+				})
+
 				if (!user) return next('User does not exist')
 
 				if (!User.checkIfUnencryptedPasswordIsValid(user, password))
@@ -41,7 +43,7 @@ passport.use(
 		) => {
 			try {
 				const user: User | undefined = await UserRepository.instance.get({
-					nickname: username,
+					email: username,
 				})
 
 				if (!user) return next(null, false)

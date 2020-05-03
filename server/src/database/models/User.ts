@@ -5,7 +5,6 @@ import {
 	Column,
 	Unique,
 	OneToMany,
-	JoinTable,
 } from 'typeorm'
 import { Length, IsNotEmpty, IsEmail } from 'class-validator'
 /** ****** ENCRYPT ****** **/
@@ -17,14 +16,18 @@ import IStorageService from 'src/services/IStorageService'
 import UserMovies from './UserMovies'
 
 @Entity()
-@Unique(['nickname'])
+@Unique(['email'])
 export default class User implements IUser {
 	@PrimaryGeneratedColumn('uuid')
 	uuid!: string
 
-	@OneToMany(type => UserMovies, (movie: IUserMovies) => movie.user, {
-		cascade: ['remove']
-	})
+	@OneToMany(
+		type => UserMovies,
+		(movie: IUserMovies) => movie.user,
+		{
+			cascade: ['remove'],
+		},
+	)
 	movies!: IUserMovies[]
 
 	@Column('text')
