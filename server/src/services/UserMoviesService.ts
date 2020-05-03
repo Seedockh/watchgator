@@ -5,7 +5,6 @@ import UserRepository from '../database/repositories/UserRepository'
 import UserMoviesRepository from '../database/repositories/UserMoviesRepository'
 import IMDBDatasetService from './IMDBDatasetService'
 import { DatabaseError } from '../core/CustomErrors'
-import User from '../database/models/User'
 import { throwIfManipulateSomeoneElse } from './utils'
 
 class UserMoviesService {

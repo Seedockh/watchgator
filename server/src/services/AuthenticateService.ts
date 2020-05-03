@@ -40,7 +40,8 @@ class AuthenticateService {
 			User.hashPassword(user)
 			// Add user to DB
 			const createdUser = await UserRepository.instance.create(user)
-			const { password, ...userToReturn } = createdUser
+			const { ...userToReturn } = createdUser
+			delete userToReturn.password
 
 			this.token = this.setToken(createdUser)
 			return {
@@ -65,7 +66,8 @@ class AuthenticateService {
 					if (!error) {
 						this.token = this.setToken(user)
 
-						const { password, ...userToReturn } = user
+						const { ...userToReturn } = user
+						delete userToReturn.password
 
 						return resolve({
 							status: 200,
@@ -99,7 +101,8 @@ class AuthenticateService {
 			}
 
 			this.token = this.setToken(user)
-			const { password, ...userToReturn } = user
+			const { ...userToReturn } = user
+			delete userToReturn.password
 
 			return {
 				status: 200,

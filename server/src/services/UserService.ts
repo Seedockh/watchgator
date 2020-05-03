@@ -19,7 +19,8 @@ class UserService {
 		const res = await UserRepository.instance.get({ uuid })
 		if (res == undefined)
 			throw new DatabaseError(`Uuid ${uuid} : user not found`, 404)
-		const { password, ...user } = res
+		const { ...user } = res
+		delete user.password
 		return { status: 200, data: { user } }
 	}
 
@@ -30,7 +31,8 @@ class UserService {
 		token: string | undefined,
 		partialUser: Partial<User>,
 	): Promise<boolean> {
-		const { uuid, password, ...dataToUpdate } = partialUser
+		const { uuid, ...dataToUpdate } = partialUser
+		delete dataToUpdate.password
 
 		if (typeof uuid == 'undefined') return false
 
@@ -142,7 +144,8 @@ class UserService {
 			throw new DatabaseError('Failed to update avatar', 500)
 		} finally {
 			await queryRunner.release()
-			const { password, ...userToReturn } = updatedUser!
+			const { ...userToReturn } = updatedUser!
+			delete userToReturn.password
 			return { status: 200, data: { user: userToReturn } }
 		}
 	}
