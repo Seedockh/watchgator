@@ -105,6 +105,123 @@ paths:
                   error:
                     type: string
   #############################
+  /user/movies/:uuid:
+    get:
+      summary: Get UserMovies associated to the UUID
+      tags: [User authenticated]
+      parameters:
+        - in: path
+          name: uuid
+          description: User UUID
+          schema:
+            type: string
+          required: true
+        - $ref: '#/components/parameters/Bearer_Token'
+      responses:
+        '200':
+          description: List of detailed Movies found in User's UserMovies
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  movies:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Movie'
+        '403':
+          description: Only operations on its own user are allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User_Error_Unauthorized'
+        '404':
+          description: User | Movie cannot be found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  error:
+                    type: string
+  #############################
+  /user/add-movie:
+    post:
+      summary: Create an UserMovie with User UUID & Movie ID
+      tags: [User authenticated]
+      parameters:
+        - $ref: '#/components/parameters/Bearer_Token'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user
+                - movie
+              properties:
+                user:
+                  type: string
+                  description: User UUID
+                movie:
+                  type: string
+                  description: Movie ID
+              example:
+                user: "8dc8504a-37c6-432e-a0c0-f80a3c32b6c6"
+                movie: "tt0070909"
+      responses:
+        '200':
+          description: UserMovie successful creation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: "Movie successfully added to user's collection"
+        '400':
+          description: UserMovie already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                example:
+                  error: "This movie is already saved for this User."
+        '403':
+          description: Only operations on its own user are allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User_Error_Unauthorized'
+        '500':
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  details:
+                    type: string
+  #############################
   /user/update:
     put:
       summary: Update user by uuid
@@ -385,6 +502,54 @@ paths:
                   error:
                     type: string
   #############################
+  /user/delete-movie/:id:
+    delete:
+      summary: Delete UserMovie with ID = :id
+      tags: [User authenticated]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User_Request_Body_Only_Uuid'
+      parameters:
+        - in: path
+          name: id
+          description: Movie ID
+          schema:
+            type: string
+          required: true
+        - $ref: '#/components/parameters/Bearer_Token'
+      responses:
+        '200':
+          description: Successfully deleted UserMovie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: "Success - Movie deleted successfully"
+        '403':
+          description: Only operations on its own user are allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User_Error_Unauthorized'
+        '500':
+          description: UserMovie cannot be deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  error:
+                    type: string
+  #############################
 
 components:
   schemas:
@@ -402,6 +567,10 @@ components:
       properties:
         uuid:
           type: string
+        movies:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserMovie'
         nickname:
           type: string
         email:
@@ -455,6 +624,10 @@ components:
       properties:
         uuid:
           type: integer
+        movies:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserMovie'
         nickname:
           type: integer
         email:
@@ -499,6 +672,19 @@ components:
                       type: string
                   constraints:
                     type: object
+    #############################
+    UserMovie:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: UserMovie ID
+        movie:
+          type: string
+          description: Movie ID
+      example:
+        id: 4
+        movie: "tt0070909"
   #############################
   parameters:
     Bearer_Token:
