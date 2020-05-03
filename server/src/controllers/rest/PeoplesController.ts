@@ -59,7 +59,7 @@ class PeoplesController {
 						const firstRgxp = new RegExp(names[0], matchCase)
 						const lastRgxp = new RegExp(names[1], matchCase)
 
-						if (names.length === 1 && firstRgxp.test(`${people.firstname}${people.lastname}`))
+						if (names.length === 1 && firstRgxp.test(`${people.firstname} ${people.lastname}`))
 							return true
 
 						if (names.length >= 2 && (
