@@ -76,6 +76,15 @@ components:
           runtime:
             type: object
             $ref: '#/components/schemas/SearchFilters'
+       pageMovies:
+         type: number
+         description: Select the Movies page to display (default = 1)
+       pageSeries:
+         type: number
+         description: Select the Series page to display (default = 1)
+       type:
+         type: string
+         description: Select a specific type, "movies" or "series" (default = none)
 
    SearchGenres:
       type: object

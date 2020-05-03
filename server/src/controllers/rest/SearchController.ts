@@ -197,18 +197,10 @@ class SearchController {
 			const totalMovies = movies ? movies.length : IMDBDatasetService[`${level}Movies`].data.length
 			// @ts-ignore: unreachable key
 			const totalSeries = series ? series.length : IMDBDatasetService[`${level}Series`].data.length
-
-			const resultMovies = _.chunk(movies ?
-				// @ts-ignore: unreachable key
-				movies : IMDBDatasetService[`${level}Movies`].data,
-				pagination
-			)
-
-			const resultSeries = _.chunk(series ?
-				// @ts-ignore: unreachable key
-				series : IMDBDatasetService[`${level}Series`].data,
-				pagination
-			)
+			// @ts-ignore: unreachable key
+			const resultMovies = _.chunk(movies ?	movies : IMDBDatasetService[`${level}Movies`].data,	pagination)
+			// @ts-ignore: unreachable key
+			const resultSeries = _.chunk(series ? series : IMDBDatasetService[`${level}Series`].data,	pagination)
 
 			const time: number = new Date().getTime() - t0
 			sLog(
