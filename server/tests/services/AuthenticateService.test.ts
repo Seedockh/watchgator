@@ -1,5 +1,4 @@
 /** ****** TESTING ****** **/
-import 'chai/register-should'
 import 'chai/register-expect'
 import Mock from '../mocks'
 /** ****** INTERNALS ****** **/
