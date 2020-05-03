@@ -6,9 +6,11 @@ import { Sidebar } from '../widget/sidebar/Sidebar'
 import { Searchbar } from '../widget/Searchbar'
 import { FiltersDialog } from '../widget/filters/FiltersDialog'
 import { FilterButton } from '../widget/filters/FilterButton'
+import { MovieFilter } from '../models/MovieFilter'
 
 export const Home = () => {
   const [isFiltersOpen, setFiltersOpen] = useState(false)
+  const [filters, setFilters] = useState<MovieFilter>()
 
   const close = () => {
     setFiltersOpen(false)
@@ -89,7 +91,7 @@ export const Home = () => {
       </Container>
 
       <FilterButton onClick={open} />
-      <FiltersDialog isOpen={isFiltersOpen} onClose={close} />
+      <FiltersDialog isOpen={isFiltersOpen} onClose={close} onApplyFilters={setFilters} initFilters={filters ? {...filters} : undefined} />
     </Container>
   );
 }

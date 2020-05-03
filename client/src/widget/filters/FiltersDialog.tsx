@@ -1,33 +1,41 @@
-import React, { FunctionComponent, useState } from 'react'
+import React, { FunctionComponent, useState, useEffect } from 'react'
 import { Modal, Button, Grid, TagPicker, Icon, Input, List } from 'rsuite'
-import { MinMax } from '../../models/MinMax'
 import { FilterSection } from './FilterSection'
 import { FilterRangeSlider } from './FilterRangeSlider'
 import { useAllCategories, useSearchActors } from '../../hooks/api/useApi'
 import { ItemDataType } from 'rsuite/lib/@types/common'
-import { Actor } from '../../models/Actor'
 import { TagList } from '../TagList'
+import { MovieFilter } from '../../models/MovieFilter'
 
 type FiltersDialogProps = {
     isOpen: boolean;
     onClose: () => void;
+    onApplyFilters: (filters: MovieFilter) => void;
+    initFilters?: MovieFilter;
 }
 
-export const FiltersDialog: FunctionComponent<FiltersDialogProps> = ({ isOpen, onClose }) => {
+const kDefaultFilters: MovieFilter = {
+    rating: { min: 7, max: 10 },
+    years: { min: 2000, max: 2020 },
+    categories: [],
+    actors: []
+}
+
+export const FiltersDialog: FunctionComponent<FiltersDialogProps> = ({ isOpen, onClose, onApplyFilters, initFilters }) => {
     const { isLoading: categoriesLoading, data: categories } = useAllCategories();
     const { data: actors, search: searchActor, query: queryActor } = useSearchActors();
 
-    const [rating, setRating] = useState<MinMax>({ min: 7, max: 10 })
-    const [year, setYear] = useState<MinMax>({ min: 2000, max: 2020 })
-    const [selectedActors, setSelectedActors] = useState<Actor[]>([])
-    const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+    const [filters, setFilters] = useState<MovieFilter>(kDefaultFilters)
+
+    useEffect(() => {
+        setFilters(initFilters ?? kDefaultFilters)
+    }, [isOpen])
 
     const categoriesToInputData = (): ItemDataType[] => {
         if (!categories) return []
         return categories.map((cat) => ({ value: cat, label: cat }))
     }
-    console.log(selectedCategories);
-    
+
     return (
         <Modal show={isOpen} onHide={onClose}>
             <Modal.Header>
@@ -40,7 +48,10 @@ export const FiltersDialog: FunctionComponent<FiltersDialogProps> = ({ isOpen, o
                             className='w-100 mt-4'
                             data={categoriesToInputData()}
                             placeholder='Select categories'
-                            onSelect={setSelectedCategories}
+                            value={filters.categories}
+                            onSelect={(value) => {
+                                setFilters({ ...filters, categories: value })
+                            }}
                             renderMenu={menu => {
                                 if (categoriesLoading) {
                                     return <p style={{ padding: 4, color: '#999', textAlign: 'center' }}>
@@ -53,18 +64,22 @@ export const FiltersDialog: FunctionComponent<FiltersDialogProps> = ({ isOpen, o
                     </FilterSection>
                     <FilterSection title="Year">
                         <FilterRangeSlider
-                            value={year}
+                            value={filters.years}
                             range={{ min: 1950, max: 2020 }}
                             step={1}
-                            onChange={setYear}
+                            onChange={(years) => {
+                                setFilters({ ...filters, years })
+                            }}
                         />
                     </FilterSection>
                     <FilterSection title="Rating">
                         <FilterRangeSlider
-                            value={rating}
+                            value={filters.rating}
                             range={{ min: 0, max: 10 }}
                             step={0.5}
-                            onChange={setRating}
+                            onChange={(rating) => {
+                                setFilters({ ...filters, rating })
+                            }}
                         />
                     </FilterSection>
                     <FilterSection title="Actors">
@@ -72,18 +87,18 @@ export const FiltersDialog: FunctionComponent<FiltersDialogProps> = ({ isOpen, o
 
                         <TagList
                             className='mt-3 mb-3'
-                            tags={selectedActors}
+                            tags={filters.actors}
                             renderTag={(a) => `${a.firstname} ${a.lastname}`}
                             onClose={(actor) => {
-                                setSelectedActors(selectedActors.filter(({ id }) => id !== actor.id))
+                                setFilters({ ...filters, actors: filters.actors.filter(({ id }) => id !== actor.id) })
                             }}
                         />
 
                         <List bordered hover autoScroll>
-                            {actors?.results[0]?.filter((a) => selectedActors.findIndex((sa) => sa.id === a.id) === -1).slice(0, 10).map((actor) => (
+                            {actors?.results[0]?.filter((a) => filters.actors.findIndex((sa) => sa.id === a.id) === -1).slice(0, 10).map((actor) => (
                                 <div key={actor.id} onClick={() => {
-                                    if (selectedActors.findIndex(({ id }) => id === actor.id) === -1) {
-                                        setSelectedActors([...selectedActors, actor])
+                                    if (filters.actors.findIndex(({ id }) => id === actor.id) === -1) {
+                                        setFilters({ ...filters, actors: [...filters.actors, actor] })
                                     }
                                     searchActor('')
                                 }}>
@@ -96,7 +111,10 @@ export const FiltersDialog: FunctionComponent<FiltersDialogProps> = ({ isOpen, o
             </Modal.Body>
             <Modal.Footer>
                 <Button onClick={onClose} appearance="subtle">Cancel</Button>
-                <Button onClick={onClose} appearance="primary">Apply filters</Button>
+                <Button onClick={() => {
+                    onClose();
+                    onApplyFilters(filters);
+                }} appearance="primary">Apply filters</Button>
             </Modal.Footer>
         </Modal>
     )
