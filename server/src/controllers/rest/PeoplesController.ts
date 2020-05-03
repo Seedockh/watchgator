@@ -21,15 +21,21 @@ class PeoplesController {
 		const page = parseInt(req.params.page)
 		const start = 20 * page
 		const end = start + 20
-		// @ts-ignore: unreachable key
-		const result = _.slice(IMDBDatasetService[`${level}Peoples`].data, start, end)
+		const result = _.slice(
+			// @ts-ignore: unreachable key
+			IMDBDatasetService[`${level}Peoples`].data,
+			start,
+			end,
+		)
 
-		res.json({ total: result.length, page: page+1, results: result })
+		res.json({ total: result.length, page: page + 1, results: result })
 	}
 
 	static getById(req: Request, res: Response) {
-		// @ts-ignore: unreachable key
-		res.json(_.find(IMDBDatasetService[`${level}Peoples`].data, { id: req.params.id }))
+		res.json(
+			// @ts-ignore: unreachable key
+			_.find(IMDBDatasetService[`${level}Peoples`].data, { id: req.params.id }),
+		)
 	}
 
 	static findByKeys(req: Request, res: Response) {

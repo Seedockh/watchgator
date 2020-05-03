@@ -27,21 +27,21 @@ describe('GraphQL Queries', (): void => {
 describe('GraphQL Muations', (): void => {
 	it('Successful register', async () => {
 		const mock = Mock.registerSuccess()
-		const { nickname, email, password } = Mock.successUser
+		const { nickname, email, password } = Mock.successUserEntry
 
 		const actual = await resolvers.Mutation.signUp(null, {
 			nickname,
 			email,
 			password,
 		})
-		actual.should.equal(Mock.successUser)
+		actual.should.equal(Mock.successUserResponse)
 
 		mock.restore()
 	})
 
 	it('Fails register validation', async () => {
 		const mock = Mock.registerFailure()
-		const { nickname, email, password } = Mock.failUser
+		const { nickname, email, password } = Mock.failUserEntry
 
 		try {
 			await resolvers.Mutation.signUp(null, { nickname, email, password })

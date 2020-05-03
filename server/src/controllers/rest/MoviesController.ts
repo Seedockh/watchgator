@@ -21,15 +21,21 @@ class MoviesController {
 		const page = parseInt(req.params.page) - 1
 		const start = 20 * page
 		const end = start + 20
-		// @ts-ignore: unreachable key
-		const result = _.slice(IMDBDatasetService[`${level}Movies`].data, start, end)
+		const result = _.slice(
+			// @ts-ignore: unreachable key
+			IMDBDatasetService[`${level}Movies`].data,
+			start,
+			end,
+		)
 
-		res.json({ total: result.length, page: page+1, results: result })
+		res.json({ total: result.length, page: page + 1, results: result })
 	}
 
 	static getById(req: Request, res: Response) {
-		// @ts-ignore: unreachable key
-		res.json(_.find(IMDBDatasetService[`${level}Movies`].data, { id: req.params.id }))
+		res.json(
+			// @ts-ignore: unreachable key
+			_.find(IMDBDatasetService[`${level}Movies`].data, { id: req.params.id }),
+		)
 	}
 
 	static findByKeys(req: Request, res: Response) {
@@ -55,9 +61,11 @@ class MoviesController {
 		)
 
 		if (keys.title) results = _.orderBy(results, ['rating'], ['desc'])
-		else if (keys.description) results = _.orderBy(results, ['rating'], ['desc'])
+		else if (keys.description)
+			results = _.orderBy(results, ['rating'], ['desc'])
 		else if (keys.rating) results = _.orderBy(results, ['rating'], ['desc'])
-		else if (keys.metaScore) results = _.orderBy(results, ['metaScore', 'rating'], ['desc', 'desc'])
+		else if (keys.metaScore)
+			results = _.orderBy(results, ['metaScore', 'rating'], ['desc', 'desc'])
 		else if (keys.year) results = _.orderBy(results, ['rating'], ['desc'])
 		else if (keys.runtime) results = _.orderBy(results, ['rating'], ['desc'])
 		// else if (keys.gross) results = _.sortBy(results, ['gross', 'rating'])
