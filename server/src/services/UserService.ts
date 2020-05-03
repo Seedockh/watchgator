@@ -1,46 +1,27 @@
-/** ****** INTERNALS ****** **/
-import { User } from '../database/models/User'
-import UserRepository from '../database/repositories/UserRepository'
-import { DatabaseError, EndpointAccessError } from '../core/CustomErrors'
+/** ****** TYPEORM ****** **/
 import { QueryFailedError, UpdateResult } from 'typeorm'
+/** ****** VALIDATOR ****** **/
 import { ValidationError } from 'class-validator'
 import { transformAndValidate } from 'class-transformer-validator'
+/** ****** INTERNALS ****** **/
+import User from '../database/models/User'
+import UserRepository from '../database/repositories/UserRepository'
+import { DatabaseError } from '../core/CustomErrors'
+import { throwIfManipulateSomeoneElse } from './utils'
 
 class UserService {
-	static throwIfManipulateSomeoneElse(
-		token: string | undefined,
-		userUuid: string,
-	): void {
-		if (typeof token == 'undefined') throw new EndpointAccessError()
-		if (!User.tokenBelongsToUser(token, userUuid))
-			throw new EndpointAccessError()
-	}
-
 	static async getUser(
 		token: string | undefined,
 		uuid: string,
 	): Promise<UserServiceResponse> {
-		this.throwIfManipulateSomeoneElse(token, uuid)
+		throwIfManipulateSomeoneElse(token, uuid)
 
-		const res = await UserRepository.get({ uuid })
+		const res = await UserRepository.instance.get({ uuid })
 		if (res == undefined)
 			throw new DatabaseError(`Uuid ${uuid} : user not found`, 404)
-		const { password, ...user } = res
+		const { ...user } = res
+		delete user.password
 		return { status: 200, data: { user } }
-	}
-
-	static async deleteUser(
-		token: string | undefined,
-		uuid: string,
-	): Promise<boolean> {
-		this.throwIfManipulateSomeoneElse(token, uuid)
-
-		try {
-			const res = await UserRepository.delete(uuid)
-			return res.affected != 0
-		} catch (error) {
-			return false
-		}
 	}
 
 	/**
@@ -50,18 +31,19 @@ class UserService {
 		token: string | undefined,
 		partialUser: Partial<User>,
 	): Promise<boolean> {
-		const { uuid, password, ...dataToUpdate } = partialUser
+		const { uuid, ...dataToUpdate } = partialUser
+		delete dataToUpdate.password
 
 		if (typeof uuid == 'undefined') return false
 
-		this.throwIfManipulateSomeoneElse(token, uuid)
+		throwIfManipulateSomeoneElse(token, uuid)
 
 		return transformAndValidate(User, partialUser, {
 			validator: { skipMissingProperties: true },
 		})
 			.then(
 				(): Promise<UpdateResult> =>
-					UserRepository.update({ uuid }, { ...dataToUpdate }),
+					UserRepository.instance.update({ uuid }, { ...dataToUpdate }),
 			)
 			.then((res): boolean => res.affected != 0)
 			.catch(error => {
@@ -83,11 +65,11 @@ class UserService {
 	): Promise<boolean> {
 		if (typeof uuid === 'undefined') return false
 
-		this.throwIfManipulateSomeoneElse(token, uuid)
+		throwIfManipulateSomeoneElse(token, uuid)
 
 		try {
 			// Check provided current password
-			const userToUpdate = await UserRepository.get({ uuid })
+			const userToUpdate = await UserRepository.instance.get({ uuid })
 			if (userToUpdate === undefined)
 				throw new DatabaseError('User not found', 404)
 			if (!User.checkIfUnencryptedPasswordIsValid(userToUpdate, currentPwd))
@@ -105,7 +87,7 @@ class UserService {
 
 			// Hash and update correct password
 			User.hashPassword(userToUpdate)
-			const res = await UserRepository.update(
+			const res = await UserRepository.instance.update(
 				{ uuid },
 				{ password: userToUpdate.password },
 			)
@@ -126,9 +108,9 @@ class UserService {
 		uuid: string,
 		avatar: string,
 	): Promise<UserServiceResponse> {
-		this.throwIfManipulateSomeoneElse(token, uuid)
+		throwIfManipulateSomeoneElse(token, uuid)
 
-		const connection = UserRepository.getConnection()
+		const connection = UserRepository.getConnection
 		let updatedUser: User | undefined = undefined
 
 		// Start sql transaction
@@ -137,7 +119,7 @@ class UserService {
 		await queryRunner.startTransaction()
 
 		try {
-			const initUser = await UserRepository.get({ uuid })
+			const initUser = await UserRepository.instance.get({ uuid })
 			if (initUser == undefined) throw new Error()
 
 			// Set updatedUser by cloning init without any reference
@@ -162,8 +144,23 @@ class UserService {
 			throw new DatabaseError('Failed to update avatar', 500)
 		} finally {
 			await queryRunner.release()
-			const { password, ...userToReturn } = updatedUser!
+			const { ...userToReturn } = updatedUser!
+			delete userToReturn.password
 			return { status: 200, data: { user: userToReturn } }
+		}
+	}
+
+	static async deleteUser(
+		token: string | undefined,
+		uuid: string,
+	): Promise<boolean> {
+		throwIfManipulateSomeoneElse(token, uuid)
+
+		try {
+			const res = await UserRepository.instance.delete(uuid)
+			return res.affected != 0
+		} catch (error) {
+			return false
 		}
 	}
 
@@ -172,10 +169,10 @@ class UserService {
 		uuid: string,
 		fileKey: string,
 	): Promise<boolean> {
-		this.throwIfManipulateSomeoneElse(token, uuid)
+		throwIfManipulateSomeoneElse(token, uuid)
 
 		try {
-			await UserRepository.update({ uuid }, { avatar: undefined })
+			await UserRepository.instance.update({ uuid }, { avatar: undefined })
 			await User.storageService.deleteImg(fileKey)
 			return true
 		} catch (error) {

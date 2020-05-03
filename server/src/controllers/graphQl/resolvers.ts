@@ -3,7 +3,7 @@ import { AuthenticationError } from 'apollo-server-errors'
 import { Context } from 'graphql-passport/lib/buildContext'
 /** ****** INTERNALS ****** **/
 import AuthenticateService from '../../services/AuthenticateService'
-import { User } from '../../database/models/User'
+import User from '../../database/models/User'
 import { DatabaseError } from '../../core/CustomErrors'
 
 export const resolvers = {

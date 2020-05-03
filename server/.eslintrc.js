@@ -23,6 +23,7 @@ module.exports = {
     'prettier/prettier': ['error', require('./prettier.config.js')],
     // Typescript stuff
     '@typescript-eslint/no-inferrable-types': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/ban-ts-ignore': 'off',
     '@typescript-eslint/no-explicit-any': 'off',

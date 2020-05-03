@@ -6,7 +6,7 @@ import { Strategy as LocalStrategy } from 'passport-local'
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt'
 import { GraphQLLocalStrategy } from 'graphql-passport'
 /** ****** INTERNALS ****** **/
-import { User } from '../../database/models/User'
+import User from '../../database/models/User'
 import UserRepository from '../../database/repositories/UserRepository'
 
 passport.use(
@@ -17,10 +17,8 @@ passport.use(
 		},
 		async (nickname, password, next) => {
 			try {
-				const user: User | undefined = await UserRepository.get({
-					nickname,
-				})
-
+				const user: User | undefined = await UserRepository.instance.get({ nickname	})
+				
 				if (!user) return next('User does not exist')
 
 				if (!User.checkIfUnencryptedPasswordIsValid(user, password))
@@ -42,7 +40,7 @@ passport.use(
 			next: (error: any, user?: any) => void,
 		) => {
 			try {
-				const user: User | undefined = await UserRepository.get({
+				const user: User | undefined = await UserRepository.instance.get({
 					nickname: username,
 				})
 
@@ -66,7 +64,7 @@ passport.use(
 		},
 		async (jwtPayload, next) => {
 			try {
-				const user: User | undefined = await UserRepository.get({
+				const user: User | undefined = await UserRepository.instance.get({
 					uuid: jwtPayload.uuid,
 				})
 

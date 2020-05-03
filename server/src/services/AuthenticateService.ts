@@ -8,7 +8,7 @@ import { Context } from 'graphql-passport/lib/buildContext'
 /** ****** TYPEORM ****** **/
 import { QueryFailedError } from 'typeorm'
 /** ****** INTERNALS ****** **/
-import { User } from '../database/models/User'
+import User from '../database/models/User'
 import UserRepository from '../database/repositories/UserRepository'
 import { sLog } from '../core/Log'
 import { DatabaseError } from '../core/CustomErrors'
@@ -39,8 +39,9 @@ class AuthenticateService {
 		try {
 			User.hashPassword(user)
 			// Add user to DB
-			const createdUser = await UserRepository.create(user)
-			const { password, ...userToReturn } = createdUser
+			const createdUser = await UserRepository.instance.create(user)
+			const { ...userToReturn } = createdUser
+			delete userToReturn.password
 
 			this.token = this.setToken(createdUser)
 			return {
@@ -65,7 +66,8 @@ class AuthenticateService {
 					if (!error) {
 						this.token = this.setToken(user)
 
-						const { password, ...userToReturn } = user
+						const { ...userToReturn } = user
+						delete userToReturn.password
 
 						return resolve({
 							status: 200,
@@ -99,7 +101,8 @@ class AuthenticateService {
 			}
 
 			this.token = this.setToken(user)
-			const { password, ...userToReturn } = user
+			const { ...userToReturn } = user
+			delete userToReturn.password
 
 			return {
 				status: 200,

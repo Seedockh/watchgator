@@ -4,7 +4,8 @@ import 'reflect-metadata'
 import { createConnection, Connection } from 'typeorm'
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions'
 /** ****** INTERNALS ****** **/
-import { User } from '../database/models/User'
+import User from './models/User'
+import UserMovies from './models/UserMovies'
 import { aLog } from '../core/Log'
 
 class Database {
@@ -22,7 +23,7 @@ class Database {
 				synchronize: true,
 				logging: false,
 				uuidExtension: 'uuid-ossp',
-				entities: [User],
+				entities: [User, UserMovies],
 				extra: {
 					ssl: {
 						rejectUnauthorized: false,

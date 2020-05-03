@@ -15,6 +15,13 @@ interface IUser {
 	email: string
 	password: string
 	avatar?: string | undefined
+	movies: IUserMovies[]
+}
+
+interface IUserMovies {
+	id: number
+	user: string
+	movie: string
 }
 
 interface AuthServiceResponse extends BaseResponse {
@@ -52,7 +59,7 @@ interface Dataset {
 	data: [IMDBMedia]
 }
 
-interface IMDBMedia {
+interface IMDBMedia extends IMDBMediaBase {
 	id: string | null
 	title: string | null
 	year: number | null

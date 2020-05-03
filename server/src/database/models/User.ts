@@ -1,18 +1,31 @@
 /** ****** ORM ****** **/
-import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm'
-import { Length, IsNotEmpty, IsEmail, ValidationSchema } from 'class-validator'
+import {
+	Entity,
+	PrimaryGeneratedColumn,
+	Column,
+	Unique,
+	OneToMany,
+	JoinTable,
+} from 'typeorm'
+import { Length, IsNotEmpty, IsEmail } from 'class-validator'
 /** ****** ENCRYPT ****** **/
 import * as bcrypt from 'bcryptjs'
 import * as jwt from 'jsonwebtoken'
 /** ****** INTERNALS ****** **/
 import S3 from '../../services/s3Services'
 import IStorageService from 'src/services/IStorageService'
+import UserMovies from './UserMovies'
 
 @Entity()
 @Unique(['nickname'])
-export class User implements IUser {
+export default class User implements IUser {
 	@PrimaryGeneratedColumn('uuid')
 	uuid!: string
+
+	@OneToMany(type => UserMovies, (movie: IUserMovies) => movie.user, {
+		cascade: ['remove']
+	})
+	movies!: IUserMovies[]
 
 	@Column('text')
 	@IsNotEmpty()
