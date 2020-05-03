@@ -196,8 +196,8 @@ class SearchController {
 			const totalMovies = typeSelected <= 1 ?
 				// @ts-ignore: unreachable key
 				(movies ? movies.length : IMDBDatasetService[`${level}Movies`].data.length) : 0
-			// @ts-ignore: unreachable key
 			const totalSeries = typeSelected >= 1 ?
+				// @ts-ignore: unreachable key
 				(series ? series.length : IMDBDatasetService[`${level}Series`].data.length) : 0
 			const resultMovies = typeSelected <= 1 ?
 				// @ts-ignore: unreachable key
