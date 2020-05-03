@@ -44,7 +44,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Auth_User_To_Register"
+              $ref: "#/components/schemas/Auth_User_To_Login"
       responses:
         "200":
           description: User logged
@@ -614,6 +614,21 @@ components:
       example:
         nickname: Luc
         email: luc@gmail.com
+        password: luc1
+    #############################
+    Auth_User_To_Login:
+      type: object
+      required:
+        - nickname
+        - password
+      properties:
+        nickname:
+          type: string
+        password:
+          type: string
+          format: min. 4 characters
+      example:
+        nickname: Luc
         password: luc1
     #############################
     Auth_Response_Success:
