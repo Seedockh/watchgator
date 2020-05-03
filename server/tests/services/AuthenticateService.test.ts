@@ -1,6 +1,8 @@
 /** ****** TESTING ****** **/
 import 'chai/register-expect'
 import Mock from '../mocks'
+/** ****** SERVER TYPES ****** **/
+import { Request, Response } from 'express'
 /** ****** INTERNALS ****** **/
 import AuthenticateService from '../../src/services/AuthenticateService'
 import { DatabaseError } from '../../src/core/CustomErrors'
@@ -31,6 +33,55 @@ describe('Register queries', (): void => {
 		} catch (e) {
 			expect(e).to.be.an.instanceof(DatabaseError)
 			expect(e.status).to.equal(400)
+		}
+
+		mock.restore()
+	})
+})
+
+describe('Login queries', (): void => {
+	it('Successfull login', async () => {
+		const mock = Mock.passportAuthenticateSuccess()
+		const { nickname, password, email } = Mock.successUserEntry
+
+		const req = Mock.loginRequest({
+			nickname,
+			password,
+			email,
+		})
+		const actual = await AuthenticateService.login(
+			req as Request,
+			{} as Response,
+		)
+		expect(actual).to.deep.equal({
+			status: 200,
+			data: {
+				user: Mock.successUserResponse,
+			},
+			meta: Mock.successUserToken,
+		})
+
+		mock.restore()
+	})
+
+	it('Failed login', async () => {
+		const mock = Mock.passportAuthenticateFailure()
+		const { nickname, password, email } = Mock.successUserEntry
+
+		const req = Mock.loginRequest({
+			nickname,
+			password,
+			email,
+		})
+
+		try {
+			const actual = await AuthenticateService.login(
+				req as Request,
+				{} as Response,
+			)
+		} catch (e) {
+			expect(e.status).to.equal(400)
+			expect(e).to.be.instanceof(DatabaseError)
 		}
 
 		mock.restore()

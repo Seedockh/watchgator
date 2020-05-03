@@ -1,5 +1,7 @@
 /** ****** MOCKING ****** **/
 import sinon from 'sinon'
+/** ****** PASSPORT ****** **/
+import passport from 'passport'
 /** ****** INTERNALS ****** **/
 import AuthenticateService from '../src/services/AuthenticateService'
 import { DatabaseError } from '../src/core/CustomErrors'
@@ -14,13 +16,13 @@ class Mock {
 		email: 'johndoe@gmail.com',
 		avatar: null,
 	}
-
+	
 	static successUserEntry = {
 		nickname: 'john',
 		email: 'johndoe@gmail.com',
-		password: 'johndoe'
+		password: 'johndoe',
 	}
-
+	
 	static successUserToken = {
 		token: Mock.successToken,
 	}
@@ -56,13 +58,15 @@ class Mock {
 
 	/** * MOCKING USEREPOSITORY CREATE SUCCESS * **/
 	static createUserSuccess() {
-			sinon.stub(UserRepository.instance, UserRepository.prototype.create.name)
-				.returns(Mock.successUserResponse)
+		sinon
+			.stub(UserRepository.instance, UserRepository.prototype.create.name)
+			.returns(Mock.successUserResponse)
 
-			sinon.stub(AuthenticateService, AuthenticateService.setToken.name)
-				.returns(Mock.successToken)
+		sinon
+			.stub(AuthenticateService, AuthenticateService.setToken.name)
+			.returns(Mock.successToken)
 
-			return sinon
+		return sinon
 	}
 
 	/** * MOCKING USEREPOSITORY CREATE FAILURE * **/
@@ -70,6 +74,38 @@ class Mock {
 		return sinon
 			.stub(UserRepository.instance, UserRepository.prototype.create.name)
 			.throws(new DatabaseError('Mock', 400, undefined, []))
+	}
+
+	/** * MOCKING LOGIN * **/
+
+	static loginRequest = (body: {
+		nickname: string
+		email: string
+		password: string
+	}) => ({ body })
+
+	static passportAuthenticateSuccess() {
+		sinon
+			.stub(passport, 'authenticate')
+			.callsFake((strategy, options, callback) => {
+				callback(null, Mock.successUserResponse, null)
+				return (req, res, next) => {}
+			})
+
+		sinon
+			.stub(AuthenticateService, AuthenticateService.setToken.name)
+			.returns(Mock.successToken)
+
+		return sinon
+	}
+
+	static passportAuthenticateFailure() {
+		return sinon
+			.stub(passport, 'authenticate')
+			.callsFake((strategy, options, callback) => {
+				callback('User does not exist', null, null)
+				return (req, res, next) => {}
+			})
 	}
 }
 
