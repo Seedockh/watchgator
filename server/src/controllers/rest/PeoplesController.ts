@@ -54,13 +54,29 @@ class PeoplesController {
 			IMDBDatasetService[`${level}Peoples`].data,
 			people => {
 				for (const key in filters) {
-					// @ts-ignore: unreachable filters keys
-					if (filters[key].test(people[key])) return true
+					if (keys.fullname) {
+						const names = keys.fullname.split(' ')
+						const firstRgxp = new RegExp(names[0], matchCase)
+						const lastRgxp = new RegExp(names[1], matchCase)
+
+						if (names.length === 1 && firstRgxp.test(`${people.firstname}${people.lastname}`))
+							return true
+
+						if (names.length >= 2 && (
+								(firstRgxp.test(`${people.firstname}`) && lastRgxp.test(`${people.lastname}`))
+								|| (lastRgxp.test(`${people.firstname}`) && firstRgxp.test(`${people.lastname}`))
+							))
+								return true
+					} else {
+						// @ts-ignore: unreachable filters keys
+						if (filters[key].test(people[key])) return true
+					}
 				}
 			},
 		)
 
-		if (keys.firstname) results = _.orderBy(results, ['lastname'], ['asc'])
+		if (keys.fullname) results = _.orderBy(results, ['lastname', 'firstname'], ['asc', 'asc'])
+		else if (keys.firstname) results = _.orderBy(results, ['lastname'], ['asc'])
 		else if (keys.lastname) results = _.orderBy(results, ['firstname'], ['asc'])
 		else if (keys.role) results = _.orderBy(results, ['role'], ['asc'])
 
