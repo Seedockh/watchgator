@@ -78,7 +78,7 @@ export const Home = () => {
             <Grid fluid >
               <Row>
                 {moviesList.map((movie) => (
-                  <Col xs={24} sm={12} md={6} lg={4} >
+                  <Col key={movie.id} xs={24} sm={12} md={6} lg={4} >
                     <MovieCard movie={movie} />
                   </Col>
                 ))}

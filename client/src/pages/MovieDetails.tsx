@@ -48,7 +48,7 @@ export const MovieDetails: FunctionComponent<MovieDetailsProps> = (props) => {
                         </Col>
                         <Col xs={24} md={15} lg={15} mdOffset={1}>
                             <h1>Avengers: Endgame</h1>
-                            <TagList tags={["Action", "Drama", "Science-fiction"]} />
+                            <TagList tags={["Action", "Drama", "Science-fiction"]} renderTag={(tag) => tag} />
 
                             <div className='flex flex-align-center' style={{ marginTop: 24 }}>
                                 <div className='text-center'>
@@ -90,7 +90,7 @@ export const MovieDetails: FunctionComponent<MovieDetailsProps> = (props) => {
                                                     circle
                                                     src="https://avatars2.githubusercontent.com/u/12592949?s=460&v=4"
                                                 />
-                                                <span style={{marginLeft: 12}}>Jean dupont</span>
+                                                <span style={{ marginLeft: 12 }}>Jean dupont</span>
                                             </div>
                                         } style={{ margin: 12 }}>
                                             <PlaceholderParagraph />

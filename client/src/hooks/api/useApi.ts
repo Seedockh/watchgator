@@ -35,12 +35,17 @@ export function useApi<T>(route: string, method = 'GET', body?: string): ApiHook
 export const useAllCategories = (): ApiHook<string[]> => useApi<string[]>('/genres/all/');
 
 export const useSearchActors = (): ApiHookSearch<BaseResponse<Actor[][]>> => {
-    const [query, setQuery] = useState('')
+    const [query, setQuery] = useState<string>('')
 
+    const values = query?.split(' ') ?? [''];
+    const payload = query !== '' ? {
+        fullname: query,
+        firstname: values[0],
+        lastname: values[1] ?? values[0],
+    } : {}
     return {
-        ...useApi<BaseResponse<Actor[][]>>('/peoples/find', 'POST', JSON.stringify({
-            firstname: query
-        })),
-        search: setQuery
+        ...useApi<BaseResponse<Actor[][]>>('/peoples/find', 'POST', JSON.stringify(payload)),
+        search: setQuery,
+        query
     }
 }

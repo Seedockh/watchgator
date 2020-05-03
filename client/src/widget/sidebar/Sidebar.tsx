@@ -59,7 +59,8 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ items }) => {
                                 <br />
                                 <h4 style={{ marginTop: 8 }}>WatchGator</h4>
                                 <Button appearance="ghost" block onClick={() => {
-                                    history.push(`/login`)}} > Login</Button>
+                                    history.push(`/login`)
+                                }} > Login</Button>
                             </>
                         )}
                     </div>
@@ -70,12 +71,13 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ items }) => {
                         {items.map((item, index) => {
                             if (!item.items) {
                                 return (
-                                    <Nav.Item eventKey={index} active icon={<Icon icon={item.icon} />}>
+                                    <Nav.Item key={index} eventKey={index} active icon={<Icon icon={item.icon} />}>
                                         {item.title}
                                     </Nav.Item>
                                 )
                             }
                             return <Dropdown
+                                key={index}
                                 eventKey={index}
                                 trigger="hover"
                                 title={item.title}
@@ -83,7 +85,7 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ items }) => {
                                 placement="rightStart"
                             >
                                 {item.items.map((subItem, subIndex) => (
-                                    <Dropdown.Item eventKey={`${index}-${subIndex}`}>
+                                    <Dropdown.Item key={`${index}-${subIndex}`} eventKey={`${index}-${subIndex}`}>
                                         <>
                                             <Toggle checkedChildren={<Icon icon="check" />} unCheckedChildren={<Icon icon="close" />} />
                                             <span style={{ marginLeft: 12 }}>{subItem.title}</span>

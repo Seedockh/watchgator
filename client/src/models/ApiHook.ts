@@ -6,4 +6,5 @@ export interface ApiHook<T> {
 
 export interface ApiHookSearch<T> extends ApiHook<T> {
     search: (query: string) => void;
+    query: string;
 }
