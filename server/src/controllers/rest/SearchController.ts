@@ -12,22 +12,15 @@ class SearchController {
 		const t0: number = new Date().getTime()
 		const level: string =
 			process.env.NODE_ENV === 'production' ? 'live' : 'sample'
-		const { names, filters } = req.body
-		let namesParam: IMDBNamesParam
-		let filtersParam: IMDBFiltersParam
+		const { names, filters, page, type } = req.body as SearchPayload
+		let namesParam: SearchNamesPayload = names
+		let filtersParam: SearchFiltersPayload = filters
 		let movies: IMDBMedia[]
 		let series: IMDBMedia[]
+		let pagination = 50
 
 		try {
 			if (names) {
-				try {
-					namesParam = JSON.parse(names)
-				} catch {
-					throw new Error(
-						'Invalid names parameter. It must be JSON.stringify() to be readable by server.',
-					)
-				}
-
 				if (namesParam.title) {
 					movies = _.filter(
 						// @ts-ignore: unreachable key
@@ -83,14 +76,6 @@ class SearchController {
 			}
 
 			if (filters) {
-				try {
-					filtersParam = JSON.parse(filters)
-				} catch {
-					throw new Error(
-						'Invalid filters parameter. It must be JSON.stringify() to be readable by server.',
-					)
-				}
-
 				if (filtersParam.year) {
 					movies = _.filter(
 						// @ts-ignore: unreachable key
