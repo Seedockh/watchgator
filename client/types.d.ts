@@ -1,14 +1,5 @@
-interface User {
-  uuid: string
-  nickname: string
-  avatar?: string
-  email: string
-}
 
-interface UserState {
-  user: User | null
-  token: string | null
-}
+
 
 declare module 'react-coverflow'
 

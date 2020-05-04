@@ -2,7 +2,7 @@ import React, { useEffect, useState} from 'react'
 import { useHistory } from 'react-router-dom'
 import { Container, Content, ControlLabel, FlexboxGrid, Form, Panel, FormGroup, FormControl, Button } from 'rsuite'
 
-import User from '../core/user'
+import { UserGlobalState } from '../core/user'
 import { ApiHook } from '../models/ApiHook';
 
 const Register = () => {
@@ -11,7 +11,7 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const values = { nickname, email, password }
 
-  const [{ user }, dispatch] = User.GlobalState()
+  const [{ user }, dispatch] = UserGlobalState()
   const history = useHistory()
   const [fetchState, setFetchState] = useState<ApiHook<any>>({
     isLoading: false

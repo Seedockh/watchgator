@@ -9,17 +9,14 @@ import { FilterButton } from '../widget/filters/FilterButton'
 import { MovieFilter } from '../models/MovieFilter'
 import { useSearchMovies } from '../hooks/api/useApi'
 import { Movie } from '../models/api/Movie'
-import User from '../core/user'
+import { UserGlobalState } from '../core/user'
 
 
 export const Home = () => {
   const [isFiltersOpen, setFiltersOpen] = useState(false)
   const [filters, setFilters] = useState<MovieFilter>()
   const { data, isLoading, search } = useSearchMovies()
-  const [{ user }] = User.GlobalState()
-
-
-  console.log(user);
+  const [{ user }] = UserGlobalState()
 
   useEffect(() => {
     search(filters ? {

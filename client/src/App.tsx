@@ -3,7 +3,7 @@ import { Route } from 'react-router-dom'
 import 'rsuite/dist/styles/rsuite-dark.css';
 
 import { Login, Home } from './pages'
-import User from './core/user'
+import { UserGlobalState, UserProvider, UserState } from './core/user'
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Playlists from './pages/Playlists';
@@ -14,9 +14,9 @@ const user = localStorage.getItem('user')
 const token = localStorage.getItem('token')
 
 
-const userInitialState = {
+const userInitialState: UserState = {
   user: user ? JSON.parse(user) : null,
-  token: token ? token : null,
+  token: token,
 }
 
 // Define your reducer actions here
@@ -46,15 +46,15 @@ const reducer = (prevState: UserState, action: UserAction): UserState => {
 }
 
 const App = () => (
-  <User.Provider initialState={userInitialState} reducer={reducer}>
+  <UserProvider initialState={userInitialState} reducer={reducer}>
     <Route exact path="/" component={Home} />
     <Route exact path="/login" component={Login} />
     <Route exact path="/register" component={Register} />
     <Route exact path="/profile" component={Profile} />
     <Route path="/movies/:movieId" component={MovieDetails} />
     <Route exact path="/playlists" component={Playlists} />
-      <Route exact path="/playlist/:playlistId" component={DetailsPlaylists} />
-  </User.Provider>
+    <Route exact path="/playlist/:playlistId" component={DetailsPlaylists} />
+  </UserProvider>
 )
 
 export default App

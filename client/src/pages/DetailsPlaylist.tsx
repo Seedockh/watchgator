@@ -2,12 +2,12 @@ import React, { useEffect } from 'react'
 import { Container, Content, Panel, Divider, Badge, FlexboxGrid, Button } from 'rsuite'
 import { useHistory } from 'react-router-dom'
 
-import User from '../core/user'
+import { UserGlobalState } from '../core/user'
 import { Sidebar } from '../widget/sidebar/Sidebar'
 import { playlists } from '../data/playlists'
 
 const DetailsPlaylists = () => {
-    const [{ user }, dispatch] = User.GlobalState()
+    const [{ user }, dispatch] = UserGlobalState()
     const history = useHistory();
 
     useEffect(() => {
