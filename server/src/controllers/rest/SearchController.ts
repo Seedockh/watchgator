@@ -182,7 +182,7 @@ class SearchController {
 							series ? series : IMDBDatasetService[`${level}Series`].data,
 							serie =>
 								serie.runtime >= filtersParam.runtime.min &&
-								serie.runtime <= filtersParam.metaScore.max,
+								serie.runtime <= filtersParam.runtime.max,
 						)
 					}
 				}

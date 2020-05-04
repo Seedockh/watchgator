@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect, CSSProperties } from 'react'
 import { Container, Content, Grid, Row, Col, Panel, Header, Loader } from 'rsuite'
+//import InfiniteScroll from 'react-infinite-scroller';
 import { MovieCard } from '../widget/MovieCard'
 import { Searchbar } from '../widget/Searchbar'
 import { MovieFilter } from '../models/MovieFilter'
@@ -10,6 +11,10 @@ import { searchMovies } from '../core/api/Api'
 import { FiltersSidebar } from '../widget/sidebar/FiltersSidebar'
 
 export const Home = () => {
+  const [isFiltersOpen, setFiltersOpen] = useState(false)
+  //const [currentPage, setCurrentPage] = useState(1)
+  const [filters, setFilters] = useState<MovieFilter>()
+  const { data, isLoading, search } = useSearchMovies()
   const moviesFetch = useApiFetch<MovieResponse>()
 
   useEffect(() => { onFiltersChange() }, [])
@@ -33,6 +38,18 @@ export const Home = () => {
         moviesFetch.setData(res)
       })
       .catch(moviesFetch.setError)
+
+  const loaderStyle = {
+    width: '100',
+    marginLeft: '40%',
+     marginTop: '10em'
+  }
+
+  const close = () => {
+    setFiltersOpen(false)
+  }
+  const open = () => {
+    setFiltersOpen(true)
   }
 
   let movies: Movie[] = [];
@@ -52,16 +69,21 @@ export const Home = () => {
           <Panel className="mb-6">
             <h1 className="ml-4">Movies</h1>
             {moviesFetch.isLoading
-              ? <Loader />
-              : <Grid fluid >
-                <Row>
-                  {movies.map((movie) => (
-                    <Col key={movie.id} xs={24} sm={12} md={6} lg={4} >
-                      <MovieCard movie={movie} />
-                    </Col>
-                  ))}
+              ? <Grid fluid >
+                <Row style={loaderStyle}>
+                  <Loader size="lg"/>
                 </Row>
               </Grid>
+              :
+                <Grid fluid >
+                  <Row>
+                    {movies.map((movie) => (
+                      <Col key={movie.id} xs={24} sm={12} md={6} lg={4} >
+                        <MovieCard movie={movie} />
+                      </Col>
+                    ))}
+                  </Row>
+                </Grid>
             }
           </Panel>
         </Content>
@@ -69,3 +91,11 @@ export const Home = () => {
     </Container>
   );
 }
+
+/*<InfiniteScroll
+    pageStart={currentPage}
+    loadMore={() => setCurrentPage(currentPage + 1)}
+    hasMore={data ? (currentPage <= data.moviesPages) : false}
+    loader={<Loader size="lg"/>}
+  >
+</InfiniteScroll>*/
