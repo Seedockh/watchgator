@@ -1,8 +1,7 @@
 import React, { FunctionComponent, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Container, Icon, Content, Grid, Row, Col, Panel, Nav, Button, Avatar } from 'rsuite'
+import { Container, Icon, Content, Grid, Row, Col, Panel, Nav, Button, Avatar, Rate } from 'rsuite'
 import { TagList } from '../widget/TagList'
-import { RatingStars } from '../widget/RatingStars'
 import { Searchbar } from '../widget/Searchbar'
 import PlaceholderParagraph from 'rsuite/lib/Placeholder/PlaceholderParagraph'
 
@@ -49,12 +48,12 @@ export const MovieDetails: FunctionComponent<MovieDetailsProps> = (props) => {
                         </Col>
                         <Col xs={24} md={15} lg={15} mdOffset={1}>
                             <h1>Avengers: Endgame</h1>
-                            <TagList tags={["Action", "Drama", "Science-fiction"]} />
+                            <TagList tags={["Action", "Drama", "Science-fiction"]} renderTag={(tag) => tag} />
 
                             <div className='flex flex-align-center' style={{ marginTop: 24 }}>
                                 <div className='text-center'>
                                     <h4>4.5/5</h4>
-                                    <RatingStars rating={4.5} />
+                                    <Rate readOnly={true} max={10} allowHalf={true} value={4.5} />
                                 </div>
                                 <div className='text-center' style={{ marginLeft: 64 }}>
                                     <Icon icon='clock-o' size='2x' />
@@ -91,7 +90,7 @@ export const MovieDetails: FunctionComponent<MovieDetailsProps> = (props) => {
                                                     circle
                                                     src="https://avatars2.githubusercontent.com/u/12592949?s=460&v=4"
                                                 />
-                                                <span style={{marginLeft: 12}}>Jean dupont</span>
+                                                <span style={{ marginLeft: 12 }}>Jean dupont</span>
                                             </div>
                                         } style={{ margin: 12 }}>
                                             <PlaceholderParagraph />

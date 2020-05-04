@@ -1,12 +1,27 @@
-import React, { FunctionComponent } from 'react'
+import React from 'react'
 import { TagGroup, Tag } from 'rsuite'
 
-type TagList = {
-    tags: string[]
+type TagListProps<T> = {
+    tags: T[]
+    renderTag: (tag: T) => string;
+    onClose?: (tag: T) => void;
+    className?: string;
 }
 
-export const TagList: FunctionComponent<TagList> = ({ tags }) => (
-    <TagGroup>
-        {tags.map((tag) => <Tag>{tag}</Tag>)}
+export function TagList<T>({ tags, renderTag, onClose, className }: TagListProps<T>) {
+    return <TagGroup className={className}>
+        {tags.map((tag, index) => (
+            <Tag
+                key={index}
+                closable={onClose ? true : false}
+                onClose={() => {
+                    if (onClose) {
+                        onClose(tag)
+                    }
+                }}
+            >
+                {renderTag(tag)}
+            </Tag>
+        ))}
     </TagGroup>
-)
+}

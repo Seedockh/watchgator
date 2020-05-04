@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Container, Content, ControlLabel, FlexboxGrid, Form, Panel, FormGroup, FormControl, Button } from 'rsuite'
-import useInput from '../core/useInput'
+import { useInput } from '../hooks/useInput'
 import User from '../core/user'
 
 const Login = () => {

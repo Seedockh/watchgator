@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Container, Content, ControlLabel, FlexboxGrid, Form, Panel, FormGroup, FormControl, Button } from 'rsuite'
-import useInput from '../core/useInput'
+import { useInput } from '../hooks/useInput'
 import User from '../core/user'
 
 const Register = () => {
@@ -29,8 +29,8 @@ const Register = () => {
   // }
 
   const redirectLogin = () => {
-      history.push('/login')    
-  } 
+    history.push('/login')
+  }
 
   return (
     <Container style={{ marginTop: "15%" }}>
@@ -39,7 +39,7 @@ const Register = () => {
           <FlexboxGrid.Item colspan={10}>
             <Panel header={<h3>Register</h3>} bordered>
               <Form fluid>
-              <FormGroup>
+                <FormGroup>
                   <ControlLabel>Pseudo</ControlLabel>
                   <FormControl name="nickname" />
                 </FormGroup>

@@ -7,7 +7,7 @@
  * @import url('http://somefont');
  */
 
-/* draw something here ??®¨ */
+/* draw something here ??Â®Â¨ */
 .grow { transition: all .2s ease-in-out; }
 .grow:hover { transform: scale(1.05); }
 
@@ -55,8 +55,7 @@
 .pb-5 { padding-bottom: 24px; }
 .pb-6 { padding-bottom: 32px; }
 
-/* Margin helper */
-/* Padding helper */
+/* Margin helpers */
 .m-0 { margin: 0px; }
 .m-1 { margin: 4px; }
 .m-2 { margin: 8px; }
@@ -108,12 +107,16 @@
 .flex-align-center {
     align-items: center;
 }
-
-.flex-content-center {
-    justify-content: center;
+.w-100 {
+    width: 100%;
 }
 
 /* Align helpers */
 .text-center {
     text-align: center;
+}
+.bottomRightFixed {
+    position: fixed !important;
+    right: 32px;
+    bottom: 32px;
 }

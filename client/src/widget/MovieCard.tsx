@@ -1,5 +1,5 @@
 import React, { FunctionComponent, CSSProperties } from 'react'
-import { BasicMovie } from './../models/Movie';
+import { Movie } from './../models/api/Movie';
 import { useHistory } from 'react-router-dom';
 import { Panel } from 'rsuite';
 
@@ -10,7 +10,7 @@ const movieCardStyle: CSSProperties = {
 }
 
 type MovieCardProps = {
-    movie: BasicMovie;
+    movie: Movie;
 }
 
 export const MovieCard: FunctionComponent<MovieCardProps> = ({ movie }) => {
@@ -21,10 +21,10 @@ export const MovieCard: FunctionComponent<MovieCardProps> = ({ movie }) => {
             history.push(`/movies/${movie.id}`)
         }}>
             <div className="poster">
-                <img src={movie.imageUrl} alt={movie.name} style={{ width: '100%', borderRadius: 8 }} />
+                <img src={movie.picture} alt={movie.title} style={{ width: '100%', borderRadius: 8 }} />
             </div>
             <div className='p-4'>
-                <h4 className='text-center'>{movie.name}</h4>
+                <h4 className='text-center'>{movie.title}</h4>
             </div>
         </Panel>
     )

@@ -12,7 +12,7 @@ interface HookInput {
   }
 }
 
-export default function useInput(initialValue: TValue): HookInput {
+export const useInput = (initialValue: TValue): HookInput => {
   const [value, setValue] = useState(initialValue)
 
   return {

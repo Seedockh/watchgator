@@ -1,11 +1,45 @@
-import React from 'react'
-import { Container, Content, Grid, Row, Col, Panel, Header } from 'rsuite'
+import React, { useState, useEffect } from 'react'
+import { Container, Content, Grid, Row, Col, Panel, Header, Loader } from 'rsuite'
 import { MovieCard } from '../widget/MovieCard'
-import { moviesList } from '../data/movies'
 import { Sidebar } from '../widget/sidebar/Sidebar'
 import { Searchbar } from '../widget/Searchbar'
+import { FiltersDialog } from '../widget/filters/FiltersDialog'
+import { FilterButton } from '../widget/filters/FilterButton'
+import { MovieFilter } from '../models/MovieFilter'
+import { useSearchMovies } from '../hooks/api/useApi'
+import { Movie } from '../models/api/Movie'
 
 export const Home = () => {
+  const [isFiltersOpen, setFiltersOpen] = useState(false)
+  const [filters, setFilters] = useState<MovieFilter>()
+  const { data, isLoading, search } = useSearchMovies()
+
+  console.log(data);
+
+  useEffect(() => {
+    search(filters ? {
+      names: {
+        actors: filters.actors,
+        genres: filters.categories.map((c) => ({ name: c }))
+      },
+      filters: {
+        year: filters.years,
+        rating: filters.rating
+      }
+    } : {})
+  }, [filters])
+
+  const close = () => {
+    setFiltersOpen(false)
+  }
+  const open = () => {
+    setFiltersOpen(true)
+  }
+
+  let movies: Movie[] = [];
+  if (data && data.results && data.results.movies) {
+    movies = data.results.movies
+  }
 
   return (
     <Container>
@@ -64,19 +98,25 @@ export const Home = () => {
         </Header>
         <Content>
           <Panel className="mb-6">
-            <h1  className="ml-4">Movies</h1>
-            <Grid fluid >
-              <Row>
-                {moviesList.map((movie) => (
-                  <Col xs={24} sm={12} md={6} lg={4} >
-                    <MovieCard movie={movie} />
-                  </Col>
-                ))}
-              </Row>
-            </Grid>
+            <h1 className="ml-4">Movies</h1>
+            {isLoading
+              ? <Loader />
+              : <Grid fluid >
+                <Row>
+                  {movies.map((movie) => (
+                    <Col key={movie.id} xs={24} sm={12} md={6} lg={4} >
+                      <MovieCard movie={movie} />
+                    </Col>
+                  ))}
+                </Row>
+              </Grid>
+            }
           </Panel>
         </Content>
       </Container>
+
+      <FilterButton onClick={open} />
+      <FiltersDialog isOpen={isFiltersOpen} onClose={close} onApplyFilters={setFilters} initFilters={filters ? { ...filters } : undefined} />
     </Container>
   );
 }
