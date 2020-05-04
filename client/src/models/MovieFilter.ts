@@ -6,4 +6,6 @@ export interface MovieFilter {
     actors: Actor[];
     years: MinMax;
     rating: MinMax;
+    runtime: MinMax;
+    metaScore: MinMax;
 }

@@ -1,96 +1,48 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { Container, Content, Grid, Row, Col, Panel, Header, Loader } from 'rsuite'
 import { MovieCard } from '../widget/MovieCard'
-import { Sidebar } from '../widget/sidebar/Sidebar'
 import { Searchbar } from '../widget/Searchbar'
-import { FiltersDialog } from '../widget/filters/FiltersDialog'
-import { FilterButton } from '../widget/filters/FilterButton'
 import { MovieFilter } from '../models/MovieFilter'
-import { useSearchMovies } from '../hooks/api/useApi'
 import { Movie } from '../models/api/Movie'
+import { useApiFetch } from '../hooks/api/useApiFetch'
+import { MovieResponse } from '../models/api/MoviesResponse'
+import { searchMovies } from '../core/api/Api'
+import { FiltersSidebar } from '../widget/sidebar/FiltersSidebar'
 
 export const Home = () => {
-  const [isFiltersOpen, setFiltersOpen] = useState(false)
-  const [filters, setFilters] = useState<MovieFilter>()
-  const { data, isLoading, search } = useSearchMovies()
+  const moviesFetch = useApiFetch<MovieResponse>()
 
-  console.log(data);
+  useEffect(() => { onFiltersChange() }, [])
 
-  useEffect(() => {
-    search(filters ? {
+  const onFiltersChange = (filters?: MovieFilter) => {
+    searchMovies(filters ? {
       names: {
         actors: filters.actors,
         genres: filters.categories.map((c) => ({ name: c }))
       },
       filters: {
         year: filters.years,
-        rating: filters.rating
+        rating: filters.rating,
+        runtime: filters.runtime,
+        metaScore: filters.metaScore
       }
     } : {})
-  }, [filters])
-
-  const close = () => {
-    setFiltersOpen(false)
-  }
-  const open = () => {
-    setFiltersOpen(true)
+      .then((res) => {
+        console.log(res);
+        
+        moviesFetch.setData(res)
+      })
+      .catch(moviesFetch.setError)
   }
 
   let movies: Movie[] = [];
-  if (data && data.results && data.results.movies) {
-    movies = data.results.movies
+  if (moviesFetch.data && moviesFetch.data.results && moviesFetch.data.results.movies) {
+    movies = moviesFetch.data.results.movies
   }
 
   return (
     <Container>
-      <Sidebar items={[
-        {
-          title: 'Categories',
-          icon: 'bookmark',
-          items: [
-            {
-              title: 'Action',
-              path: '/categories/action'
-            },
-            {
-              title: 'Science-fiction',
-              path: '/categories/science-fiction'
-            },
-            {
-              title: 'Policier',
-              path: '/categories/policier'
-            },
-            {
-              title: 'Animé',
-              path: '/categories/anime'
-            }
-          ]
-
-        },
-        {
-          title: 'Decade',
-          icon: 'calendar',
-          items: [
-            {
-              title: '80\'s',
-              path: '/decade/1980'
-            },
-            {
-              title: '90\'s',
-              path: '/decade/1990'
-            },
-            {
-              title: '2000\'s',
-              path: '/decade/2000'
-            },
-            {
-              title: '2010\'s',
-              path: '/decade/2010'
-            },
-          ]
-
-        }
-      ]} />
+      <FiltersSidebar onApplyFilters={onFiltersChange} />
 
       <Container>
         <Header className='p-4'>
@@ -99,7 +51,7 @@ export const Home = () => {
         <Content>
           <Panel className="mb-6">
             <h1 className="ml-4">Movies</h1>
-            {isLoading
+            {moviesFetch.isLoading
               ? <Loader />
               : <Grid fluid >
                 <Row>
@@ -114,9 +66,6 @@ export const Home = () => {
           </Panel>
         </Content>
       </Container>
-
-      <FilterButton onClick={open} />
-      <FiltersDialog isOpen={isFiltersOpen} onClose={close} onApplyFilters={setFilters} initFilters={filters ? { ...filters } : undefined} />
     </Container>
   );
 }

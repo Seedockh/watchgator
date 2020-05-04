@@ -2,6 +2,7 @@ import React, { FunctionComponent, CSSProperties } from 'react'
 import { Movie } from './../models/api/Movie';
 import { useHistory } from 'react-router-dom';
 import { Panel } from 'rsuite';
+import { addPictureUrlSize } from '../utils/movieUtils';
 
 const movieCardStyle: CSSProperties = {
     margin: 16,
@@ -21,7 +22,7 @@ export const MovieCard: FunctionComponent<MovieCardProps> = ({ movie }) => {
             history.push(`/movies/${movie.id}`)
         }}>
             <div className="poster">
-                <img src={movie.picture} alt={movie.title} style={{ width: '100%', borderRadius: 8 }} />
+                <img src={addPictureUrlSize(movie.picture, 500)} alt={movie.title} style={{ width: '100%', borderRadius: 8 }} />
             </div>
             <div className='p-4'>
                 <h4 className='text-center'>{movie.title}</h4>
