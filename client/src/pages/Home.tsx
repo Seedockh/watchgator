@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Container, Content, Grid, Row, Col, Panel, Header, Progress, Loader } from 'rsuite'
+import { Container, Content, Grid, Row, Col, Panel, Header, Loader } from 'rsuite'
 import { MovieCard } from '../widget/MovieCard'
-import { moviesList } from '../data/movies'
 import { Sidebar } from '../widget/sidebar/Sidebar'
 import { Searchbar } from '../widget/Searchbar'
 import { FiltersDialog } from '../widget/filters/FiltersDialog'
@@ -38,8 +37,8 @@ export const Home = () => {
   }
 
   let movies: Movie[] = [];
-  if (data && data.results && data.results.movies && data.results.movies[0]) {
-    movies = data.results.movies[0]
+  if (data && data.results && data.results.movies) {
+    movies = data.results.movies
   }
 
   return (

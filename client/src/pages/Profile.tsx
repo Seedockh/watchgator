@@ -1,11 +1,9 @@
 import React, { useEffect } from 'react'
-import { Container, Content, Grid, Panel, Col, Row, Divider } from 'rsuite'
+import { Container, Content, Grid, Panel, Row, Divider } from 'rsuite'
 
 import User from '../core/user'
 import MyPlaylist from '../widget/MyPlaylist'
-import { moviesList } from '../data/movies'
 import { Sidebar } from '../widget/sidebar/Sidebar'
-import { MovieCard } from '../widget/MovieCard'
 
 const Profile = () => {
   const [{ user }] = User.GlobalState()
