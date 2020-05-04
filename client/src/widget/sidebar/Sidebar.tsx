@@ -28,14 +28,54 @@ type Item = {
 
 type SidebarProps = {
     items: Item[]
+    userConnected?: User | null
 }
 
-export const Sidebar: FunctionComponent<SidebarProps> = ({ items }) => {
+export const Sidebar: FunctionComponent<SidebarProps> = ({ items, userConnected }) => {
     const [expand, setExpand] = useState(true)
     const history = useHistory()
 
     const handleToggle = () => {
         setExpand(!expand);
+    }
+
+    const Logged = () => {
+        return (
+            <>
+                <img src={userConnected?.avatar ? userConnected?.avatar : logo} alt="Watchgator" style={imageStyles} />
+                {expand && (
+                    <>
+                        <br />
+                        <h4 className="mt-2">{userConnected?.nickname}</h4>
+                        <Nav>
+                            <Nav.Item icon={<Icon icon="edit" />} onClick={() => history.push('/profile')}>
+                                Profile
+                         </Nav.Item>
+                            <Nav.Item icon={<Icon icon="list-ul" />} onClick={() => history.push('/playlists')}>
+                                Playlist
+                         </Nav.Item>
+                        </Nav>
+                    </>
+                )}
+            </>
+        )
+    }
+
+    const NotLogged = () => {
+        return (
+            <>
+                <img src={logo} alt="Watchgator" style={imageStyles} />
+                {expand && (
+                    <>
+                        <br />
+                        <h4 style={{ marginTop: 8 }}>WatchGator</h4>
+                        <Button appearance="ghost" block onClick={() => {
+                            history.push(`/login`)
+                        }} > Login</Button>
+                    </>
+                )}
+            </>
+        )
     }
 
     return (
@@ -53,16 +93,7 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ items }) => {
                 <ExpandBtn expand={expand} onPress={handleToggle} />
                 <Sidenav.Header>
                     <div className='pt-5 pb-5 pl-3 pr-3 text-center' style={headerStyles}>
-                        <img src={logo} alt="Watchgator" style={imageStyles} />
-                        {expand && (
-                            <>
-                                <br />
-                                <h4 style={{ marginTop: 8 }}>WatchGator</h4>
-                                <Button appearance="ghost" block onClick={() => {
-                                    history.push(`/login`)
-                                }} > Login</Button>
-                            </>
-                        )}
+                        {userConnected ? <Logged /> : <NotLogged/>}
                     </div>
                 </Sidenav.Header>
                 <hr />

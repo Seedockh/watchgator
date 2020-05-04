@@ -1,5 +1,8 @@
 interface User {
-  nickname?: string
+  uuid: string
+  nickname: string
+  avatar?: string
+  email: string
 }
 
 interface UserState {

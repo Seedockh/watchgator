@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Container, Content, Grid, Row, Col, Panel, Header, Loader } from 'rsuite'
+
 import { MovieCard } from '../widget/MovieCard'
 import { Sidebar } from '../widget/sidebar/Sidebar'
 import { Searchbar } from '../widget/Searchbar'
@@ -8,13 +9,17 @@ import { FilterButton } from '../widget/filters/FilterButton'
 import { MovieFilter } from '../models/MovieFilter'
 import { useSearchMovies } from '../hooks/api/useApi'
 import { Movie } from '../models/api/Movie'
+import User from '../core/user'
+
 
 export const Home = () => {
   const [isFiltersOpen, setFiltersOpen] = useState(false)
   const [filters, setFilters] = useState<MovieFilter>()
   const { data, isLoading, search } = useSearchMovies()
+  const [{ user }] = User.GlobalState()
 
-  console.log(data);
+
+  console.log(user);
 
   useEffect(() => {
     search(filters ? {
@@ -90,7 +95,7 @@ export const Home = () => {
           ]
 
         }
-      ]} />
+      ]} userConnected={user} />
 
       <Container>
         <Header className='p-4'>
