@@ -1,15 +1,15 @@
-import React, { FunctionComponent, useState, useEffect } from 'react'
+import React, { FunctionComponent, CSSProperties, useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Container, Icon, Content, Grid, Row, Col, Panel, Nav, Button, Avatar, Rate, List } from 'rsuite'
 import { TagList } from '../widget/TagList'
 import { Searchbar } from '../widget/Searchbar'
 import PlaceholderParagraph from 'rsuite/lib/Placeholder/PlaceholderParagraph'
 
-type MovieDetailsProps = {
+export type MovieDetailsProps = {
     movieId: string;
 }
 
-type Media = {
+export type Media = {
   id: string
   title: string
   year: number
@@ -30,9 +30,14 @@ export type Genre = {
   name: string
 }
 
-type People = {
+export type People = {
   id: string
 	name: string
+}
+
+const detailKeysStyle: CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between'
 }
 
 export const MovieDetails: FunctionComponent<MovieDetailsProps> = (props) => {
@@ -81,33 +86,42 @@ export const MovieDetails: FunctionComponent<MovieDetailsProps> = (props) => {
         }
         if (movie && activeTab === 'details') {
             return (
-              <List className="movie-details-list">
-                <List.Item key={`movie-year`} index={0}>
-                  <strong>Year</strong> {movie.year ?? '-'}
+              <List>
+                <List.Item key={`movie-year`} index={0} style={detailKeysStyle}>
+                  <strong>Year</strong>
+                  <p>{movie.year ?? '-'}</p>
                 </List.Item>
-                <List.Item key={`movie-nbRatings`} index={1}>
-                  <strong>People critics</strong> {movie.nbRatings ?? '0'}
+                <List.Item key={`movie-nbRatings`} index={1} style={detailKeysStyle}>
+                  <strong>People critics</strong>
+                  <p>{movie.nbRatings ?? '0'}</p>
                 </List.Item>
-                <List.Item key={`movie-metaScore`} index={2}>
-                  <strong>MetaScore</strong> {movie.metaScore ?? '-'}
+                <List.Item key={`movie-metaScore`} index={2} style={detailKeysStyle}>
+                  <strong>MetaScore</strong>
+                  <p>{movie.metaScore ?? '-'}</p>
                 </List.Item>
-                <List.Item key={`movie-certificate`} index={3}>
-                  <strong>Certificate</strong> {movie.certificate ?? '-'}
+                <List.Item key={`movie-certificate`} index={3} style={detailKeysStyle}>
+                  <strong>Certificate</strong>
+                  <p>{movie.certificate ?? '-'}</p>
                 </List.Item>
-                <List.Item key={`movie-directors`} index={4}>
+                <List.Item key={`movie-directors`} index={4} style={detailKeysStyle}>
                   <strong>Directors </strong>
+                  <p>
                     {movie.directors.length > 0 ?
                       movie.directors.map((director, i) => `${i > 0 ? ', ' : ''}${director.name}`)
                       : '-'}
+                  </p>
                 </List.Item>
-                <List.Item key={`movie-actors`} index={5}>
+                <List.Item key={`movie-actors`} index={5} style={detailKeysStyle}>
                   <strong>Actors </strong>
+                  <p>
                     {movie.actors.length > 0 ?
                       movie.actors.map((actor, i) => `${i > 0 ? ', ' : ''}${actor.name}`)
                       : '-'}
+                  </p>
                 </List.Item>
-                <List.Item key={`movie-gross`} index={6}>
-                  <strong>Gross</strong> {movie.gross ?? '-'}
+                <List.Item key={`movie-gross`} index={6} style={detailKeysStyle}>
+                  <strong>Gross</strong>
+                  <p>{movie.gross ?? '-'}</p>
                 </List.Item>
               </List>
             )
