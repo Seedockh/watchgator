@@ -27,7 +27,7 @@ const MyPlaylist = () => {
                         <h3>My Playlists</h3>
                     </FlexboxGrid.Item>
                     <FlexboxGrid.Item style={{ marginRight: 100 }}>
-                        <Button icon="plus" onClick={openModal}>
+                        <Button onClick={openModal}>
                             <Icon icon="plus" style={{ color: "green" }} />
                         </Button>
                     </FlexboxGrid.Item>

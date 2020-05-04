@@ -24,6 +24,8 @@ type SubItem = {
 type Item = {
     title: string
     icon: IconNames
+    state?: string
+    path?: string
     items?: SubItem[]
 }
 
@@ -45,14 +47,6 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ items, userConnected 
         {expand && <>
             <br />
             <h4 className="mt-2">{userConnected?.nickname}</h4>
-            {/* <Nav>
-                <Nav.Item icon={<Icon icon="edit" />} onClick={() => history.push('/profile')}>
-                    Profile
-                </Nav.Item>
-                <Nav.Item icon={<Icon icon="list-ul" />} onClick={() => history.push('/playlists')}>
-                    Playlist
-                </Nav.Item>
-            </Nav> */}
         </>}
     </>
 
@@ -73,15 +67,19 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ items, userConnected 
         </>}
     </>
 
+    console.log(history.location);
+
     const navItems: Item[] = [
         ...(userConnected ? [
             {
                 title: 'Profile',
-                icon: 'edit',
+                icon: 'user',
+                path: '/profile'
             } as Item,
             {
                 title: 'Playlists',
                 icon: 'list-ul',
+                path: '/playlists'
             } as Item
         ] : []),
         ...items
@@ -110,11 +108,10 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ items, userConnected 
                     <Nav>
                         {navItems.map((item, index) => {
                             if (!item.items) {
-                                return (
-                                    <Nav.Item key={index} eventKey={index} active icon={<Icon icon={item.icon} />}>
-                                        {item.title}
-                                    </Nav.Item>
-                                )
+                                const state = { active: history.location.pathname === item.path }
+                                return <Nav.Item eventKey={index} {...state} icon={<Icon icon={item.icon} />} onClick={() => history.push(item.path!)} >
+                                    {item.title}
+                                </Nav.Item>
                             }
                             return <Dropdown
                                 key={index}

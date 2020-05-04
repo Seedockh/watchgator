@@ -91,7 +91,7 @@ export const Home = () => {
             },
           ]
 
-        }
+        },
       ]} userConnected={user} />
 
       <Container>

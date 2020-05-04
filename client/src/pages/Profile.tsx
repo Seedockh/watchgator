@@ -16,7 +16,13 @@ const Profile = () => {
           {
             title: 'Update information',
             icon: 'edit',
-          }
+            path: '/information'
+          },
+          {
+            title: 'Home',
+            icon: 'home',
+            path: "/"
+          },
         ]} userConnected={user} />
         <Content style={{ marginRight: 100 }}>
           <Panel>

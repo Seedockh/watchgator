@@ -9,6 +9,7 @@ import Profile from './pages/Profile';
 import Playlists from './pages/Playlists';
 import DetailsPlaylists from './pages/DetailsPlaylist';
 import { MovieDetails } from './pages/MovieDetails';
+import Information from './pages/Information';
 
 const user = localStorage.getItem('user')
 const token = localStorage.getItem('token')
@@ -51,6 +52,7 @@ const App = () => (
     <Route exact path="/login" component={Login} />
     <Route exact path="/register" component={Register} />
     <Route exact path="/profile" component={Profile} />
+    <Route exact path="/information" component={Information} />
     <Route path="/movies/:movieId" component={MovieDetails} />
     <Route exact path="/playlists" component={Playlists} />
     <Route exact path="/playlist/:playlistId" component={DetailsPlaylists} />
