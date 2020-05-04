@@ -21,8 +21,8 @@ export type Media = {
   genres: Genre[]
   description: string
   picture: string
-  directors: People[]
-  actors: People[]
+  directors: MoviePeople[]
+  actors: MoviePeople[]
   gross: string
 }
 
@@ -30,9 +30,17 @@ export type Genre = {
   name: string
 }
 
-export type People = {
+export type MoviePeople = {
   id: string
 	name: string
+}
+
+export type People = {
+  id: string
+  firstname: string
+  lastname: string
+  picture: string
+  role: string
 }
 
 const detailKeysStyle: CSSProperties = {
@@ -44,6 +52,7 @@ export const MovieDetails: FunctionComponent<MovieDetailsProps> = (props) => {
     const [activeTab, setActiveTab] = useState("overview")
     const [movie, setMovie] = useState<Media | null>(null)
     const [genres, setGenres] = useState<string[]>([])
+    const [peoples, setPeoples] = useState<People[]>([])
     const history = useHistory()
 
     useEffect(() => {
@@ -59,6 +68,7 @@ export const MovieDetails: FunctionComponent<MovieDetailsProps> = (props) => {
         let movieGenres: string[] = []
         movie.genres.map(genre => movieGenres.push(genre.name))
         setGenres(movieGenres)
+        fetchActors()
       }
     }, [movie])
 
@@ -68,6 +78,23 @@ export const MovieDetails: FunctionComponent<MovieDetailsProps> = (props) => {
           .then(response => response.json())
           .then(movie => setMovie(movie))
           .catch(error => console.log(error))
+      }
+    }
+
+    const fetchActors = async () => {
+      let movieActors: People[] = []
+
+      if (movie && movie.actors) {
+        const getActors = movie.actors!.map((actor, index) => {
+          return fetch(`${process.env.REACT_APP_API_URI}/peoples/${actor.id}`)
+            .then(response => response.json())
+            .then(apiActor => movieActors.push(apiActor))
+            .catch(error => console.log(error))
+        })
+
+        Promise.all(getActors).then(() => {
+          setPeoples(movieActors)
+        })
       }
     }
 
@@ -187,30 +214,26 @@ export const MovieDetails: FunctionComponent<MovieDetailsProps> = (props) => {
                         </Col>
                     </Row>
                   }
-                  {/*
+                  {peoples.length > 0 &&
                     <Row style={{ marginTop: 32 }}>
                         <Col xs={24} md={22} lg={20} mdOffset={1} lgOffset={2}>
-                            <h3 className='text-center'>Reviews</h3>
+                            <h3 className='text-center'>Actors</h3>
                             <Row>
-                                {Array(10).fill(0).map((_, idx) => (
+                                {peoples.map((actor, idx) => (
                                     <Col xs={24} sm={12} md={8} lg={6} key={idx}>
                                         <Panel shaded bordered header={
-                                            <div className='flex flex-align-center'>
-                                                <Avatar
-                                                    circle
-                                                    src="https://avatars2.githubusercontent.com/u/12592949?s=460&v=4"
-                                                />
-                                                <span style={{ marginLeft: 12 }}>Jean dupont</span>
+                                            <div>
+                                                <img src={actor.picture} width="90" height="118" style={{ borderRadius: "10px" }}/>
+                                                <span style={{ marginLeft: 30 }}>{actor.firstname} {actor.lastname} ({actor.role})</span>
                                             </div>
                                         } style={{ margin: 12 }}>
-                                            <PlaceholderParagraph />
                                         </Panel>
                                     </Col>
                                 ))}
                             </Row>
                         </Col>
                     </Row>
-                  */}
+                  }
                 </Grid>
             </Content>
         </Container>
