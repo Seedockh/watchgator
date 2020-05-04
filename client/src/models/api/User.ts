@@ -1,4 +1,5 @@
 import { Movie } from "./Movie"
+import { Playlist } from "../Playlists";
 
 export interface User {
   uuid: string
@@ -6,4 +7,5 @@ export interface User {
   avatar?: string
   email: string
   movies: Movie[]
+  playlists?: Playlist[]
 }
