@@ -5,7 +5,7 @@ import { Panel } from 'rsuite';
 
 const movieCardStyle: CSSProperties = {
     margin: 16,
-    width: 200, 
+    width: 200,
     height: 400
 }
 
@@ -15,11 +15,15 @@ type MovieCardProps = {
 
 export const MovieCard: FunctionComponent<MovieCardProps> = ({ movie }) => {
     const history = useHistory()
+    const goToDetails = () => {
+      history.push({
+        pathname: `/movies/${movie.id}`,
+        state: { movie: movie }
+      })
+    }
 
     return (
-        <Panel className="grow" bodyFill shaded style={movieCardStyle} onClick={() => {
-            history.push(`/movies/${movie.id}`)
-        }}>
+        <Panel className="grow" bodyFill shaded style={movieCardStyle} onClick={goToDetails}>
             <div className="poster">
                 <img src={movie.picture} alt={movie.title} style={{ width: '100%', borderRadius: 8 }} />
             </div>

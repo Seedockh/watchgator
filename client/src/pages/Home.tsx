@@ -14,8 +14,6 @@ export const Home = () => {
   const [filters, setFilters] = useState<MovieFilter>()
   const { data, isLoading, search } = useSearchMovies()
 
-  console.log(data);
-
   useEffect(() => {
     search(filters ? {
       names: {
