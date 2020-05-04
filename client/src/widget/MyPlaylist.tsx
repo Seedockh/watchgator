@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import {
     Container, Content, Divider, FlexboxGrid, Icon,
-    Button, Modal, Form, FormControl, FormGroup, ControlLabel, Panel, Row, Col, Toggle, Badge, Carousel
+    Button, Modal, Form, FormControl, FormGroup, ControlLabel, Panel, Row, Col, Toggle, Badge
 } from 'rsuite'
 import { useHistory } from 'react-router-dom';
 

@@ -6,8 +6,8 @@ import User from '../core/user'
 import { Sidebar } from '../widget/sidebar/Sidebar'
 import { playlists } from '../data/playlists'
 
-const DetailsPlaylists = () => {
-    const [{ user }, dispatch] = User.GlobalState()
+export const DetailsPlaylists = () => {
+    const [{ user }] = User.GlobalState()
     const history = useHistory();
 
     useEffect(() => {
@@ -31,7 +31,7 @@ const DetailsPlaylists = () => {
                             <Panel bordered bodyFill className="mb-5">
                                 <FlexboxGrid>
                                     <FlexboxGrid.Item colspan={4}>
-                                        <img src={movie.imageUrl} style={{ width: 200, height: 250 }}></img>
+                                        <img src={movie.imageUrl} alt={movie.name} style={{ width: 200, height: 250 }}></img>
                                     </FlexboxGrid.Item>
                                     <FlexboxGrid.Item style={{ width: "80%" }}>
                                         <h3 className="mb-3">{movie.name}</h3>
@@ -52,4 +52,3 @@ const DetailsPlaylists = () => {
         </Container>
     )
 }
-export default DetailsPlaylists;

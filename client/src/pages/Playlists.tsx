@@ -7,8 +7,8 @@ import User from '../core/user'
 import { Sidebar } from '../widget/sidebar/Sidebar'
 import { playlists } from '../data/playlists'
 
-const Playlists = () => {
-    const [{ user }, dispatch] = User.GlobalState()
+export const Playlists = () => {
+    const [{ user }] = User.GlobalState()
     const history = useHistory();
 
     useEffect(() => {
@@ -48,4 +48,3 @@ const Playlists = () => {
         </Container>
     )
 }
-export default Playlists;

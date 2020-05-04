@@ -2,13 +2,14 @@ import React from 'react'
 import { Route } from 'react-router-dom'
 import 'rsuite/dist/styles/rsuite-dark.css';
 
-import { Login, Home } from './pages'
 import User from './core/user'
-import Register from './pages/Register';
-import Profile from './pages/Profile';
-import Playlists from './pages/Playlists';
-import DetailsPlaylists from './pages/DetailsPlaylist';
+import { Register } from './pages/Register';
+import { Profile } from './pages/Profile';
+import { Playlists } from './pages/Playlists';
+import { DetailsPlaylists } from './pages/DetailsPlaylist';
 import { MovieDetails } from './pages/MovieDetails';
+import { Home } from './pages/Home';
+import { Login } from './pages/Login';
 
 const user = localStorage.getItem('user')
 
@@ -33,7 +34,7 @@ const reducer = (prevState: UserState, action: UserAction): UserState => {
   }
 }
 
-const App = () => (
+export const App = () => (
   <User.Provider initialState={userInitialState} reducer={reducer}>
     <Route exact path="/" component={Home} />
     <Route exact path="/login" component={Login} />
@@ -41,8 +42,6 @@ const App = () => (
     <Route exact path="/profile" component={Profile} />
     <Route path="/movies/:movieId" component={MovieDetails} />
     <Route exact path="/playlists" component={Playlists} />
-      <Route exact path="/playlist/:playlistId" component={DetailsPlaylists} />
+    <Route exact path="/playlist/:playlistId" component={DetailsPlaylists} />
   </User.Provider>
 )
-
-export default App
