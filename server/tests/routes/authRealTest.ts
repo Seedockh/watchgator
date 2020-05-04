@@ -3,12 +3,12 @@ import request from 'superagent'
 import User from '../../src/database/models/User'
 import AuthenticateService from '../../src/services/AuthenticateService'
 
-const authRoutesSuite = (server: supertest.SuperTest<supertest.Test>) =>
+const authRealTest = (server: supertest.SuperTest<supertest.Test>) =>
 	describe('Auth routes', () => {
 		const userWithCorrectData: User = new User()
-		userWithCorrectData.nickname = 'Bob'
-		userWithCorrectData.password = 'bob1'
-		userWithCorrectData.email = 'bob@gmail.com'
+		userWithCorrectData.nickname = 'John'
+		userWithCorrectData.password = 'john'
+		userWithCorrectData.email = 'john77@gmail.com'
 
 		describe('Sign Up routes / Local PASSPORT strategy', () => {
 			it('Sign Up with correct data should return 201', async done => {
@@ -28,9 +28,9 @@ const authRoutesSuite = (server: supertest.SuperTest<supertest.Test>) =>
 			})
 			it('Sign Up with too short password should return 400', async done => {
 				const userWIthTooShortPwd: User = new User()
-				userWIthTooShortPwd.nickname = 'Bob'
-				userWIthTooShortPwd.password = 'bob'
-				userWIthTooShortPwd.email = 'bob@gmail.com'
+				userWIthTooShortPwd.nickname = 'John'
+				userWIthTooShortPwd.password = 'jo'
+				userWIthTooShortPwd.email = 'john@gmail.com'
 
 				const res: request.Response = await server
 					.post('/api/auth/signup')
@@ -40,9 +40,9 @@ const authRoutesSuite = (server: supertest.SuperTest<supertest.Test>) =>
 			})
 			it('Sign Up with unformatted mail should return 400', async done => {
 				const userWIthTooShortPwd: User = new User()
-				userWIthTooShortPwd.nickname = 'Bob1'
-				userWIthTooShortPwd.password = 'bob1'
-				userWIthTooShortPwd.email = 'bob@gmail'
+				userWIthTooShortPwd.nickname = 'John'
+				userWIthTooShortPwd.password = 'john'
+				userWIthTooShortPwd.email = 'john@gmail'
 
 				const res: request.Response = await server
 					.post('/api/auth/signup')
@@ -75,9 +75,9 @@ const authRoutesSuite = (server: supertest.SuperTest<supertest.Test>) =>
 			it('Sign In with wrong password should return 400', async done => {
 				console.log('### SIGNIN BAD2')
 				const userNotCreated: User = new User()
-				userNotCreated.nickname = 'Bob'
+				userNotCreated.nickname = 'John'
 				userNotCreated.password = 'wrongPassword'
-				userNotCreated.email = 'bob@gmail.com'
+				userNotCreated.email = 'john@gmail.com'
 
 				const res: request.Response = await server
 					.post('/api/auth/signin')
@@ -88,7 +88,7 @@ const authRoutesSuite = (server: supertest.SuperTest<supertest.Test>) =>
 		})
 
 		describe('PASSPORT JWT strategy', () => {
-			// Step 1 : Define a weel formatted JsonWebToken, but with false data
+			// Step 1 : Define a well formatted JsonWebToken, but with false data
 			const fictiveUser: User = new User()
 			fictiveUser.nickname = 'fictive'
 			fictiveUser.password = 'fictive'
@@ -118,4 +118,4 @@ const authRoutesSuite = (server: supertest.SuperTest<supertest.Test>) =>
 		})
 	})
 
-export default authRoutesSuite
+export default authRealTest
