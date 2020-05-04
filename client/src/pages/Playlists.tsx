@@ -7,8 +7,8 @@ import User from '../core/user'
 import { Sidebar } from '../widget/sidebar/Sidebar'
 import { playlists } from '../data/playlists'
 
-const Playlists = () => {
-    const [{ user }, dispatch] = User.GlobalState()
+export const Playlists = () => {
+    const [{ user }] = User.GlobalState()
     const history = useHistory();
 
     useEffect(() => {
@@ -37,7 +37,7 @@ const Playlists = () => {
                                 enableScroll={false}
                             >
                                 {playlist.movies.map(movie => (
-                                    <img src={movie.imageUrl} alt='title or description' onClick={() => history.push(`/movies/${movie.id}`)} />
+                                    <img src={movie.picture} alt='title or description' onClick={() => history.push(`/movies/${movie.id}`)} />
                                 ))}
                             </Coverflow>
                         </Content>
@@ -48,4 +48,3 @@ const Playlists = () => {
         </Container>
     )
 }
-export default Playlists;

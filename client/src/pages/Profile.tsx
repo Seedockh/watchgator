@@ -5,7 +5,7 @@ import User from '../core/user'
 import MyPlaylist from '../widget/MyPlaylist'
 import { Sidebar } from '../widget/sidebar/Sidebar'
 
-const Profile = () => {
+export const Profile = () => {
   const [{ user }] = User.GlobalState()
 
   useEffect(() => {
@@ -42,4 +42,3 @@ const Profile = () => {
     </div>
   )
 }
-export default Profile;

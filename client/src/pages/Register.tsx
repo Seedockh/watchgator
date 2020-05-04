@@ -4,7 +4,7 @@ import { Container, Content, ControlLabel, FlexboxGrid, Form, Panel, FormGroup, 
 import { useInput } from '../hooks/useInput'
 import User from '../core/user'
 
-const Register = () => {
+export const Register = () => {
   const { bind: emailBind } = useInput('')
   const { bind: passwordBind } = useInput('')
   const [{ user }] = User.GlobalState()
@@ -66,4 +66,3 @@ const Register = () => {
     </Container>
   )
 }
-export default Register;

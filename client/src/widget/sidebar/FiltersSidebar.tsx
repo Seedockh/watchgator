@@ -1,6 +1,6 @@
 import React, { useState, useEffect, FunctionComponent } from 'react'
 import { useApiFetch, useApiFetchSearch } from '../../hooks/api/useApiFetch';
-import { Actor } from '../../models/Actor';
+import { Actor } from '../../models/api/Actor';
 import { MovieFilter } from '../../models/MovieFilter';
 import { getCategories, searchActor } from '../../core/api/Api';
 import { ItemDataType } from 'rsuite/lib/@types/common';
@@ -36,6 +36,7 @@ export const FiltersSidebar: FunctionComponent<FiltersSidebarProps> = ({ initFil
         getCategories()
             .then(categoriesFetch.setData)
             .catch(categoriesFetch.setError)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const onSearchActor = (query: string) => {
@@ -167,13 +168,14 @@ export const FiltersSidebar: FunctionComponent<FiltersSidebarProps> = ({ initFil
                     />
                 </FilterSection>
 
+                <Button className='mb-4' onClick={() => onApplyFilters(filters)} appearance="primary" block>
+                    Apply filters
+                </Button>
+
                 <Button onClick={onReset} appearance="ghost" color='orange' block>
                     Reset
                 </Button>
 
-                <Button className='mt-3' onClick={() => onApplyFilters(filters)} appearance="primary" block>
-                    Apply filters
-                </Button>
             </div>
 
         </Sidebar>
