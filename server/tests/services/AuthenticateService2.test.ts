@@ -9,6 +9,10 @@ import AuthenticateService from '../../src/services/AuthenticateService'
 import { DatabaseError } from '../../src/core/CustomErrors'
 import AuthenticateServiceMock from './AuthenticateService.mock'
 
+afterEach(() => {
+	sinon.restore();
+  });
+
 describe('Login queries', (): void => {
 	it('Successfull login', async () => {
 		const token = '1234'
@@ -44,30 +48,26 @@ describe('Login queries', (): void => {
 			},
 			meta: { token },
 		})
-
-		// mock.restore()
 	})
 
-	// it('Failed login', async() => {
-	// 	const mock = Mock.passportAuthenticateFailure()
-	// 	const { nickname, password, email } = Mock.successUserEntry
+	it('Failed login', async() => {
+		const mock = Mock.passportAuthenticateFailure()
+		const { nickname, password, email } = Mock.successUserEntry
 
-	// 	const req = Mock.loginRequest({
-	// 		nickname,
-	// 		password,
-	// 		email,
-	// 	})
+		const req = Mock.loginRequest({
+			nickname,
+			password,
+			email,
+		})
 
-	// 	try {
-	// 		const actual = await AuthenticateService.login(
-	// 			req as Request,
-	// 			{} as Response,
-	// 		)
-	// 	} catch (e) {
-	// 		expect(e.status).to.equal(400)
-	// 		expect(e).to.be.instanceof(DatabaseError)
-	// 	}
-
-	// 	// mock.restore()
-	// })
+		try {
+			const actual = await AuthenticateService.login(
+				req as Request,
+				{} as Response,
+			)
+		} catch (e) {
+			expect(e.status).to.equal(400)
+			expect(e).to.be.instanceof(DatabaseError)
+		}
+	})
 })
