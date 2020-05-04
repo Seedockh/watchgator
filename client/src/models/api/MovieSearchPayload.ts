@@ -19,4 +19,5 @@ export interface MovieSearchPayload {
         metaScore?: MinMax,
         runtime?: MinMax
     }
+    pageMovies?: number
 }

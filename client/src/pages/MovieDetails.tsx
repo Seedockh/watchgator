@@ -1,6 +1,6 @@
 import React, { FunctionComponent, CSSProperties, useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Container, Icon, Content, Grid, Row, Col, Panel, Nav, Button, Avatar, Rate, List } from 'rsuite'
+import { Container, Icon, Content, Grid, Row, Col, Panel, Nav, Button, Avatar, Rate, List, Loader } from 'rsuite'
 import { TagList } from '../widget/TagList'
 import { Searchbar } from '../widget/Searchbar'
 import PlaceholderParagraph from 'rsuite/lib/Placeholder/PlaceholderParagraph'
@@ -137,6 +137,13 @@ export const MovieDetails: FunctionComponent<MovieDetailsProps> = (props) => {
                     <Searchbar style={{ flex: 1 }} />
                 </div>
                 <Grid fluid style={{ marginTop: 64 }}>
+                  {!movie &&
+                    <Row>
+                        <Col xs={24} md={6} lg={4} mdOffset={1} lgOffset={2} className='text-center'>
+                          <Loader size="lg" content="Loading ..." />
+                        </Col>
+                    </Row>
+                  }
                   {movie &&
                     <Row>
                         <Col xs={24} md={6} lg={4} mdOffset={1} lgOffset={2} className='text-center'>
