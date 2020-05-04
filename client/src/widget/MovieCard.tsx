@@ -25,7 +25,7 @@ export const MovieCard: FunctionComponent<MovieCardProps> = ({ movie }) => {
                 <img src={addPictureUrlSize(movie.picture, 500)} alt={movie.title} style={{ width: '100%', borderRadius: 8 }} />
             </div>
             <div className='p-4'>
-                <h4 className='text-center'>{movie.title}</h4>
+                <h5 className='text-center'>{movie.title}</h5>
             </div>
         </Panel>
     )
