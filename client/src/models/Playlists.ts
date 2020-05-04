@@ -1,4 +1,4 @@
-import { Movie } from "./Movie";
+import { Movie } from "./api/Movie";
 
 export class Playlist {
     constructor(

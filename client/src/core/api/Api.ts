@@ -1,6 +1,6 @@
 import { MovieResponse } from './../../models/api/MoviesResponse';
 import { MovieSearchPayload } from './../../models/api/MovieSearchPayload';
-import { Actor } from './../../models/Actor';
+import { Actor } from './../../models/api/Actor';
 import { BaseResponse } from '../../models/api/BaseResponse';
 
 async function callApi<T>(route: string, method: string, body?: string): Promise<T> {

@@ -31,10 +31,10 @@ export const DetailsPlaylists = () => {
                             <Panel bordered bodyFill className="mb-5">
                                 <FlexboxGrid>
                                     <FlexboxGrid.Item colspan={4}>
-                                        <img src={movie.imageUrl} alt={movie.name} style={{ width: 200, height: 250 }}></img>
+                                        <img src={movie.picture} alt={movie.title} style={{ width: 200, height: 250 }}></img>
                                     </FlexboxGrid.Item>
                                     <FlexboxGrid.Item style={{ width: "80%" }}>
-                                        <h3 className="mb-3">{movie.name}</h3>
+                                        <h3 className="mb-3">{movie.title}</h3>
                                         <h5>Description</h5>
                                         <Divider />
                                         <p className="mb-6" >{movie.description}</p>

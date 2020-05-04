@@ -37,7 +37,7 @@ export const Playlists = () => {
                                 enableScroll={false}
                             >
                                 {playlist.movies.map(movie => (
-                                    <img src={movie.imageUrl} alt='title or description' onClick={() => history.push(`/movies/${movie.id}`)} />
+                                    <img src={movie.picture} alt='title or description' onClick={() => history.push(`/movies/${movie.id}`)} />
                                 ))}
                             </Coverflow>
                         </Content>

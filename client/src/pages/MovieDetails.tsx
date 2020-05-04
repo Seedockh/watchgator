@@ -1,58 +1,22 @@
-import React, { FunctionComponent, CSSProperties, useState, useEffect } from 'react'
+import React, { CSSProperties, useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Container, Icon, Content, Grid, Row, Col, Panel, Nav, Button, Rate, List, Loader } from 'rsuite'
 import { TagList } from '../widget/TagList'
 import { Searchbar } from '../widget/Searchbar'
 import { addPictureUrlSize } from '../utils/movieUtils'
 import { ActorAvatar } from '../widget/ActorAvatar'
-
-export type MovieDetailsProps = {
-  movieId: string;
-}
-
-export type Media = {
-  id: string
-  title: string
-  year: number
-  rating: number
-  nbRatings: number
-  metaScore: number
-  certificate: string
-  runtime: number
-  genres: Genre[]
-  description: string
-  picture: string
-  directors: MoviePeople[]
-  actors: MoviePeople[]
-  gross: string
-}
-
-export type Genre = {
-  name: string
-}
-
-export type MoviePeople = {
-  id: string
-  name: string
-}
-
-export type People = {
-  id: string
-  firstname: string
-  lastname: string
-  picture: string
-  role: string
-}
+import { Movie } from '../models/api/Movie'
+import { Actor } from '../models/api/Actor'
 
 const detailKeysStyle: CSSProperties = {
   display: 'flex',
   justifyContent: 'space-between'
 }
 
-export const MovieDetails: FunctionComponent<MovieDetailsProps> = (props) => {
+export const MovieDetails = () => {
   const [activeTab, setActiveTab] = useState("overview")
-  const [movie, setMovie] = useState<Media>()
-  const [peoples, setPeoples] = useState<People[]>([])
+  const [movie, setMovie] = useState<Movie>()
+  const [peoples, setPeoples] = useState<Actor[]>([])
   const history = useHistory()
 
   useEffect(() => {
@@ -83,7 +47,7 @@ export const MovieDetails: FunctionComponent<MovieDetailsProps> = (props) => {
   }
 
   const fetchActors = async () => {
-    let movieActors: People[] = []
+    let movieActors: Actor[] = []
 
     if (movie && movie.actors) {
       const getActors = movie.actors!.map((actor, index) => {
@@ -187,7 +151,7 @@ export const MovieDetails: FunctionComponent<MovieDetailsProps> = (props) => {
                 <div className='flex flex-align-center' style={{ marginTop: 24 }}>
                   <div className='text-center'>
                     <h4>{movie.rating} / 10</h4>
-                    <Rate readOnly={true} max={10} allowHalf={true} value={movie.rating} />
+                    <Rate readOnly={true} max={10} allowHalf={true} value={movie.rating ?? 0} />
                   </div>
                   <div className='text-center' style={{ marginLeft: 64 }}>
                     <Icon icon='clock-o' size='2x' />

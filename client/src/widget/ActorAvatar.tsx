@@ -1,6 +1,6 @@
 import React, { FunctionComponent, CSSProperties } from 'react'
 import { addPictureUrlSize } from '../utils/movieUtils'
-import { Actor } from '../models/Actor'
+import { Actor } from '../models/api/Actor'
 
 type ActorAvatarProps = {
     actor: Actor;
