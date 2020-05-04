@@ -6,6 +6,7 @@ import {
 	Repository,
 	DeleteResult,
 	FindConditions,
+	getRepository,
 } from 'typeorm'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
 
@@ -18,8 +19,6 @@ abstract class BaseRepository<T> {
 	}
 
 	repository!: Repository<T>
-
-	abstract init(): void
 
 	async save(entity: T): Promise<T> {
 		return await BaseRepository.getConnection.manager.save(entity)

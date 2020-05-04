@@ -16,12 +16,7 @@ class UserRepository extends BaseRepository<User> {
 			this._instance != null ? this._instance : new UserRepository())
 	}
 
-	repository!: Repository<User>
-
-	init(): void {
-		this.repository = UserRepository.getConnection.getRepository(User)
-		aLog('').succeed('Users initialized')
-	}
+	repository: Repository<User> = UserRepository.getConnection?.getRepository(User)
 
 	async save(user: User): Promise<User> {
 		return await super.save(user)

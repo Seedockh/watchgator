@@ -6,9 +6,10 @@ import passport from 'passport'
 import AuthenticateService from '../src/services/AuthenticateService'
 import { DatabaseError } from '../src/core/CustomErrors'
 import UserRepository from '../src/database/repositories/UserRepository'
+import BaseRepository from '../src/database/repositories/BaseRepository'
 
 class Mock {
-	private static successToken = '1234'
+	public static successToken = '1234'
 	static successUserResponse = {
 		uuid: '1',
 		movies: [],
@@ -58,6 +59,9 @@ class Mock {
 
 	/** * MOCKING USEREPOSITORY CREATE SUCCESS * **/
 	static createUserSuccess() {
+		sinon.stub(BaseRepository, 'getConnection').get(function getterFn() {
+			return null
+		})
 		sinon
 			.stub(UserRepository.instance, UserRepository.prototype.create.name)
 			.returns(Mock.successUserResponse)

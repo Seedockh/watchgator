@@ -8,6 +8,7 @@ import { Request, Response } from 'express'
 import AuthenticateService from '../../src/services/AuthenticateService'
 import { DatabaseError } from '../../src/core/CustomErrors'
 import AuthenticateServiceMock from './AuthenticateService.mock'
+import UserRepository from '../../src/database/repositories/UserRepository'
 
 afterEach(() => {
 	sinon.restore();

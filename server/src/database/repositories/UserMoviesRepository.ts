@@ -14,12 +14,7 @@ class UserMoviesRepository extends BaseRepository<UserMovies> {
 			this._instance != null ? this._instance : new UserMoviesRepository())
 	}
 
-	repository!: Repository<UserMovies>
-
-	init(): void {
-		this.repository = UserMoviesRepository.getConnection.getRepository(UserMovies)
-		aLog('').succeed('UserMovies initialized')
-	}
+	repository: Repository<UserMovies> = UserMoviesRepository.getConnection.getRepository(UserMovies)
 
 	async add(user: User, movie: IMDBMedia): Promise<UserMovies> {
 		let userMovie: UserMovies = new UserMovies()

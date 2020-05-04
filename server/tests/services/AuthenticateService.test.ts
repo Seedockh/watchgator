@@ -8,6 +8,13 @@ import { Request, Response } from 'express'
 import AuthenticateService from '../../src/services/AuthenticateService'
 import { DatabaseError } from '../../src/core/CustomErrors'
 import AuthenticateServiceMock from './AuthenticateService.mock'
+import UserRepository from '../../src/database/repositories/UserRepository'
+import BaseRepository from '../../src/database/repositories/BaseRepository'
+import User from '../../src/database/models/User'
+
+afterEach(() => {
+	sinon.restore();
+  });
 
 describe('Register queries', (): void => {
 	it('Successfull register', async () => {
@@ -22,8 +29,6 @@ describe('Register queries', (): void => {
 			},
 			meta: Mock.successUserToken,
 		})
-
-		mock.restore()
 	})
 
 	it('Failed registration', async () => {
@@ -36,8 +41,6 @@ describe('Register queries', (): void => {
 			expect(e).to.be.an.instanceof(DatabaseError)
 			expect(e.status).to.equal(400)
 		}
-
-		mock.restore()
 	})
 })
 
@@ -62,8 +65,6 @@ describe('Login queries', (): void => {
 			},
 			meta: Mock.successUserToken,
 		})
-
-		mock.restore()
 	})
 
 	it('Failed login', async () => {
@@ -85,7 +86,5 @@ describe('Login queries', (): void => {
 			expect(e.status).to.equal(400)
 			expect(e).to.be.instanceof(DatabaseError)
 		}
-
-		mock.restore()
 	})
 })

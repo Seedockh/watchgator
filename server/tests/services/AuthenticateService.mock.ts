@@ -8,9 +8,11 @@ import { DatabaseError } from '../../src/core/CustomErrors'
 import User from '../../src/database/models/User'
 import UserRepositoryMock from '../database/repositories/UserRepository.mock'
 import passportMock from '../routes/middlewares/passport.mock'
+import BaseRepository from '../../src/database/repositories/BaseRepository'
+import Mock from '../mocks'
 
 class AuthenticateServiceMock {
-    /** * MOCKING SETTOKEN * **/
+	/** * MOCKING SETTOKEN * **/
 
 	static setToken(successToken: string) {
 		return sinon
@@ -18,21 +20,23 @@ class AuthenticateServiceMock {
 			.returns(successToken)
 	}
 
-    /** * MOCKING REGISTER * **/
+	/** * MOCKING REGISTER * **/
 
 	static registerSuccess(
 		successUserResponse: Omit<User, 'password'>,
 		sucessToken: string,
 	) {
+		sinon.stub(BaseRepository, 'getConnection').get(function getterFn() {
+			return null
+		})
+		sinon.stub(AuthenticateService, AuthenticateService.register.name).returns({
+			status: 201,
+			data: {
+				user: successUserResponse,
+			},
+			meta: { token: sucessToken },
+		})
 		return sinon
-			.stub(AuthenticateService, AuthenticateService.register.name)
-			.returns({
-				status: 201,
-				data: {
-					user: successUserResponse,
-				},
-				meta: { token: sucessToken },
-			})
 	}
 
 	static registerFailure() {
@@ -40,20 +44,17 @@ class AuthenticateServiceMock {
 			.stub(AuthenticateService, AuthenticateService.register.name)
 			.throws(new DatabaseError('Incorrect data', 400, undefined, []))
 	}
-    
-    /** * MOCKING LOGIN * **/
+
+	/** * MOCKING LOGIN * **/
 
 	static loginSuccess(userEntry: User, tokenSuccess: string) {
-		const { password, ...userWithoutPwd } = userEntry
-		const userRepositoryStub = UserRepositoryMock.createSuccess(userWithoutPwd)
 		const passportStub = passportMock.authenticateSuccess(userEntry)
-        const setTokenStub = AuthenticateServiceMock.setToken(tokenSuccess)
+		const setTokenStub = AuthenticateServiceMock.setToken(tokenSuccess)
 	}
 
 	static loginFailure() {
 		const UserRepositoryStub = UserRepositoryMock.createFailure()
 	}
-
 }
 
 export default AuthenticateServiceMock
