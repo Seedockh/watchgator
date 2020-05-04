@@ -33,7 +33,7 @@ const Login = () => {
   }
 
   return (
-    <Container style={{ marginTop: 200 }}>
+    <Container style={{ marginTop: "15%" }}>
       <Content>
         <FlexboxGrid justify="center">
           <FlexboxGrid.Item colspan={10}>
@@ -50,7 +50,7 @@ const Login = () => {
                 </FormGroup>
                 <FormGroup className='flex flex-column flex-align-center'>
                   <Button appearance="primary" style={{ width: 150 }} onClick={() => history.push('/')}>Login</Button>
-                  <FormGroup className='flex' style={{ alignItems: "baseline", marginTop: 10 }}>
+                  <FormGroup className='flex mt-3' style={{ alignItems: "baseline"}}>
                     <ControlLabel>Don't have account ?</ControlLabel>
                     <Button onClick={redirectRegister} appearance="link"> Sign up</Button>
                   </FormGroup>
