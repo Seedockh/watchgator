@@ -65,7 +65,7 @@ export const FiltersDialog: FunctionComponent<FiltersDialogProps> = ({ isOpen, o
                     <FilterSection title="Year">
                         <FilterRangeSlider
                             value={filters.years}
-                            range={{ min: 1950, max: 2020 }}
+                            range={{ min: 1965, max: 2020 }}
                             step={1}
                             onChange={(years) => {
                                 setFilters({ ...filters, years })

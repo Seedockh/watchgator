@@ -5,8 +5,10 @@ import * as jwt from 'jsonwebtoken'
 import passport from 'passport'
 import { validate, ValidationError } from 'class-validator'
 import { Context } from 'graphql-passport/lib/buildContext'
+/** ****** TYPEORM ****** **/
+import { QueryFailedError } from 'typeorm'
 /** ****** INTERNALS ****** **/
-import { User } from '../database/models/User'
+import User from '../database/models/User'
 import UserRepository from '../database/repositories/UserRepository'
 import { sLog } from '../core/Log'
 import { DatabaseError } from '../core/CustomErrors'
@@ -35,17 +37,21 @@ class AuthenticateService {
 			throw new DatabaseError('Incorrect data', 400, undefined, errors)
 
 		try {
-			user.hashPassword()
+			User.hashPassword(user)
 			// Add user to DB
-			const createdUser = await UserRepository.create(user)
+			const createdUser = await UserRepository.instance.create(user)
+			const { ...userToReturn } = createdUser
+			delete userToReturn.password
 
 			this.token = this.setToken(createdUser)
 			return {
 				status: 201,
-				data: { user: createdUser },
+				data: { user: userToReturn },
 				meta: { token: this.token },
 			}
 		} catch (error) {
+			if (error instanceof QueryFailedError)
+				throw new DatabaseError(error.message, 400, undefined, error)
 			throw new DatabaseError('Unexpected error', 400)
 		}
 	}
@@ -57,13 +63,15 @@ class AuthenticateService {
 		return new Promise(
 			(resolve: (result: AuthServiceResponse) => void, reject: any) => {
 				passport.authenticate('local', { session: false }, (error, user) => {
-					console.log(error)
-					if (!error) {
+					if (!error && user) {
 						this.token = this.setToken(user)
+
+						const { ...userToReturn } = user
+						delete userToReturn.password
 
 						return resolve({
 							status: 200,
-							data: { user },
+							data: { user: userToReturn },
 							meta: { token: this.token },
 						})
 					}
@@ -75,13 +83,13 @@ class AuthenticateService {
 
 	static async loginGraphQL(
 		nickname: string,
-		password: string,
+		pwd: string,
 		context: Context<User>,
 	): Promise<AuthServiceResponse> {
 		try {
 			const { user } = await context.authenticate('graphql-local', {
 				username: nickname,
-				password,
+				password: pwd,
 			})
 
 			if (user === undefined) {
@@ -93,7 +101,14 @@ class AuthenticateService {
 			}
 
 			this.token = this.setToken(user)
-			return { status: 200, data: { user }, meta: { token: this.token } }
+			const { ...userToReturn } = user
+			delete userToReturn.password
+
+			return {
+				status: 200,
+				data: { user: userToReturn },
+				meta: { token: this.token },
+			}
 		} catch (error) {
 			if (error instanceof DatabaseError) throw error
 			throw new DatabaseError('Unexpected error', 500, undefined, error)

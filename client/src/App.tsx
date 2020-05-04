@@ -3,9 +3,11 @@ import { Route } from 'react-router-dom'
 import 'rsuite/dist/styles/rsuite-dark.css';
 
 import { Login, Home } from './pages'
-import User from './core/user';
+import User from './core/user'
 import Register from './pages/Register';
 import Profile from './pages/Profile';
+import Playlists from './pages/Playlists';
+import DetailsPlaylists from './pages/DetailsPlaylist';
 import { MovieDetails } from './pages/MovieDetails';
 
 const user = localStorage.getItem('user')
@@ -50,6 +52,8 @@ const App = () => (
     <Route exact path="/register" component={Register} />
     <Route exact path="/profile" component={Profile} />
     <Route path="/movies/:movieId" component={MovieDetails} />
+    <Route exact path="/playlists" component={Playlists} />
+      <Route exact path="/playlist/:playlistId" component={DetailsPlaylists} />
   </User.Provider>
 )
 

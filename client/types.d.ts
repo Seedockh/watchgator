@@ -4,8 +4,10 @@ interface User {
 
 interface UserState {
   user: User | null
-  token: string |  null
+  token: string | null
 }
+
+declare module 'react-coverflow'
 
 type UserAction = { type: string; payload: User|null }
 type UserReducer = (prevState: UserState, action: UserAction) => UserState

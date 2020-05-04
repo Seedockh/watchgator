@@ -6,13 +6,16 @@ export const typeDefs = gql`
 		hello: String
 	}
 	type Mutation {
-		signUp(nickname: String!, email: String!, password: String!): User
-		signIn(nickname: String!, email: String!, password: String!): User!
+		signUp(nickname: String!, email: String!, password: String!): UserWithoutPwd
+		signIn(
+			nickname: String!
+			email: String!
+			password: String!
+		): UserWithoutPwd!
 	}
-	type User {
+	type UserWithoutPwd {
 		uuid: String!
 		nickname: String!
 		email: String!
-		password: String!
 	}
 `

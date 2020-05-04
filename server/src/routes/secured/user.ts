@@ -1,9 +1,18 @@
+/** ****** EXPRESS ****** **/
 import { Router } from 'express'
-import UserAuthController from '../../controllers/rest/UserController'
+/** ****** INTERNALS ****** **/
+import UserController from '../../controllers/rest/UserController'
 
 const router = Router()
 
-router.post('/add-avatar', UserAuthController.uploadAvatar)
-router.delete('/remove-avatar/:fileKey', UserAuthController.deleteAvatar)
+router.get('/get/:uuid', UserController.getUser)
+router.get('/movies/:uuid', UserController.getMovies)
+router.post('/add-movie', UserController.addMovie)
+router.put('/update', UserController.updateUser)
+router.put('/update-password', UserController.updateUserPwd)
+router.put('/update-avatar', UserController.updateAvatar)
+router.delete('/delete/:uuid', UserController.deleteUser)
+router.delete('/delete-avatar/:fileKey', UserController.deleteAvatar)
+router.delete('/delete-movie/:id', UserController.deleteMovie)
 
 export default router

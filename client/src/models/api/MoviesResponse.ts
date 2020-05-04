@@ -9,7 +9,7 @@ export interface MovieResponse {
     moviesPages: number
     seriesPages: number
     results: {
-        movies: Movie[][],
-        series: Serie[][]
+        movies: Movie[],
+        series: Serie[]
     }
 }

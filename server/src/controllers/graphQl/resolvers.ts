@@ -3,15 +3,15 @@ import { AuthenticationError } from 'apollo-server-errors'
 import { Context } from 'graphql-passport/lib/buildContext'
 /** ****** INTERNALS ****** **/
 import AuthenticateService from '../../services/AuthenticateService'
-import { User } from '../../database/models/User'
+import User from '../../database/models/User'
 import { DatabaseError } from '../../core/CustomErrors'
 
 export const resolvers = {
 	Query: {
-		hello: () => 'Hello world!',
+		hello: (): string => 'Hello world!',
 	},
 	Mutation: {
-		signUp: async (_: any, args: User): Promise<User> => {
+		signUp: async (_: any, args: User): Promise<Omit<User, 'password'>> => {
 			const { nickname, password, email } = args
 			try {
 				const result = await AuthenticateService.register(
@@ -30,11 +30,11 @@ export const resolvers = {
 			_: any,
 			args: User,
 			context: Context<User>,
-		): Promise<User> => {
-			const { nickname, password } = args
+		): Promise<Omit<User, 'password'>> => {
+			const { email, password } = args
 			try {
 				const result = await AuthenticateService.loginGraphQL(
-					nickname,
+					email,
 					password,
 					context,
 				)

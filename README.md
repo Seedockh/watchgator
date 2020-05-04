@@ -3,49 +3,18 @@ Startup week project : Movies / Series search engine
 
 # Hosted URLs
 
-- Client: https://watchgator-client.herokuapp.com/
+- Client: http://www.watchgator.org
 - Server: https://watchgator-server.herokuapp.com/
 
-# Heroku Deploys
+# API
 
-All commands are inspired from [this article](https://medium.com/@shalandy/deploy-git-subdirectory-to-heroku-ea05e95fce1f).
+### Documentation
 
-## Setup
+See all routes details here :
+https://watchgator-server.herokuapp.com/doc/  
 
-First, make sure to get the **`Heroku Cli`**
-```console
-~ $ npm install -g heroku
-~ $ heroku login
-```
+### Routes
 
-## Deploy Client
+![https://image.noelshack.com/fichiers/2020/19/1/1588544299-screenshot-from-2020-05-04-00-17-40.png](https://image.noelshack.com/fichiers/2020/19/1/1588544299-screenshot-from-2020-05-04-00-17-40.png)
 
-You can run either :
-```console
-~/watchgator$ yarn pcli
-```
-
-Or :
-```console
-~/watchgator$ heroku git:remote -a watchgator-client
-~/watchgator$ git subtree push --prefix client heroku master
-```
-
-## Deploy Server
-
-You can run either :
-```console
-~/watchgator$ yarn pserv
-```
-
-Or :
-```console
-~/watchgator$ heroku git:remote -a watchgator-server
-~/watchgator$ git subtree push --prefix server heroku master
-```
-
-## Both
-
-```console
-~/watchgator$ yarn pheroku
-```
+![https://image.noelshack.com/fichiers/2020/19/1/1588544320-screenshot-from-2020-05-04-00-18-26.png](https://image.noelshack.com/fichiers/2020/19/1/1588544320-screenshot-from-2020-05-04-00-18-26.png)

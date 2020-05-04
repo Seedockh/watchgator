@@ -4,6 +4,7 @@ import { Container, Content, ControlLabel, FlexboxGrid, Form, Panel, FormGroup, 
 
 import User from '../core/user'
 import { ApiHook } from '../models/ApiHook';
+import BaseLoginRegister from '../components/BaseLoginRegister';
 
 
 const Login = () => {
@@ -18,13 +19,17 @@ const Login = () => {
     isLoading: false
   })
 
-  const setUser = (res: any) => {
-    dispatch({ type: 'setUser', payload: res.data.user })
-    dispatch({ type: 'setToken', payload: res.meta.token })
+  if(user) {
+    history.push('/')    
   }
 
   const redirectRegister = () => {
     history.push('/register')
+  }
+  //BaseLoginRegister({isLogin: true, values})
+  const setUser = (res: any) => {
+    dispatch({ type: 'setUser', payload: res.data.user })
+    dispatch({ type: 'setToken', payload: res.meta.token })
   }
 
   const handleSubmit = async () => {
@@ -53,7 +58,7 @@ const Login = () => {
   }
 
   return (
-    <Container style={{ marginTop: 200 }}>
+    <Container style={{ marginTop: "15%" }}>
       <Content>
         <FlexboxGrid justify="center">
           <FlexboxGrid.Item colspan={10}>
@@ -69,9 +74,9 @@ const Login = () => {
                   <Button appearance="link">Forgot password?</Button>
                 </FormGroup>
                 <FormGroup className='flex flex-column flex-align-center'>
-                  {!fetchState.isLoading && fetchState.error ? <h5>{JSON.stringify(fetchState.error)}</h5> : null}
-                  <Button appearance="primary" style={{ width: 150 }} onClick={handleSubmit} loading={fetchState.isLoading}>Login</Button>
-                  <FormGroup className='flex' style={{ alignItems: "baseline", marginTop: 10 }}>
+                  {!fetchState.isLoading && fetchState.error ? <h5>{fetchState.error}</h5> : null}
+                  <Button appearance="primary" style={{ width: 150 }} onClick={() => handleSubmit()} loading={fetchState.isLoading}>Login</Button>
+                  <FormGroup className='flex mt-3' style={{ alignItems: "baseline" }}>
                     <ControlLabel>Don't have account ?</ControlLabel>
                     <Button onClick={redirectRegister} appearance="link"> Sign up</Button>
                   </FormGroup>
