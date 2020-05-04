@@ -63,8 +63,8 @@ export const Home = () => {
           <Searchbar />
         </Header>
         <Content>
-          <Panel style={{ marginTop: 32 }}>
-            <h1 style={{ marginLeft: 16 }}>Movies</h1>
+          <Panel className="mb-6">
+            <h1  className="ml-4">Movies</h1>
             <Grid fluid >
               <Row>
                 {moviesList.map((movie) => (
