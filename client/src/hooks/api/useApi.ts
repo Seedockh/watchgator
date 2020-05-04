@@ -38,7 +38,7 @@ export function useApi<T>(route: string, method = 'GET', body?: string): ApiHook
 }
 
 export const useAllCategories = (): ApiHook<string[]> => useApi<string[]>('/genres/all/');
-// export const useConnectUser = (values: object): ApiHook<string[]> => return () useApi<string[]>('/auth/signin', "POST", JSON.stringify(values));
+export const useConnectUser = (values: object): ApiHook<string[]> => useApi<string[]>('/auth/signin', "POST", JSON.stringify(values));
 
 export const useSearchActors = (): ApiHookSearch<BaseResponse<Actor[][]>, string> => {
     const [query, setQuery] = useState<string>('')

@@ -3,51 +3,53 @@ import { useHistory } from 'react-router-dom'
 import { Container, Content, ControlLabel, FlexboxGrid, Form, Panel, FormGroup, FormControl, Button } from 'rsuite'
 
 import User from '../core/user'
-import { useApi, useConnectUser } from '../hooks/api/useApi'
 import { ApiHook } from '../models/ApiHook';
 
 
 const Login = () => {
-  // const { bind: emailBind } = useInput('')
-  // const { bind: passwordBind } = useInput('')
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const values = {email, password}
+  const values = { email, password }
 
-  //const { isLoading: categoriesLoading, data: categories } = useConnectUser(values);
-
-  const [{ user }] = User.GlobalState()
+  const [{ user }, dispatch] = User.GlobalState()
   const history = useHistory()
 
-  useEffect(() => {
-    // do something once here
-    console.log('Login page called !')
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const [fetchState, setFetchState] = useState<ApiHook<any>>({
+    isLoading: false
+  })
 
-  useEffect(() => {
-    console.log(`user: ${JSON.stringify(user)}`)
-  }, [user])
-
-  // const login = (): void => {
-  //   dispatch({ type: 'setUser', payload: { email } })
-  //   console.log('User handled !')
-  //   alert('Check your console.log !')
-  //   // redirect to next view :
-  //   history.push('/home')
-  // }
+  const setUser = (res: any) => {
+    dispatch({ type: 'setUser', payload: res.data.user })
+    dispatch({ type: 'setToken', payload: res.meta.token })
+  }
 
   const redirectRegister = () => {
     history.push('/register')
   }
 
-  const handleSubmit = () => {
-    
-    //const response = useApi<string[]>('/auth/signin', "POST", JSON.stringify(values));
-    const response = useConnectUser(values);
-    console.log(response);
-    
+  const handleSubmit = async () => {
+    setFetchState({ isLoading: true })
+    const res = await fetch(`${process.env.REACT_APP_API_URI}/auth/signin`, {
+      method: "POST",
+      body: JSON.stringify(values),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
 
+    if (res.status === 400) {
+      setFetchState({ isLoading: false, error: "Email or password incorrect" })
+    } else {
+      res.json()
+        .then(res => {
+          setFetchState({ isLoading: false })
+          setUser(res)
+        })
+        .catch(err => {
+          console.log("API ERROR", err);
+          setFetchState({ isLoading: false, error: err })
+        });
+    }
   }
 
   return (
@@ -67,7 +69,8 @@ const Login = () => {
                   <Button appearance="link">Forgot password?</Button>
                 </FormGroup>
                 <FormGroup className='flex flex-column flex-align-center'>
-                  <Button appearance="primary" style={{ width: 150 }} onClick={handleSubmit}>Login</Button>
+                  {!fetchState.isLoading && fetchState.error ? <h5>{JSON.stringify(fetchState.error)}</h5> : null}
+                  <Button appearance="primary" style={{ width: 150 }} onClick={handleSubmit} loading={fetchState.isLoading}>Login</Button>
                   <FormGroup className='flex' style={{ alignItems: "baseline", marginTop: 10 }}>
                     <ControlLabel>Don't have account ?</ControlLabel>
                     <Button onClick={redirectRegister} appearance="link"> Sign up</Button>
