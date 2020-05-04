@@ -7,7 +7,7 @@ import { Sidebar } from '../widget/sidebar/Sidebar'
 import { playlists } from '../data/playlists'
 
 const DetailsPlaylists = () => {
-    const [{ user }, dispatch] = UserGlobalState()
+    const [{ user }] = UserGlobalState()
     const history = useHistory();
 
     useEffect(() => {
@@ -31,7 +31,7 @@ const DetailsPlaylists = () => {
                             <Panel bordered bodyFill className="mb-5">
                                 <FlexboxGrid>
                                     <FlexboxGrid.Item colspan={4}>
-                                        <img src={movie.imageUrl} style={{ width: 200, height: 250 }}></img>
+                                        <img src={movie.imageUrl} style={{ width: 200, height: 250 }} alt="poster movie"></img>
                                     </FlexboxGrid.Item>
                                     <FlexboxGrid.Item style={{ width: "80%" }}>
                                         <h3 className="mb-3">{movie.name}</h3>

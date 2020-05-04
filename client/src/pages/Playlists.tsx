@@ -7,9 +7,13 @@ import { UserGlobalState } from '../core/user'
 import { Sidebar } from '../widget/sidebar/Sidebar'
 
 const Playlists = () => {
-    const [{ user }, dispatch] = UserGlobalState()
+    const [{ user }] = UserGlobalState()
     const history = useHistory();
 
+    if(!user) {
+        history.push('/')
+    }
+    
     return (
         <Container>
             <Sidebar items={[{
@@ -19,7 +23,7 @@ const Playlists = () => {
             },]} userConnected={user} />
             <Content className="mr-6">
                 <Panel>
-                    {user?.playlists?.length ?? 0 > 0 ?
+                    {user?.playlists?.length ?? 0  ?
                         user?.playlists?.map((playlist) => (
                             <Content>
                                 <h3>{playlist.name} <Badge content={playlist.movies.length} style={{ backgroundColor: "green", fontSize: 15 }} /></h3>

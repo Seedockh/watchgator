@@ -3,7 +3,7 @@ import { Route } from 'react-router-dom'
 import 'rsuite/dist/styles/rsuite-dark.css';
 
 import { Login, Home } from './pages'
-import { UserGlobalState, UserProvider, UserState } from './core/user'
+import { UserProvider, UserState } from './core/user'
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Playlists from './pages/Playlists';
@@ -38,9 +38,9 @@ const reducer = (prevState: UserState, action: UserAction): UserState => {
         return { ...prevState, token: null }
       }
 
-      const token = { token: prevState.token, ...action.payload }
-      localStorage.setItem('token', token.token ?? "")
-      return { ...prevState, token: token.token }
+      const token = action.payload
+      localStorage.setItem('token', token )
+      return { ...prevState, token }
     default:
       return prevState
   }

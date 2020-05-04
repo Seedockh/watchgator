@@ -1,15 +1,15 @@
-import React, { useEffect, useState} from 'react'
+import React, { useState} from 'react'
 import { useHistory } from 'react-router-dom'
 import { Container, Content, ControlLabel, FlexboxGrid, Form, Panel, FormGroup, FormControl, Button } from 'rsuite'
 
 import { UserGlobalState } from '../core/user'
 import { ApiHook } from '../models/ApiHook';
+import { useInput } from '../hooks/useInput';
 
 const Register = () => {
-  const [nickname, setNickname] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const values = { nickname, email, password }
+  const email = useInput('');
+  const nickname = useInput('');
+  const password = useInput('');
 
   const [{ user }, dispatch] = UserGlobalState()
   const history = useHistory()
@@ -34,7 +34,7 @@ const Register = () => {
     setFetchState({ isLoading: true })
     const res = await fetch(`${process.env.REACT_APP_API_URI}/auth/signup`, {
       method: "POST",
-      body: JSON.stringify(values),
+      body: JSON.stringify({nickanme: nickname.value, email: email.value, password: password.value}),
       headers: {
         'Content-Type': 'application/json'
       }
@@ -74,15 +74,15 @@ const Register = () => {
               <Form fluid>
                 <FormGroup>
                   <ControlLabel>Pseudo</ControlLabel>
-                  <FormControl name="nickname"  onChange={(value) => setNickname(value)}/>
+                  <FormControl name="nickname"  {...nickname.bind}/>
                 </FormGroup>
                 <FormGroup>
                   <ControlLabel>Email address</ControlLabel>
-                  <FormControl name="email" onChange={(value) => setEmail(value)} />
+                  <FormControl name="email" {...email.bind} />
                 </FormGroup>
                 <FormGroup>
                   <ControlLabel>Password</ControlLabel>
-                  <FormControl name="password" type="password" onChange={(value) => setPassword(value)} />
+                  <FormControl name="password" type="password" {...password.bind} />
                 </FormGroup>
                 <FormGroup className='flex flex-column flex-align-center'>
                 {!fetchState.isLoading && fetchState.error ? <h5>{fetchState.error}</h5> : <></>}

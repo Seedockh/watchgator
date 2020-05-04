@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Container, Content, ControlLabel, FlexboxGrid, Form, Panel, FormGroup, FormControl, Button } from 'rsuite'
 
 import { UserGlobalState } from '../core/user'
 import { ApiHook } from '../models/ApiHook';
-import BaseLoginRegister from '../components/BaseLoginRegister';
+import { useInput } from '../hooks/useInput';
 
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const values = { email, password }
+  const email = useInput('');
+  const password = useInput('');
 
   const [{ user }, dispatch] = UserGlobalState()
   const history = useHistory()
@@ -26,17 +25,17 @@ const Login = () => {
   const redirectRegister = () => {
     history.push('/register')
   }
-  //BaseLoginRegister({isLogin: true, values})
+
   const setUser = (res: any) => {
     dispatch({ type: 'setUser', payload: res.data.user })
     dispatch({ type: 'setToken', payload: res.meta.token })
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = async () => {        
     setFetchState({ isLoading: true })
     const res = await fetch(`${process.env.REACT_APP_API_URI}/auth/signin`, {
       method: "POST",
-      body: JSON.stringify(values),
+      body: JSON.stringify({email: email.value, password: password.value}),
       headers: {
         'Content-Type': 'application/json'
       }
@@ -66,11 +65,11 @@ const Login = () => {
               <Form fluid>
                 <FormGroup>
                   <ControlLabel>Email address</ControlLabel>
-                  <FormControl name="name" onChange={value => setEmail(value)} />
+                  <FormControl name="name" {...email.bind} />
                 </FormGroup>
                 <FormGroup>
                   <ControlLabel>Password</ControlLabel>
-                  <FormControl name="password" type="password" onChange={value => setPassword(value)} />
+                  <FormControl name="password" type="password" {...password.bind} />
                   <Button appearance="link">Forgot password?</Button>
                 </FormGroup>
                 <FormGroup className='flex flex-column flex-align-center'>

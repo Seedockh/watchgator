@@ -47,6 +47,16 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ items, userConnected 
         {expand && <>
             <br />
             <h4 className="mt-2">{userConnected?.nickname}</h4>
+            <Button
+                appearance="ghost"
+                block
+                onClick={() => {
+                    localStorage.clear()
+                    window.location.reload(true)
+                }}
+            >
+                Disconnect
+                </Button>
         </>}
     </>
 
@@ -66,8 +76,6 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ items, userConnected 
                 </Button>
         </>}
     </>
-
-    console.log(history.location);
 
     const navItems: Item[] = [
         ...(userConnected ? [

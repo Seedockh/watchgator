@@ -8,7 +8,7 @@ interface HookInput {
   reset(): void
   bind: {
     value: TValue
-    onChange(event: React.ChangeEvent<HTMLInputElement>): void
+    onChange(value: string): void
   }
 }
 
@@ -23,8 +23,8 @@ export const useInput = (initialValue: TValue): HookInput => {
     },
     bind: {
       value,
-      onChange(event: React.ChangeEvent<HTMLInputElement>): void {
-        setValue(event.target.value)
+      onChange(value: string): void {
+        setValue(value)
       },
     },
   }

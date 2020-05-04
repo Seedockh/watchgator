@@ -1,4 +1,5 @@
-import React, { useEffect, useContext } from 'react'
+import React from 'react'
+import { useHistory } from 'react-router-dom'
 import { Container, Content, Grid, Panel, Row, Divider, Col } from 'rsuite'
 
 import { UserGlobalState } from '../core/user'
@@ -7,7 +8,12 @@ import { Sidebar } from '../widget/sidebar/Sidebar'
 import { MovieCard } from '../widget/MovieCard'
 
 const Profile = () => {
-  const [{user}, dispatch] = UserGlobalState()
+  const [{ user }] = UserGlobalState()
+  const history = useHistory()
+
+  if (!user) {
+    history.push("/")
+  }
 
   return (
     <div className="sidebar-page">
@@ -26,12 +32,11 @@ const Profile = () => {
         ]} userConnected={user} />
         <Content style={{ marginRight: 100 }}>
           <Panel>
-            <MyPlaylist />
             <h3>My Favorites</h3>
             <Divider />
-            <Grid fluid>
+            <Grid fluid className="mb-6">
               <Row className="show-grid" gutter={30}>
-                {user?.movies?.length ?? 0 > 0 ?
+                {user?.movies?.length ?? 0 ?
                   user?.movies.map((itemMovie) => (
                     <Col xs={24} sm={12} md={6} lg={4} style={{ width: 240 }} >
                       <MovieCard movie={itemMovie} />
@@ -41,6 +46,7 @@ const Profile = () => {
                 }
               </Row>
             </Grid>
+            <MyPlaylist />
           </Panel>
         </Content>
       </Container>
