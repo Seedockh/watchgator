@@ -1,15 +1,13 @@
 import React, { FunctionComponent } from 'react'
-import { Row, Col } from 'rsuite'
 
 type FilterSectionProps = {
     title: string;
+    subtitle?: string;
 }
 
-export const FilterSection: FunctionComponent<FilterSectionProps> = ({ title, children }) => (
-    <Row className='mb-6'>
-        <Col xs={24} sm={24}>
-            <h5>{title}</h5>
-            {children}
-        </Col>
-    </Row>
+export const FilterSection: FunctionComponent<FilterSectionProps> = ({ title, subtitle, children }) => (
+    <div className='mb-6'>
+        <h5 className='mb-4'>{title} {subtitle && <small>{subtitle}</small>}</h5>
+        {children}
+    </div>
 )

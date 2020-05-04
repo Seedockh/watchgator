@@ -10,7 +10,9 @@ export const Searchbar: FunctionComponent<SearchbarProps> = ({ style }) => (
         <Row>
             <Col xs={24} md={12} mdOffset={6}>
                 <InputGroup inside size="lg" style={{ width: '100%' }}>
-                    <Input placeholder="Search a movie title, actor, realtor, ..." />
+                    <Input placeholder="Search a movie title, actor, realtor, ..." onChange={() => {
+                        //TODO: Redirect to search screen
+                    }} />
                     <InputGroup.Button>
                         <Icon icon="search" size="lg" />
                     </InputGroup.Button>
