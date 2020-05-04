@@ -1,11 +1,13 @@
 /** ****** TESTING ****** **/
 import 'chai/register-expect'
 import Mock from '../mocks'
+import sinon from 'sinon'
 /** ****** SERVER TYPES ****** **/
 import { Request, Response } from 'express'
 /** ****** INTERNALS ****** **/
 import AuthenticateService from '../../src/services/AuthenticateService'
 import { DatabaseError } from '../../src/core/CustomErrors'
+import AuthenticateServiceMock from './AuthenticateService.mock'
 
 describe('Register queries', (): void => {
 	it('Successfull register', async () => {
