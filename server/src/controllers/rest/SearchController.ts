@@ -199,12 +199,12 @@ class SearchController {
 			const totalSeries = typeSelected >= 1 ?	(series ? series.length : IMDBDatasetService[`${level}Series`].data.length) : 0
 			const resultMovies = typeSelected <= 1 ?
 				// @ts-ignore: unreachable key
-				_.chunk(movies ? _.orderBy(movies, [( o ) => o.rating || 0], ['desc']) : _.orderBy(IMDBDatasetService[`${level}Movies`].data, [( o ) => o.rating || 0], ['desc'])
+				_.chunk(movies ? _.orderBy(movies, [( o ) => o.metaScore || 0], ['desc']) : _.orderBy(IMDBDatasetService[`${level}Movies`].data, [( o ) => o.metaScore || 0], ['desc'])
 					,	pagination) :
 				[]
 			const resultSeries = typeSelected >= 1 ?
 				// @ts-ignore: unreachable key
-				_.chunk(series ? _.orderBy(series, [( o ) => o.rating || 0], ['desc']) : _.orderBy(IMDBDatasetService[`${level}Series`].data, [( o ) => o.rating || 0], ['desc']),	pagination) :
+				_.chunk(series ? _.orderBy(series, [( o ) => o.metaScore || 0], ['desc']) : _.orderBy(IMDBDatasetService[`${level}Series`].data, [( o ) => o.metaScore || 0], ['desc']),	pagination) :
 				[]
 
 			const time: number = new Date().getTime() - t0
