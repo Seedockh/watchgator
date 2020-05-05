@@ -108,16 +108,13 @@ export const MovieDetails = () => {
     })
 
     res.json().then(res => {
-      console.log(res);
       if(res.message !== undefined) {
-        console.log(user);
         user?.movies.push(movie!)
-        
         setUser(user!)
-
       }
     }).catch(error => console.log(error));
 }
+
   const renderTabs = (): JSX.Element => {
     if (movie && activeTab === 'overview') {
       return <p>{movie.description}</p>

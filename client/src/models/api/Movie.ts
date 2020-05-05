@@ -16,4 +16,5 @@ export interface Movie {
     directors: People[],
     actors: People[],
     gross: string | null
+    movie?: string
 }
