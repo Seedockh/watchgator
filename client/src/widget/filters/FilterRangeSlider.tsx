@@ -18,9 +18,7 @@ export const FilterRangeSlider: FunctionComponent<FilterRangeSliderProps> = ({ r
     }
 
     return <RangeSlider
-        className='ml-4 mt-5 mr-6'
-        graduated
-        progress
+        className='ml-1 mr-3'
         value={[value.min, value.max]}
         onChange={value => {
             onChange({ min: value[0], max: value[1] })

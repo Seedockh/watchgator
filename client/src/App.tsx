@@ -2,14 +2,16 @@ import React from 'react'
 import { Route } from 'react-router-dom'
 import 'rsuite/dist/styles/rsuite-dark.css';
 
-import { Login, Home } from './pages'
 import { UserProvider, UserState } from './core/user'
-import Register from './pages/Register';
-import Profile from './pages/Profile';
-import Playlists from './pages/Playlists';
-import DetailsPlaylists from './pages/DetailsPlaylist';
+
+import { Information } from './pages/Information';
+import { Register } from './pages/Register';
+import { Profile } from './pages/Profile';
+import { Playlists } from './pages/Playlists';
+import { DetailsPlaylists } from './pages/DetailsPlaylist';
 import { MovieDetails } from './pages/MovieDetails';
-import Information from './pages/Information';
+import { Home } from './pages/Home';
+import { Login } from './pages/Login';
 
 const user = localStorage.getItem('user')
 const token = localStorage.getItem('token')
@@ -39,14 +41,14 @@ const reducer = (prevState: UserState, action: UserAction): UserState => {
       }
 
       const token = action.payload
-      localStorage.setItem('token', token )
+      localStorage.setItem('token', token)
       return { ...prevState, token }
     default:
       return prevState
   }
 }
 
-const App = () => (
+export const App = () => (
   <UserProvider initialState={userInitialState} reducer={reducer}>
     <Route exact path="/" component={Home} />
     <Route exact path="/login" component={Login} />
@@ -58,5 +60,3 @@ const App = () => (
     <Route exact path="/playlist/:playlistId" component={DetailsPlaylists} />
   </UserProvider>
 )
-
-export default App

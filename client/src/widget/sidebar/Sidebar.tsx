@@ -34,7 +34,7 @@ type SidebarProps = {
     userConnected?: User | null
 }
 
-export const Sidebar: FunctionComponent<SidebarProps> = ({ items, userConnected }) => {
+export const Sidebar: FunctionComponent<SidebarProps> = ({ items, userConnected, children }) => {
     const [expand, setExpand] = useState(true)
     const history = useHistory()
 
@@ -96,7 +96,7 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ items, userConnected 
     return (
         <RSidebar
             style={{ minHeight: '100vh' }}
-            width={expand ? 260 : 56}
+            width={expand ? 300 : 56}
             collapsible
         >
             <Sidenav
@@ -131,14 +131,16 @@ export const Sidebar: FunctionComponent<SidebarProps> = ({ items, userConnected 
                             >
                                 {item.items.map((subItem, subIndex) => (
                                     <Dropdown.Item key={`${index}-${subIndex}`} eventKey={`${index}-${subIndex}`}>
-                                        <>
-                                            <Toggle checkedChildren={<Icon icon="check" />} unCheckedChildren={<Icon icon="close" />} />
-                                            <span style={{ marginLeft: 12 }}>{subItem.title}</span>
-                                        </>
+                                        <Toggle
+                                            checkedChildren={<Icon icon="check" />}
+                                            unCheckedChildren={<Icon icon="close" />}
+                                        />
+                                        <span style={{ marginLeft: 12 }}>{subItem.title}</span>
                                     </Dropdown.Item>
                                 ))}
                             </Dropdown>
                         })}
+                        {expand && children}
                     </Nav>
                 </Sidenav.Body>
             </Sidenav>

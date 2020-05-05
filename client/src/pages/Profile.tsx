@@ -7,7 +7,7 @@ import MyPlaylist from '../widget/MyPlaylist'
 import { Sidebar } from '../widget/sidebar/Sidebar'
 import { MovieCard } from '../widget/MovieCard'
 
-const Profile = () => {
+export const Profile = () => {
   const [{ user }] = UserGlobalState()
   const history = useHistory()
 
@@ -53,4 +53,3 @@ const Profile = () => {
     </div>
   )
 }
-export default Profile;

@@ -1,16 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import {UserGlobalState} from '../core/user'
-import { ApiHook } from '../models/ApiHook';
+import { UserGlobalState } from '../core/user'
+import { useApiFetch } from '../hooks/api/useApiFetch'
 
-const BaseLoginRegister = (props: any) => {
+export const BaseLoginRegister = (props: any) => {
     const [{ user }, dispatch] = UserGlobalState()
     const history = useHistory()
 
-    const [fetchState, setFetchState] = useState<ApiHook<any>>({
-        isLoading: false
-    })
+    const fetchState = useApiFetch<any>()
 
     useEffect(() => {
         // do something once here
@@ -20,7 +18,7 @@ const BaseLoginRegister = (props: any) => {
             handleSubmit()
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [])
+    }, [])
 
     const setUser = (res: any) => {
         dispatch({ type: 'setUser', payload: res.data.user })
@@ -32,7 +30,7 @@ const BaseLoginRegister = (props: any) => {
         const endUrl = props.isLogin ? "signin" : "signup"
         const url = `${process.env.REACT_APP_API_URI}/auth/${endUrl}`;
 
-        setFetchState({ isLoading: true })
+        fetchState.setLoading(true)
         const res = await fetch(`${url}`, {
             method: "POST",
             body: JSON.stringify(props.values),
@@ -42,21 +40,14 @@ const BaseLoginRegister = (props: any) => {
         });
 
         if (res.status === 400) {
-            setFetchState({ isLoading: false, error: "Email or password incorrect" })
+            fetchState.setError("Email or password incorrect")
         } else {
-            res.json()
-                .then(res => {
-                    setFetchState({ isLoading: false })
-                    setUser(res)
-                })
-                .catch(err => {
-                    console.log("API ERROR", err);
-                    setFetchState({ isLoading: false, error: err })
-                });
+            res.json().then(res => {
+                fetchState.setLoading(false)
+                setUser(res)
+            }).catch(fetchState.setError);
         }
     }
 
     return fetchState
 }
-
-export default BaseLoginRegister;

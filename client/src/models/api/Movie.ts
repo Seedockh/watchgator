@@ -1,27 +1,19 @@
-import { Actor } from './../Actor'
+import { Genre } from "./Genre";
+import { People } from "./People";
 
 export interface Movie {
     id: string
     title: string
     year: number
-    rating: number
-    nbRatings: number
-    metaScore: number
-    certificate: string
-    runtime: number
-    genre: [
-        {
-            name: string
-        }
-    ],
-    description: string
+    rating: number | null
+    nbRatings: number | null
+    metaScore: number | null
+    certificate: string | null
+    runtime: number | null
+    genres: Genre[],
+    description: string | null
     picture: string
-    directors: [
-        {
-            id: string
-            name: string
-        }
-    ],
-    actors: Actor[],
-    gross: string
+    directors: People[],
+    actors: People[],
+    gross: string | null
 }

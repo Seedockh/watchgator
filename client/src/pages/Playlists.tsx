@@ -5,8 +5,9 @@ import { useHistory } from 'react-router-dom'
 
 import { UserGlobalState } from '../core/user'
 import { Sidebar } from '../widget/sidebar/Sidebar'
+import { addPictureUrlSize } from '../utils/movieUtils'
 
-const Playlists = () => {
+export const Playlists = () => {
     const [{ user }] = UserGlobalState()
     const history = useHistory();
 
@@ -35,7 +36,7 @@ const Playlists = () => {
                                     enableScroll={false}
                                 >
                                     {playlist.movies.map(movie => (
-                                        <img src={movie.imageUrl} alt='title or description' onClick={() => history.push(`/movies/${movie.id}`)} />
+                                        <img src={addPictureUrlSize(movie.picture, 700)} alt={movie.title} onClick={() => history.push(`/movies/${movie.id}`)} />
                                     ))}
                                 </Coverflow>
                             </Content>
@@ -50,4 +51,3 @@ const Playlists = () => {
         </Container>
     )
 }
-export default Playlists;

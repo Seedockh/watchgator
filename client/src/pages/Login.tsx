@@ -1,22 +1,19 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { Container, Content, ControlLabel, FlexboxGrid, Form, Panel, FormGroup, FormControl, Button } from 'rsuite'
 
 import { UserGlobalState } from '../core/user'
-import { ApiHook } from '../models/ApiHook';
 import { useInput } from '../hooks/useInput';
+import { useApiFetch } from '../hooks/api/useApiFetch';
 
-
-const Login = () => {
+export const Login = () => {
   const email = useInput('');
   const password = useInput('');
 
   const [{ user }, dispatch] = UserGlobalState()
   const history = useHistory()
 
-  const [fetchState, setFetchState] = useState<ApiHook<any>>({
-    isLoading: false
-  })
+  const fetchState = useApiFetch<any>()
 
   if (user) {
     history.push('/')
@@ -31,28 +28,23 @@ const Login = () => {
     dispatch({ type: 'setToken', payload: res.meta.token })
   }
 
-  const handleSubmit = async () => {        
-    setFetchState({ isLoading: true })
+  const handleSubmit = async () => {
+    fetchState.setLoading(true)
     const res = await fetch(`${process.env.REACT_APP_API_URI}/auth/signin`, {
       method: "POST",
-      body: JSON.stringify({email: email.value, password: password.value}),
+      body: JSON.stringify({ email: email.value, password: password.value }),
       headers: {
         'Content-Type': 'application/json'
       }
     });
 
     if (res.status === 400) {
-      setFetchState({ isLoading: false, error: "Email or password incorrect" })
+      fetchState.setError("Email or password incorrect")
     } else {
-      res.json()
-        .then(res => {
-          setFetchState({ isLoading: false })
-          setUser(res)
-        })
-        .catch(err => {
-          console.log("API ERROR", err);
-          setFetchState({ isLoading: false, error: err })
-        });
+      res.json().then(res => {
+        fetchState.setLoading(false)
+        setUser(res)
+      }).catch(fetchState.setError);
     }
   }
 
@@ -74,7 +66,7 @@ const Login = () => {
                 </FormGroup>
                 <FormGroup className='flex flex-column flex-align-center'>
                   {!fetchState.isLoading && fetchState.error ? <h5>{fetchState.error}</h5> : null}
-                  <Button appearance="primary" style={{ width: 150 }} onClick={() => handleSubmit()} loading={fetchState.isLoading}>Login</Button>
+                  <Button appearance="primary" style={{ width: 150 }} onClick={handleSubmit} loading={fetchState.isLoading}>Login</Button>
                   <FormGroup className='flex mt-3' style={{ alignItems: "baseline" }}>
                     <ControlLabel>Don't have account ?</ControlLabel>
                     <Button onClick={redirectRegister} appearance="link"> Sign up</Button>
@@ -88,4 +80,3 @@ const Login = () => {
     </Container>
   )
 }
-export default Login;

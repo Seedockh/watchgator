@@ -1,18 +1,16 @@
 import { useState } from 'react'
 
-type TValue = string | number
-
-interface HookInput {
-  value: TValue
-  setValue(v: unknown): void
+export interface HookInput {
+  value: string
+  setValue(v: string): void
   reset(): void
   bind: {
-    value: TValue
+    value: string
     onChange(value: string): void
   }
 }
 
-export const useInput = (initialValue: TValue): HookInput => {
+export const useInput = (initialValue: string): HookInput => {
   const [value, setValue] = useState(initialValue)
 
   return {

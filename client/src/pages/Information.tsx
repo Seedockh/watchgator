@@ -6,26 +6,24 @@ import { Sidebar } from '../widget/sidebar/Sidebar'
 import logo from "../assets/logo.png";
 import { FileType } from 'rsuite/lib/Uploader';
 import { UserGlobalState } from '../core/user';
-import { ApiHook } from '../models/ApiHook';
 import { useInput } from '../hooks/useInput';
+import { useApiFetch } from '../hooks/api/useApiFetch';
 
-
-const Information = () => {
+export const Information = () => {
     const [uploading, setUploading] = useState(false);
     const [fileInfo, setFileInfo] = useState(undefined);
     const [{ user }, dispatch] = UserGlobalState()
-    const [fetchState, setFetchState] = useState<ApiHook<any>>({
-        isLoading: false,
-    })
+    const fetchState = useApiFetch<any>()
+
     const history = useHistory()
 
     const [avatar, setAvatar] = useState(user?.avatar ?? logo)
     const nickname = useInput(user?.nickname ?? '')
-    
+
     const email = useInput(user?.email ?? "")
     const password = useInput("")
     const oldPassword = useInput('')
-    
+
     if (!user) {
         history.push("/")
     }
@@ -48,7 +46,7 @@ const Information = () => {
     }
 
     const fetchData = async (route: string, values: Object, test: string) => {
-        setFetchState({ isLoading: true })
+        fetchState.setLoading(true)
 
         const res = await fetch(`${process.env.REACT_APP_API_URI}/user/${route}`, {
             method: "PUT",
@@ -59,22 +57,17 @@ const Information = () => {
             }
         });
 
-        res.json()
-                .then(res => {    
-                    // TODO: Handle error
-                })
-                .catch(err => {
-                    console.log("API ERROR", err);
-                    setFetchState({ isLoading: false, error: err })
-                });
+        res.json().then(res => {
+            // TODO: Handle error
+        }).catch(fetchState.setError);
     }
 
     const updateGlobalInformation = () => {
         fetchData("update", { uuid: user?.uuid, nickname: nickname.value, email: email.value }, "global")
     }
 
-    const updatePassword =  () => {
-         fetchData("update-password", { uuid: user?.uuid, currentPwd: oldPassword.value, newPwd: password.value }, "password")        
+    const updatePassword = () => {
+        fetchData("update-password", { uuid: user?.uuid, currentPwd: oldPassword.value, newPwd: password.value }, "password")
     }
 
     return (
@@ -150,8 +143,7 @@ const Information = () => {
                                     <ControlLabel>Email address</ControlLabel>
                                     <FormControl name="email" {...email.bind} />
                                 </FormGroup>
-                                {!fetchState.isLoading && fetchState.type ? <h5>{fetchState.type}</h5> : <></>}
-                                <Button appearance="primary"  onClick={updateGlobalInformation}>
+                                <Button appearance="primary" onClick={updateGlobalInformation}>
                                     Update
                                 </Button>
                             </div>
@@ -171,7 +163,7 @@ const Information = () => {
                                     <FormControl name="newPwd" type="password" {...password.bind} />
                                 </FormGroup>
                                 {!fetchState.isLoading && fetchState.error ? <h5>{fetchState.error}</h5> : <></>}
-                                <Button appearance="primary"  onClick={updatePassword}>
+                                <Button appearance="primary" onClick={updatePassword}>
                                     Update
                             </Button>
                             </div>
@@ -182,5 +174,3 @@ const Information = () => {
         </div>
     )
 }
-
-export default Information
