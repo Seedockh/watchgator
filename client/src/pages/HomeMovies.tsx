@@ -22,7 +22,7 @@ export const HomeMovies: FunctionComponent<HomeMoviesProps> = ({ filters }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => { onFiltersChange() }, [filters])
 
-    const onFiltersChange = (filters?: MovieFilter) => {
+    const onFiltersChange = () => {
         moviesFetch.setLoading(true)
         searchMovies(filters ? {
             names: {
