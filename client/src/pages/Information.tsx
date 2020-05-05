@@ -8,21 +8,24 @@ import { FileType } from 'rsuite/lib/Uploader';
 import { UserGlobalState } from '../core/user';
 import { useInput } from '../hooks/useInput';
 import { useApiFetch } from '../hooks/api/useApiFetch';
+import { User } from '../models/api/User';
 
 export const Information = () => {
     const [uploading, setUploading] = useState(false);
     const [fileInfo, setFileInfo] = useState(undefined);
-    const [{ user }, dispatch] = UserGlobalState()
+    let [{ user }, dispatch] = UserGlobalState()
     const fetchState = useApiFetch<any>()
 
     const history = useHistory()
 
     const [avatar, setAvatar] = useState(user?.avatar ?? logo)
     const nickname = useInput(user?.nickname ?? '')
-
     const email = useInput(user?.email ?? "")
     const password = useInput("")
     const oldPassword = useInput('')
+
+    const [emailError, setEmailError] = useState('')
+    const [passwordError, setPasswordError] = useState('')
 
     if (!user) {
         history.push("/")
@@ -41,11 +44,11 @@ export const Information = () => {
         height: 150
     };
 
-    const setUser = (res: any) => {
-        dispatch({ type: 'setUser', payload: res.data.user })
+    const setUser = (data: User) => {
+        dispatch({ type: 'setUser', payload: data })
     }
 
-    const fetchData = async (route: string, values: Object, test: string) => {
+    const fetchData = async (route: string, values: Object, type: string) => {
         fetchState.setLoading(true)
 
         const res = await fetch(`${process.env.REACT_APP_API_URI}/user/${route}`, {
@@ -58,7 +61,26 @@ export const Information = () => {
         });
 
         res.json().then(res => {
-            // TODO: Handle error
+            if(res.success !== undefined && type === "global") {
+                user = {uuid: user?.uuid!, movies: user?.movies!, nickname: nickname.value, email: email.value }
+                setUser(user!)
+            }
+
+            if(res.success !== undefined && type === "type") {
+                localStorage.clear()
+                history.push("/")
+            }
+
+            if(res.error !== undefined) {
+                if(type === "global") {
+                    setEmailError(res.error.message)
+                }
+
+                if(type === "password") {
+                    setPasswordError(res.error.message)
+                }
+            }
+
         }).catch(fetchState.setError);
     }
 
@@ -143,6 +165,7 @@ export const Information = () => {
                                     <ControlLabel>Email address</ControlLabel>
                                     <FormControl name="email" {...email.bind} />
                                 </FormGroup>
+                                {!fetchState.isLoading && emailError? <h5>{emailError}</h5> : <></>}
                                 <Button appearance="primary" onClick={updateGlobalInformation}>
                                     Update
                                 </Button>
@@ -162,7 +185,7 @@ export const Information = () => {
                                     <ControlLabel>New password</ControlLabel>
                                     <FormControl name="newPwd" type="password" {...password.bind} />
                                 </FormGroup>
-                                {!fetchState.isLoading && fetchState.error ? <h5>{fetchState.error}</h5> : <></>}
+                                {!fetchState.isLoading && passwordError? <h5>{passwordError}</h5> : <></>}
                                 <Button appearance="primary" onClick={updatePassword}>
                                     Update
                             </Button>
