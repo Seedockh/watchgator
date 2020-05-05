@@ -30,7 +30,10 @@ export const Home = () => {
 =======
           <Panel className="mb-6">
             <h1 className="ml-4">{displayTabTitles()}</h1>
-            <span style={{ color: 'gray', fontSize: 15, marginLeft: '1.2em' }}>{moviesFetch.data ? `${moviesFetch.data.totalMovies} results, ${moviesFetch.data.time}ms` : 'searching...' }</span>
+            <span style={{ color: '#6a6f76', fontSize: 15, marginLeft: '1.2em' }}>
+              {moviesFetch.data ? `${tab === 'movies' ?
+                moviesFetch.data.totalMovies : moviesFetch.data.totalSeries} results, ${moviesFetch.data.time}ms`
+                : 'searching...' }</span>
             <Grid fluid >
               {moviesFetch.isLoading
                 ? <Row style={loaderStyle}>
@@ -39,7 +42,7 @@ export const Home = () => {
                 : <Row>
                   {(tab === 'movies' ? movies : series).map((item) => (
                     <Col key={item.id} xs={24} sm={12} md={6} lg={4} >
-                      <MovieCard movie={item} />
+                      <MovieCard movie={item} type={tab} />
                     </Col>
                   ))}
                 </Row>
