@@ -1,7 +1,9 @@
+import { Serie } from './../../models/api/Serie';
 import { MovieResponse } from './../../models/api/MoviesResponse';
 import { MovieSearchPayload } from './../../models/api/MovieSearchPayload';
 import { Actor } from './../../models/api/Actor';
 import { BaseResponse } from '../../models/api/BaseResponse';
+import { Movie } from '../../models/api/Movie';
 
 async function callApi<T>(route: string, method: string, body?: string): Promise<T> {
     const res = await fetch(`${process.env.REACT_APP_API_URI}${route}`, {
@@ -34,4 +36,16 @@ export const searchActor = async (query: string): Promise<Actor[]> => {
 
 export const searchMovies = async (filters: MovieSearchPayload): Promise<MovieResponse> => {
     return callApi<MovieResponse>('/search', 'POST', JSON.stringify(filters));
+}
+
+export const findMovies = async (query: string): Promise<BaseResponse<Movie[][]>> => {
+    return callApi<BaseResponse<Movie[][]>>('/movies/find', 'POST', JSON.stringify({
+        title: query
+    }));
+}
+
+export const findSeries = async (query: string): Promise<BaseResponse<Serie[][]>> => {
+    return callApi<BaseResponse<Serie[][]>>('/series/find', 'POST', JSON.stringify({
+        title: query
+    }));
 }

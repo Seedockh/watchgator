@@ -2,7 +2,6 @@ import React, { CSSProperties, useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Container, Icon, Content, Grid, Row, Col, Panel, Nav, Button, Rate, List, Loader } from 'rsuite'
 import { TagList } from '../widget/TagList'
-import { Searchbar } from '../widget/Searchbar'
 import { addPictureUrlSize } from '../utils/movieUtils'
 import { ActorAvatar } from '../widget/ActorAvatar'
 import { Movie } from '../models/api/Movie'
@@ -130,7 +129,6 @@ export const MovieDetails = () => {
       <Content className='p-6'>
         <div className='flex'>
           <Icon icon="close" size="3x" onClick={history.goBack} style={{ marginRight: 16 }} />
-          <Searchbar style={{ flex: 1 }} />
         </div>
         <Grid fluid style={{ marginTop: 64 }}>
           {!movie &&
