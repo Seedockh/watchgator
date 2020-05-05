@@ -12,15 +12,16 @@ const movieCardStyle: CSSProperties = {
 }
 
 type MovieCardProps = {
-    movie: Movie;
+    movie: Movie
+    type: string
 }
 
-export const MovieCard: FunctionComponent<MovieCardProps> = ({ movie }) => {
+export const MovieCard: FunctionComponent<MovieCardProps> = ({ movie, type }) => {
     const history = useHistory()
     const goToDetails = () => {
       history.push({
         pathname: `/movies/${movie.id}`,
-        state: { movie: movie }
+        state: { movie: movie, type: type }
       })
     }
 
