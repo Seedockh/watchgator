@@ -32,7 +32,6 @@ export const Search: FunctionComponent<SearchProps> = ({ query }) => {
 
   let movies: Movie[] = [];
   if (moviesFetch.data && moviesFetch.data.results && moviesFetch.data.results[0]) {
-    console.log(moviesFetch)
     movies = moviesFetch.data.results[0]
   }
 
