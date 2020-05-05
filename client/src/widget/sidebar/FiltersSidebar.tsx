@@ -10,6 +10,7 @@ import { FilterRangeSlider } from '../../widget/filters/FilterRangeSlider';
 import { TagList } from '../../widget/TagList';
 import { Sidebar } from './Sidebar';
 import { ActorAvatar } from '../ActorAvatar';
+import { useInputTimeout } from '../../hooks/useInputTimeout';
 
 type FiltersSidebarProps = {
     initFilters?: MovieFilter;
@@ -28,6 +29,7 @@ const kDefaultFilters: MovieFilter = {
 export const FiltersSidebar: FunctionComponent<FiltersSidebarProps> = ({ initFilters, onApplyFilters }) => {
     const categoriesFetch = useApiFetch<string[]>({ isLoading: true });
     const actorsFetch = useApiFetchSearch<Actor[], string>();
+    const inputActor = useInputTimeout()
 
     const [filters, setFilters] = useState<MovieFilter>(kDefaultFilters)
 
@@ -39,15 +41,13 @@ export const FiltersSidebar: FunctionComponent<FiltersSidebarProps> = ({ initFil
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    const onSearchActor = (query: string) => {
-        actorsFetch.search(query);
-        console.log(query);
-
+    useEffect(() => {
         actorsFetch.setLoading(true)
-        searchActor(query)
+        searchActor(inputActor.timeoutValue)
             .then(actorsFetch.setData)
             .catch(actorsFetch.setError)
-    }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [inputActor.timeoutValue])
 
     const categoriesToInputData = (): ItemDataType[] => {
         if (!categoriesFetch.data) return []
@@ -111,7 +111,7 @@ export const FiltersSidebar: FunctionComponent<FiltersSidebarProps> = ({ initFil
                     />
                 </FilterSection>
                 <FilterSection title="Actors">
-                    <Input className='mt-3' value={actorsFetch.query} onChange={onSearchActor} placeholder="Search an actor" />
+                    <Input className='mt-3' {...inputActor.bind} placeholder="Search an actor" />
 
                     <TagList
                         className='mt-3 mb-3'
@@ -122,8 +122,6 @@ export const FiltersSidebar: FunctionComponent<FiltersSidebarProps> = ({ initFil
                         }}
                     />
 
-
-
                     {actorsFetch.isLoading && <Loader />}
                     {!actorsFetch.isLoading && (actorsFetch.data?.length ?? 0) > 0 && (
                         <List bordered hover>
@@ -132,7 +130,7 @@ export const FiltersSidebar: FunctionComponent<FiltersSidebarProps> = ({ initFil
                                     if (filters.actors.findIndex(({ id }) => id === actor.id) === -1) {
                                         setFilters({ ...filters, actors: [...filters.actors, actor] })
                                     }
-                                    onSearchActor('')
+                                    inputActor.reset()
                                 }}>
                                     <List.Item style={{ fontSize: 14 }}>
                                         <div className='flex flex-align-center'>
