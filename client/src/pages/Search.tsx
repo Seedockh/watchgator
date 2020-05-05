@@ -18,9 +18,11 @@ export const Search: FunctionComponent<SearchProps> = ({ query }) => {
   const seriesFetch = useApiFetch<BaseResponse<Serie[][]>>()
 
   useEffect(() => {
+    moviesFetch.setLoading(true)
     findMovies(query)
-      .then(moviesFetch.setData)
-      .catch(moviesFetch.setError)
+    .then(moviesFetch.setData)
+    .catch(moviesFetch.setError)
+    seriesFetch.setLoading(true)
     findSeries(query)
       .then(seriesFetch.setData)
       .catch(seriesFetch.setError)
@@ -43,7 +45,7 @@ export const Search: FunctionComponent<SearchProps> = ({ query }) => {
       <MovieTVShowSwitch type={tab} onSwitch={setTab} />
     </h3>
     <Grid fluid >
-      {moviesFetch.isLoading
+      {moviesFetch.isLoading || seriesFetch.isLoading
         ? <Loader size="lg" />
         : <Row>
           {(tab === 'movies' ? movies : series).map((item) => (
