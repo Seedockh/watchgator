@@ -11,10 +11,6 @@ export const DetailsPlaylists = () => {
     const [{ user }] = UserGlobalState()
     const history = useHistory();
 
-    useEffect(() => {
-        console.log(`user: ${JSON.stringify(user)}`)
-    }, [user])
-
     return (
         <Container>
             <Sidebar items={[
@@ -22,7 +18,7 @@ export const DetailsPlaylists = () => {
                     title: 'Playlists',
                     icon: 'list-ul',
                 }
-            ]} />
+            ]} userConnected={user} />
             <Content className="mr-5">
                 <Panel>
                     <Content>
