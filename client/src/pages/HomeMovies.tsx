@@ -20,6 +20,8 @@ export const HomeMovies: FunctionComponent<HomeMoviesProps> = ({ filters }) => {
     const [tab, setTab] = useState<SwitchValue>('movies')
     const moviesFetch = useApiFetch<MovieResponse>()
     const seriesFetch = useApiFetch<MovieResponse>()
+    let moviesPage = 1
+    let seriesPage = 1
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => { onFiltersChange() }, [filters])
@@ -47,6 +49,7 @@ export const HomeMovies: FunctionComponent<HomeMoviesProps> = ({ filters }) => {
     }
 
     const fetchMovies = (page: number, reset: boolean) => {
+        moviesPage = page
         // Fetch movies
         searchMovies({ ...getSearchPayload(), pageMovies: page, type: 'movies' })
             .then((response) => {
@@ -60,6 +63,7 @@ export const HomeMovies: FunctionComponent<HomeMoviesProps> = ({ filters }) => {
     }
 
     const fetchSeries = (page: number, reset: boolean) => {
+        seriesPage = page
         // Fetch series
         searchMovies({ ...getSearchPayload(), pageSeries: page, type: 'series' })
             .then((response) => {
@@ -108,11 +112,11 @@ export const HomeMovies: FunctionComponent<HomeMoviesProps> = ({ filters }) => {
                     ? <LoaderRowCenter />
                     : <InfiniteScroll
                         key={tab}
-                        loadMore={(page) => {
+                        loadMore={(page) => {                            
                             if (tab === 'movies') fetchMovies(page + 1, false)
                             else fetchSeries(page + 1, false)
                         }}
-                        hasMore={true}
+                        hasMore={(tab === 'movies' && moviesPage < (moviesFetch.data?.moviesPages ?? 0)) || (tab === 'tvshows' && seriesPage < (seriesFetch.data?.seriesPages ?? 0))}
                         loader={<Loader size="lg" />}
                     >
                         <Row>
