@@ -43,7 +43,7 @@ export const MovieDetails = () => {
   }, [movie])
 
   const fetchMovie = async () => {
-    if (history && movie === null) {
+    if (history && !movie) {
       fetch(`${process.env.REACT_APP_API_URI}/movies/${window.location.href.split('/')[4]}`)
         .then(response => response.json())
         .then(setMovie)
