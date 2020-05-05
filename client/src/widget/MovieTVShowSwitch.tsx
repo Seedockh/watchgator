@@ -10,7 +10,7 @@ type MovieTVShowSwitchProps = {
 export const MovieTVShowSwitch: FunctionComponent<MovieTVShowSwitchProps> = ({ type, onSwitch }) => {
     const slash = <small>/</small>
     if (type === 'movies') {
-        return <span>Movies {slash} <small onClick={() => onSwitch('tvshows')}>TV Shows</small></span>
+        return <span style={{ cursor: 'pointer' }}>Movies {slash} <small onClick={() => onSwitch('tvshows')}>TV Shows</small></span>
     }
-    return <span><small onClick={() => onSwitch('movies')}>Movies</small> {slash} TV Shows</span>
+    return <span style={{ cursor: 'pointer' }}><small onClick={() => onSwitch('movies')}>Movies</small> {slash} TV Shows</span>
 }
