@@ -32,6 +32,7 @@ export const Search: FunctionComponent<SearchProps> = ({ query }) => {
 
   let movies: Movie[] = [];
   if (moviesFetch.data && moviesFetch.data.results && moviesFetch.data.results[0]) {
+    console.log(moviesFetch)
     movies = moviesFetch.data.results[0]
   }
 
@@ -45,13 +46,16 @@ export const Search: FunctionComponent<SearchProps> = ({ query }) => {
     <h3 className="ml-4">
       <MovieTVShowSwitch type={tab} onSwitch={setTab} />
     </h3>
+    <span style={{ color: 'gray', fontSize: 15, marginLeft: '1.2em' }}>{tab === 'movies' ?
+      (moviesFetch.data ? `${moviesFetch.data.total} results` : 'searching...') :
+      (seriesFetch.data ? `${seriesFetch.data.total} results` : 'searching...')}</span>
     <Grid fluid>
       {moviesFetch.isLoading || seriesFetch.isLoading
         ? <LoaderRowCenter />
         : <Row>
           {(tab === 'movies' ? movies : series).map((item) => (
             <Col key={item.id} xs={24} sm={12} md={6} lg={4} >
-              <MovieCard movie={item} />
+              <MovieCard movie={item} type={tab} />
             </Col>
           ))}
         </Row>

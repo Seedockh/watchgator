@@ -56,13 +56,14 @@ export const HomeMovies: FunctionComponent<HomeMoviesProps> = ({ filters }) => {
             <h1 className="ml-4">
                 <MovieTVShowSwitch type={tab} onSwitch={setTab} />
             </h1>
+            <span style={{ color: 'gray', fontSize: 15, marginLeft: '1.2em' }}>{moviesFetch.data ? `${moviesFetch.data.totalMovies} results, ${moviesFetch.data.time}ms` : 'searching...' }</span>
             <Grid fluid >
                 {moviesFetch.isLoading
                     ? <LoaderRowCenter />
                     : <Row>
                         {(tab === 'movies' ? movies : series).map((item) => (
                             <Col key={item.id} xs={24} sm={12} md={6} lg={4} >
-                                <MovieCard movie={item} />
+                                <MovieCard movie={item} type={tab}/>
                             </Col>
                         ))}
                     </Row>

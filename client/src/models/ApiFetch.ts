@@ -1,10 +1,11 @@
 export interface BaseApiFetch<T> {
     isLoading: boolean;
+    time?: number;
     data?: T;
     error?: any;
 }
 
-export interface ApiFetch<T> extends BaseApiFetch<T> {    
+export interface ApiFetch<T> extends BaseApiFetch<T> {
     setData: (data?: T) => void;
     setError: (error?: any) => void;
     setLoading: (loading: boolean) => void;
