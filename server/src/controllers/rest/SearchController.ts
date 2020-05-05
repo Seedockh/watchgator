@@ -193,19 +193,18 @@ class SearchController {
 				}
 			}
 
-			const totalMovies = typeSelected <= 1 ?
-				// @ts-ignore: unreachable key
-				(movies ? movies.length : IMDBDatasetService[`${level}Movies`].data.length) : 0
-			const totalSeries = typeSelected >= 1 ?
-				// @ts-ignore: unreachable key
-				(series ? series.length : IMDBDatasetService[`${level}Series`].data.length) : 0
+			// @ts-ignore: unreachable key
+			const totalMovies = typeSelected <= 1 ?	(movies ? movies.length : IMDBDatasetService[`${level}Movies`].data.length) : 0
+			// @ts-ignore: unreachable key
+			const totalSeries = typeSelected >= 1 ?	(series ? series.length : IMDBDatasetService[`${level}Series`].data.length) : 0
 			const resultMovies = typeSelected <= 1 ?
 				// @ts-ignore: unreachable key
-				_.chunk(movies ?	movies : IMDBDatasetService[`${level}Movies`].data,	pagination) :
+				_.chunk(movies ? _.orderBy(movies, [( o ) => o.rating || 0], ['desc']) : _.orderBy(IMDBDatasetService[`${level}Movies`].data, [( o ) => o.rating || 0], ['desc'])
+					,	pagination) :
 				[]
 			const resultSeries = typeSelected >= 1 ?
 				// @ts-ignore: unreachable key
-				_.chunk(series ? series : IMDBDatasetService[`${level}Series`].data,	pagination) :
+				_.chunk(series ? _.orderBy(series, [( o ) => o.rating || 0], ['desc']) : _.orderBy(IMDBDatasetService[`${level}Series`].data, [( o ) => o.rating || 0], ['desc']),	pagination) :
 				[]
 
 			const time: number = new Date().getTime() - t0
