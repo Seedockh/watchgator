@@ -1,5 +1,5 @@
 import React, { useEffect, useState, FunctionComponent } from 'react'
-import { Grid, Row, Col, Panel } from 'rsuite'
+import { Grid, Row, Col, Panel, Loader } from 'rsuite'
 import { MovieCard } from '../widget/MovieCard'
 import { MovieFilter } from '../models/MovieFilter'
 import { Movie } from '../models/api/Movie'
@@ -9,6 +9,8 @@ import { searchMovies } from '../core/api/Api'
 import { Serie } from '../models/api/Serie'
 import { MovieTVShowSwitch, SwitchValue } from '../widget/MovieTVShowSwitch'
 import { LoaderRowCenter } from '../widget/LoaderRowCenter'
+import { MovieSearchPayload } from '../models/api/MovieSearchPayload'
+import InfiniteScroll from 'react-infinite-scroller'
 
 type HomeMoviesProps = {
     filters?: MovieFilter
@@ -16,15 +18,21 @@ type HomeMoviesProps = {
 
 export const HomeMovies: FunctionComponent<HomeMoviesProps> = ({ filters }) => {
     const [tab, setTab] = useState<SwitchValue>('movies')
-    //const [currentPage, setCurrentPage] = useState(1)
     const moviesFetch = useApiFetch<MovieResponse>()
+    const seriesFetch = useApiFetch<MovieResponse>()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => { onFiltersChange() }, [filters])
 
     const onFiltersChange = () => {
         moviesFetch.setLoading(true)
-        searchMovies(filters ? {
+        fetchMovies(1, true)
+        fetchSeries(1, true)
+    }
+
+    const getSearchPayload = (): MovieSearchPayload => {
+        if (!filters) return {};
+        return {
             names: {
                 actors: filters.actors,
                 genres: filters.categories.map((c) => ({ name: c }))
@@ -35,27 +43,55 @@ export const HomeMovies: FunctionComponent<HomeMoviesProps> = ({ filters }) => {
                 runtime: filters.runtime,
                 metaScore: filters.metaScore
             }
-        } : {})
-            .then(moviesFetch.setData)
+        }
+    }
+
+    const fetchMovies = (page: number, reset: boolean) => {
+        // Fetch movies
+        searchMovies({ ...getSearchPayload(), pageMovies: page, type: 'movies' })
+            .then((response) => {
+                if (!reset) {
+                    const currentMovies = moviesFetch.data?.results?.movies ?? [];
+                    response.results.movies = [...currentMovies, ...response.results.movies]
+                }
+                moviesFetch.setData(response)
+            })
             .catch(moviesFetch.setError)
     }
 
+    const fetchSeries = (page: number, reset: boolean) => {
+        // Fetch series
+        searchMovies({ ...getSearchPayload(), pageSeries: page, type: 'series' })
+            .then((response) => {
+                if (!reset) {
+                    const currentSeries = seriesFetch.data?.results?.series ?? [];
+                    response.results.series = [...currentSeries, ...response.results.series]
+                }
+                seriesFetch.setData(response)
+            })
+            .catch(seriesFetch.setError)
+    }
+
     const displaySearchingText = () => {
-        if (!moviesFetch.data) return 'Searching...'
         if (tab === 'movies') {
+            if (!moviesFetch.data) return 'Searching...'
             return `${moviesFetch.data.totalMovies} results, ${moviesFetch.data.time}ms`
         }
-        return `${moviesFetch.data.totalSeries} results, ${moviesFetch.data.time}ms`
+
+        if (!seriesFetch.data) return 'Searching...'
+        return `${seriesFetch.data.totalSeries} results, ${seriesFetch.data.time}ms`
     }
 
     let movies: Movie[] = [];
-    let series: Serie[] = [];
     if (moviesFetch.data && moviesFetch.data.results) {
         if (moviesFetch.data.results.movies) {
             movies = moviesFetch.data.results.movies
         }
-        if (moviesFetch.data.results.series) {
-            series = moviesFetch.data.results.series
+    }
+    let series: Serie[] = [];
+    if (seriesFetch.data && seriesFetch.data.results) {
+        if (seriesFetch.data.results.series) {
+            series = seriesFetch.data.results.series
         }
     }
 
@@ -70,23 +106,25 @@ export const HomeMovies: FunctionComponent<HomeMoviesProps> = ({ filters }) => {
             <Grid fluid >
                 {moviesFetch.isLoading
                     ? <LoaderRowCenter />
-                    : <Row>
-                        {(tab === 'movies' ? movies : series).map((item) => (
-                            <Col key={item.id} xs={24} sm={12} md={6} lg={4} >
-                                <MovieCard movie={item} type={tab} />
-                            </Col>
-                        ))}
-                    </Row>
+                    : <InfiniteScroll
+                        key={tab}
+                        loadMore={(page) => {
+                            if (tab === 'movies') fetchMovies(page + 1, false)
+                            else fetchSeries(page + 1, false)
+                        }}
+                        hasMore={true}
+                        loader={<Loader size="lg" />}
+                    >
+                        <Row>
+                            {(tab === 'movies' ? movies : series).map((item) => (
+                                <Col key={item.id} xs={24} sm={12} md={6} lg={4} >
+                                    <MovieCard movie={item} type={tab} />
+                                </Col>
+                            ))}
+                        </Row>
+                    </InfiniteScroll>
                 }
             </Grid>
         </Panel>
     );
 }
-
-/*<InfiniteScroll
-    pageStart={currentPage}
-    loadMore={() => setCurrentPage(currentPage + 1)}
-    hasMore={data ? (currentPage <= data.moviesPages) : false}
-    loader={<Loader size="lg"/>}
-  >
-</InfiniteScroll>*/

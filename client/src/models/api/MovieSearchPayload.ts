@@ -10,14 +10,16 @@ type CategoryPayload = {
 
 export interface MovieSearchPayload {
     names?: {
-        actors?: ActorPayload[],
+        actors?: ActorPayload[]
         genres?: CategoryPayload[]
-    },
+    }
     filters?: {
-        year?: MinMax,
-        rating?: MinMax,
-        metaScore?: MinMax,
+        year?: MinMax
+        rating?: MinMax
+        metaScore?: MinMax
         runtime?: MinMax
     }
     pageMovies?: number
+    pageSeries?: number
+    type?: 'movies' | 'series'
 }
