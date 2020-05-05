@@ -2,12 +2,13 @@ import React, { useEffect } from 'react'
 import { Container, Content, Panel, Divider, Badge, FlexboxGrid, Button } from 'rsuite'
 import { useHistory } from 'react-router-dom'
 
-import User from '../core/user'
+import { UserGlobalState } from '../core/user'
 import { Sidebar } from '../widget/sidebar/Sidebar'
 import { playlists } from '../data/playlists'
+import { addPictureUrlSize } from '../utils/movieUtils'
 
 export const DetailsPlaylists = () => {
-    const [{ user }] = User.GlobalState()
+    const [{ user }] = UserGlobalState()
     const history = useHistory();
 
     useEffect(() => {
@@ -31,7 +32,7 @@ export const DetailsPlaylists = () => {
                             <Panel bordered bodyFill className="mb-5">
                                 <FlexboxGrid>
                                     <FlexboxGrid.Item colspan={4}>
-                                        <img src={movie.picture} alt={movie.title} style={{ width: 200, height: 250 }}></img>
+                                        <img src={addPictureUrlSize(movie.picture, 700)} alt={movie.title} style={{ width: 200, height: 250 }}></img>
                                     </FlexboxGrid.Item>
                                     <FlexboxGrid.Item style={{ width: "80%" }}>
                                         <h3 className="mb-3">{movie.title}</h3>

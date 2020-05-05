@@ -11,10 +11,12 @@ import { TagList } from '../../widget/TagList';
 import { Sidebar } from './Sidebar';
 import { ActorAvatar } from '../ActorAvatar';
 import { useInputTimeout } from '../../hooks/useInputTimeout';
+import { User } from '../../models/api/User';
 
 type FiltersSidebarProps = {
     initFilters?: MovieFilter;
     onApplyFilters: (filters: MovieFilter) => void;
+    userConnected?: User | null
 }
 
 const kDefaultFilters: MovieFilter = {
@@ -26,7 +28,7 @@ const kDefaultFilters: MovieFilter = {
     actors: []
 }
 
-export const FiltersSidebar: FunctionComponent<FiltersSidebarProps> = ({ initFilters, onApplyFilters }) => {
+export const FiltersSidebar: FunctionComponent<FiltersSidebarProps> = ({ initFilters, onApplyFilters, userConnected }) => {
     const categoriesFetch = useApiFetch<string[]>({ isLoading: true });
     const actorsFetch = useApiFetchSearch<Actor[], string>();
     const inputActor = useInputTimeout()
@@ -66,7 +68,7 @@ export const FiltersSidebar: FunctionComponent<FiltersSidebarProps> = ({ initFil
     }
 
     return (
-        <Sidebar items={[]}>
+        <Sidebar items={[]} userConnected={userConnected}>
             <div className="p-3">
                 <FilterSection title="Categories">
                     <TagPicker
