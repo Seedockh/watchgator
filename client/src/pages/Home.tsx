@@ -22,7 +22,7 @@ export const Home = () => {
           <Searchbar onChange={setSearch} />
         </Header>
         <Content>
-          {search
+          {search && search.trim().length > 0
             ? <Search query={search} />
             : <HomeMovies filters={filters} />
           }
