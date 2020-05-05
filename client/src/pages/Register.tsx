@@ -32,7 +32,7 @@ export const Register = () => {
     fetchState.setLoading(true)
     const res = await fetch(`${process.env.REACT_APP_API_URI}/auth/signup`, {
       method: "POST",
-      body: JSON.stringify({ nickanme: nickname.value, email: email.value, password: password.value }),
+      body: JSON.stringify({ nickname: nickname.value, email: email.value, password: password.value }),
       headers: {
         'Content-Type': 'application/json'
       }
