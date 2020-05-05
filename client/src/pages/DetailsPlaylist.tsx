@@ -13,12 +13,7 @@ export const DetailsPlaylists = () => {
 
     return (
         <Container>
-            <Sidebar items={[
-                {
-                    title: 'Playlists',
-                    icon: 'list-ul',
-                }
-            ]} userConnected={user} />
+            <Sidebar items={[]} userConnected={user} />
             <Content className="mr-5">
                 <Panel>
                     <Content>
