@@ -9,45 +9,29 @@ import AuthenticateService from '../../src/services/AuthenticateService'
 import { DatabaseError } from '../../src/core/CustomErrors'
 import AuthenticateServiceMock from './AuthenticateService.mock'
 import UserRepository from '../../src/database/repositories/UserRepository'
-import BaseRepository from '../../src/database/repositories/BaseRepository'
-import User from '../../src/database/models/User'
 
 afterEach(() => {
 	sinon.restore();
   });
 
-describe('Register queries', (): void => {
-	it('Successfull register', async () => {
-		const mock = Mock.createUserSuccess()
-		const { nickname, password, email } = Mock.successUserEntry
-
-		const actual = await AuthenticateService.register(nickname, password, email)
-		expect(actual).to.deep.equal({
-			status: 201,
-			data: {
-				user: Mock.successUserResponse,
-			},
-			meta: Mock.successUserToken,
-		})
-	})
-
-	it('Failed registration', async () => {
-		const mock = Mock.createUserFailure()
-		const { nickname, password, email } = Mock.failUserEntry
-
-		try {
-			await AuthenticateService.register(nickname, password, email)
-		} catch (e) {
-			expect(e).to.be.an.instanceof(DatabaseError)
-			expect(e.status).to.equal(400)
-		}
-	})
-})
-
 describe('Login queries', (): void => {
 	it('Successfull login', async () => {
-		const mock = Mock.passportAuthenticateSuccess()
-		const { nickname, password, email } = Mock.successUserEntry
+		const token = '1234'
+
+		const userEntry = {
+			uuid: '1',
+			movies: [],
+			nickname: 'john',
+			email: 'johndoe@gmail.com',
+			avatar: null,
+			password: '1234',
+		}
+
+		const { ...expectedUserResponse } = userEntry
+		delete expectedUserResponse.password
+
+		const mock = AuthenticateServiceMock.loginSuccess(userEntry, token)
+		const { nickname, password, email } = userEntry
 
 		const req = Mock.loginRequest({
 			nickname,
@@ -61,13 +45,13 @@ describe('Login queries', (): void => {
 		expect(actual).to.deep.equal({
 			status: 200,
 			data: {
-				user: Mock.successUserResponse,
+				user: expectedUserResponse,
 			},
-			meta: Mock.successUserToken,
+			meta: { token },
 		})
 	})
 
-	it('Failed login', async () => {
+	it('Failed login', async() => {
 		const mock = Mock.passportAuthenticateFailure()
 		const { nickname, password, email } = Mock.successUserEntry
 
