@@ -38,3 +38,5 @@ jobs:
         env:
           CI: true
           NODE_ENV: test
+          DB_TEST_URL: ${{ secrets.DB_TEST_URL }}
+          DB_TEST_SSL: ${{ secrets.DB_TEST_SSL }}
