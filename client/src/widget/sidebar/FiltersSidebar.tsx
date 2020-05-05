@@ -46,6 +46,7 @@ export const FiltersSidebar: FunctionComponent<FiltersSidebarProps> = ({ initFil
         searchActor(inputActor.timeoutValue)
             .then(actorsFetch.setData)
             .catch(actorsFetch.setError)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [inputActor.timeoutValue])
 
     const categoriesToInputData = (): ItemDataType[] => {
