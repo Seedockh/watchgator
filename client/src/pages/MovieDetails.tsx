@@ -6,6 +6,7 @@ import { addPictureUrlSize } from '../utils/movieUtils'
 import { ActorAvatar } from '../widget/ActorAvatar'
 import { Movie } from '../models/api/Movie'
 import { Actor } from '../models/api/Actor'
+import { SwitchValue } from '../widget/MovieTVShowSwitch'
 
 const detailKeysStyle: CSSProperties = {
   display: 'flex',
@@ -15,12 +16,16 @@ const detailKeysStyle: CSSProperties = {
 export const MovieDetails = () => {
   const [activeTab, setActiveTab] = useState("overview")
   const [movie, setMovie] = useState<Movie>()
-  const [peoples, setPeoples] = useState<Actor[]>([])
+  const [type, setType] = useState<SwitchValue>()
+  const [casting, setCasting] = useState<Actor[]>([])
+  const [directors, setDirectors] = useState<Actor[]>([])
   const history = useHistory()
 
   useEffect(() => {
     // @ts-ignore
     if (history.location.state) {
+      // @ts-ignore
+      setType(history.location.state.type)
       // @ts-ignore
       setMovie(history.location.state.movie)
     } else {
@@ -31,7 +36,8 @@ export const MovieDetails = () => {
 
   useEffect(() => {
     if (movie) {
-      fetchActors()
+      if (type === 'movies') fetchCasting()
+      fetchDirectors()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [movie])
@@ -45,7 +51,7 @@ export const MovieDetails = () => {
     }
   }
 
-  const fetchActors = async () => {
+  const fetchCasting = async () => {
     let movieActors: Actor[] = []
 
     if (movie && movie.actors) {
@@ -57,7 +63,24 @@ export const MovieDetails = () => {
       })
 
       Promise.all(getActors).then(() => {
-        setPeoples(movieActors)
+        setCasting(movieActors)
+      })
+    }
+  }
+
+  const fetchDirectors = async () => {
+    let movieDirectors: Actor[] = []
+
+    if (movie && movie.directors) {
+      const getDirectors = movie.directors!.map((director, index) => {
+        return fetch(`${process.env.REACT_APP_API_URI}/peoples/${director.id}`)
+          .then(response => response.json())
+          .then(apiDirector => movieDirectors.push(apiDirector))
+          .catch(error => console.log(error))
+      })
+
+      Promise.all(getDirectors).then(() => {
+        setDirectors(movieDirectors)
       })
     }
   }
@@ -92,24 +115,6 @@ export const MovieDetails = () => {
         <List.Item key={`movie-certificate`} index={3} style={detailKeysStyle}>
           <strong>Certificate</strong>
           <p>{movie.certificate ?? '-'}</p>
-        </List.Item>
-        <List.Item key={`movie-directors`} index={4} style={detailKeysStyle}>
-          <strong>Directors</strong>
-          <p>
-            {movie.directors.length > 0
-              ? movie.directors.map(({ name }) => name).join(', ')
-              : '-'
-            }
-          </p>
-        </List.Item>
-        <List.Item key={`movie-actors`} index={5} style={detailKeysStyle}>
-          <strong>Actors</strong>
-          <p>
-            {movie.actors.length > 0
-              ? movie.actors.map(({ name }) => name).join(', ')
-              : '-'
-            }
-          </p>
         </List.Item>
         <List.Item key={`movie-gross`} index={6} style={detailKeysStyle}>
           <strong>Gross</strong>
@@ -175,16 +180,36 @@ export const MovieDetails = () => {
               </Col>
             </Row>
           }
-          {peoples.length > 0 &&
+          {directors.length > 0 &&
             <Row style={{ marginTop: 32 }}>
               <Col xs={24} md={22} lg={20} mdOffset={1} lgOffset={2}>
-                <h3 className='text-center'>Actors</h3>
-                <Row>
-                  {peoples.map((actor, idx) => (
+                <h3 className='text-center'>{type === 'movies' ? 'Directors' : 'Casting'}</h3>
+                <Row style={{ display: 'flex', justifyContent: 'center' }}>
+                  {directors.map((actor, idx) => (
                     <Col xs={24} sm={12} md={8} lg={6} key={idx}>
                       <Panel shaded bordered className='text-center'>
-                        <ActorAvatar actor={actor} size={100} style={{ marginLeft: 'auto', marginRight: 'auto'}} />
-                        <Panel bodyFill className='mt-3'> 
+                        <ActorAvatar actor={actor} size={100} style={{ marginLeft: 'auto', marginRight: 'auto' }} />
+                        <Panel bodyFill className='mt-3'>
+                          <h6>{actor.firstname} {actor.lastname}</h6>
+                          <small>{actor.role}</small>
+                        </Panel>
+                      </Panel>
+                    </Col>
+                  ))}
+                </Row>
+              </Col>
+            </Row>
+          }
+          {type === 'movies' && casting.length > 0 &&
+            <Row style={{ marginTop: 32 }}>
+              <Col xs={24} md={22} lg={20} mdOffset={1} lgOffset={2}>
+                <h3 className='text-center'>Casting</h3>
+                <Row style={{ display: 'flex', justifyContent: 'center' }}>
+                  {casting.map((actor, idx) => (
+                    <Col xs={24} sm={12} md={8} lg={6} key={idx}>
+                      <Panel shaded bordered className='text-center'>
+                        <ActorAvatar actor={actor} size={100} style={{ marginLeft: 'auto', marginRight: 'auto' }} />
+                        <Panel bodyFill className='mt-3'>
                           <h6>{actor.firstname} {actor.lastname}</h6>
                           <small>{actor.role}</small>
                         </Panel>

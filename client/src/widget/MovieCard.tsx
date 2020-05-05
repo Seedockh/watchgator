@@ -4,6 +4,7 @@ import { Movie } from './../models/api/Movie';
 import { useHistory } from 'react-router-dom';
 import { Panel } from 'rsuite';
 import { addPictureUrlSize } from '../utils/movieUtils';
+import { SwitchValue } from './MovieTVShowSwitch';
 
 const movieCardStyle: CSSProperties = {
     margin: 16,
@@ -12,15 +13,16 @@ const movieCardStyle: CSSProperties = {
 }
 
 type MovieCardProps = {
-    movie: Movie;
+    movie: Movie
+    type: SwitchValue
 }
 
-export const MovieCard: FunctionComponent<MovieCardProps> = ({ movie }) => {
+export const MovieCard: FunctionComponent<MovieCardProps> = ({ movie, type }) => {
     const history = useHistory()
     const goToDetails = () => {
       history.push({
         pathname: `/movies/${movie.id}`,
-        state: { movie: movie }
+        state: { movie: movie, type: type }
       })
     }
 
