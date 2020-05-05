@@ -7,6 +7,7 @@ import { findMovies, findSeries } from '../core/api/Api'
 import { MovieTVShowSwitch, SwitchValue } from '../widget/MovieTVShowSwitch'
 import { BaseResponse } from '../models/api/BaseResponse'
 import { Serie } from '../models/api/Serie'
+import { LoaderRowCenter } from '../widget/LoaderRowCenter'
 
 type SearchProps = {
   query: string;
@@ -20,8 +21,8 @@ export const Search: FunctionComponent<SearchProps> = ({ query }) => {
   useEffect(() => {
     moviesFetch.setLoading(true)
     findMovies(query)
-    .then(moviesFetch.setData)
-    .catch(moviesFetch.setError)
+      .then(moviesFetch.setData)
+      .catch(moviesFetch.setError)
     seriesFetch.setLoading(true)
     findSeries(query)
       .then(seriesFetch.setData)
@@ -44,9 +45,9 @@ export const Search: FunctionComponent<SearchProps> = ({ query }) => {
     <h3 className="ml-4">
       <MovieTVShowSwitch type={tab} onSwitch={setTab} />
     </h3>
-    <Grid fluid >
+    <Grid fluid>
       {moviesFetch.isLoading || seriesFetch.isLoading
-        ? <Loader size="lg" />
+        ? <LoaderRowCenter />
         : <Row>
           {(tab === 'movies' ? movies : series).map((item) => (
             <Col key={item.id} xs={24} sm={12} md={6} lg={4} >

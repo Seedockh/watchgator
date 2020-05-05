@@ -8,6 +8,7 @@ import { MovieResponse } from '../models/api/MoviesResponse'
 import { searchMovies } from '../core/api/Api'
 import { Serie } from '../models/api/Serie'
 import { MovieTVShowSwitch, SwitchValue } from '../widget/MovieTVShowSwitch'
+import { LoaderRowCenter } from '../widget/LoaderRowCenter'
 
 const loaderStyle: CSSProperties = {
     width: 100,
@@ -63,9 +64,7 @@ export const HomeMovies: FunctionComponent<HomeMoviesProps> = ({ filters }) => {
             </h1>
             <Grid fluid >
                 {moviesFetch.isLoading
-                    ? <Row style={loaderStyle}>
-                        <Loader size="lg" />
-                    </Row>
+                    ? <LoaderRowCenter />
                     : <Row>
                         {(tab === 'movies' ? movies : series).map((item) => (
                             <Col key={item.id} xs={24} sm={12} md={6} lg={4} >
