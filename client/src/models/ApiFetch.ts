@@ -1,6 +1,5 @@
 export interface BaseApiFetch<T> {
     isLoading: boolean;
-    time?: number;
     data?: T;
     error?: any;
 }
