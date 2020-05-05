@@ -39,7 +39,7 @@ export const Profile = () => {
                 {user?.movies?.length ?? 0 ?
                   user?.movies.map((itemMovie) => (
                     <Col xs={24} sm={12} md={6} lg={4} style={{ width: 240 }} >
-                      <MovieCard movie={itemMovie} />
+                      <MovieCard movie={itemMovie} type='movies'/>
                     </Col>
                   ))
                   : <h3> Sorry you don't have Favorites Movies</h3>
