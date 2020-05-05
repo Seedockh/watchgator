@@ -28,6 +28,7 @@ export const HomeMovies: FunctionComponent<HomeMoviesProps> = ({ filters }) => {
     useEffect(() => { onFiltersChange() }, [filters])
 
     const onFiltersChange = (filters?: MovieFilter) => {
+        moviesFetch.setLoading(true)
         searchMovies(filters ? {
             names: {
                 actors: filters.actors,
