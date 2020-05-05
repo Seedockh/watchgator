@@ -16,7 +16,7 @@ export const Login = () => {
   const fetchState = useApiFetch<any>()
 
   if (user) {
-    history.push('/')
+    history.goBack()
   }
 
   const redirectRegister = () => {

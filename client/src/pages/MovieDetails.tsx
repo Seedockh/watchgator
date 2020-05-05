@@ -7,6 +7,8 @@ import { ActorAvatar } from '../widget/ActorAvatar'
 import { Movie } from '../models/api/Movie'
 import { Actor } from '../models/api/Actor'
 import { SwitchValue } from '../widget/MovieTVShowSwitch'
+import { UserGlobalState } from '../core/user'
+import { User } from '../models/api/User'
 
 const detailKeysStyle: CSSProperties = {
   display: 'flex',
@@ -20,6 +22,8 @@ export const MovieDetails = () => {
   const [casting, setCasting] = useState<Actor[]>([])
   const [directors, setDirectors] = useState<Actor[]>([])
   const history = useHistory()
+
+  let [{ user }, dispatch] = UserGlobalState()
 
   useEffect(() => {
     // @ts-ignore
@@ -85,6 +89,35 @@ export const MovieDetails = () => {
     }
   }
 
+  const setUser = (data: User) => {
+    dispatch({ type: 'setUser', payload: data })
+  }
+
+  const handleFavorites =  async () => {
+    if (!user) {
+      history.push("/login")
+    }
+    
+    const res = await fetch(`${process.env.REACT_APP_API_URI}/user/add-movie`, {
+      method: "POST",
+      body: JSON.stringify({ user: user?.uuid, movie: movie?.id }),
+      headers: {
+        'Content-Type': 'application/json',
+        "Authorization" : `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+
+    res.json().then(res => {
+      console.log(res);
+      if(res.message !== undefined) {
+        console.log(user);
+        user?.movies.push(movie!)
+        
+        setUser(user!)
+
+      }
+    }).catch(error => console.log(error));
+}
   const renderTabs = (): JSX.Element => {
     if (movie && activeTab === 'overview') {
       return <p>{movie.description}</p>
@@ -170,7 +203,7 @@ export const MovieDetails = () => {
                   {renderTabs()}
                 </Panel>
                 <div className='flex' style={{ marginTop: 16 }}>
-                  <Button color='yellow' appearance='ghost'>
+                  <Button color='yellow' appearance='ghost' onClick={handleFavorites}>
                     <Icon icon='heart-o' /> Add to favorites
                   </Button>
                   <Button appearance='ghost' style={{ marginLeft: 16 }}>
