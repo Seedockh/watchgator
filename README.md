@@ -3,7 +3,7 @@ Startup week project : Movies / Series search engine
 
 # Hosted URLs
 
-- Client: http://www.watchgator.org
+- Client: https://watchgator.org
 - Server: https://watchgator-server.herokuapp.com/
 
 # API
