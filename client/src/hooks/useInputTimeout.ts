@@ -18,6 +18,7 @@ export const useInputTimeout = (initialValue: string = '', timeout: number = 800
     setTyingTimeout(setTimeout(() => {
       setTimeoutValue(input.value)
     }, timeout));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [input.value])
 
   return {

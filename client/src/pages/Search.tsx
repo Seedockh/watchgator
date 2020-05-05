@@ -1,5 +1,5 @@
 import React, { useEffect, useState, FunctionComponent } from 'react'
-import { Grid, Row, Col, Panel, Loader } from 'rsuite'
+import { Grid, Row, Col, Panel } from 'rsuite'
 import { MovieCard } from '../widget/MovieCard'
 import { Movie } from '../models/api/Movie'
 import { useApiFetch } from '../hooks/api/useApiFetch'

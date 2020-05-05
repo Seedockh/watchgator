@@ -12,8 +12,9 @@ export const Searchbar: FunctionComponent<SearchbarProps> = ({ style, onChange }
 
     useEffect(() => {
         onChange(searchInput.timeoutValue)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchInput.timeoutValue])
-    
+
     return <Grid fluid style={style}>
         <Row>
             <Col xs={24} md={12} mdOffset={6}>

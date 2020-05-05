@@ -1,5 +1,5 @@
-import React, { useEffect, CSSProperties, useState, FunctionComponent } from 'react'
-import { Grid, Row, Col, Panel, Loader } from 'rsuite'
+import React, { useEffect, useState, FunctionComponent } from 'react'
+import { Grid, Row, Col, Panel } from 'rsuite'
 import { MovieCard } from '../widget/MovieCard'
 import { MovieFilter } from '../models/MovieFilter'
 import { Movie } from '../models/api/Movie'
@@ -9,12 +9,6 @@ import { searchMovies } from '../core/api/Api'
 import { Serie } from '../models/api/Serie'
 import { MovieTVShowSwitch, SwitchValue } from '../widget/MovieTVShowSwitch'
 import { LoaderRowCenter } from '../widget/LoaderRowCenter'
-
-const loaderStyle: CSSProperties = {
-    width: 100,
-    marginLeft: '40%',
-    marginTop: '10em'
-}
 
 type HomeMoviesProps = {
     filters?: MovieFilter
