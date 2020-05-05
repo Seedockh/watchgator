@@ -6,6 +6,7 @@ import { addPictureUrlSize } from '../utils/movieUtils'
 import { ActorAvatar } from '../widget/ActorAvatar'
 import { Movie } from '../models/api/Movie'
 import { Actor } from '../models/api/Actor'
+import { SwitchValue } from '../widget/MovieTVShowSwitch'
 
 const detailKeysStyle: CSSProperties = {
   display: 'flex',
@@ -15,7 +16,7 @@ const detailKeysStyle: CSSProperties = {
 export const MovieDetails = () => {
   const [activeTab, setActiveTab] = useState("overview")
   const [movie, setMovie] = useState<Movie>()
-  const [type, setType] = useState('')
+  const [type, setType] = useState<SwitchValue>()
   const [casting, setCasting] = useState<Actor[]>([])
   const [directors, setDirectors] = useState<Actor[]>([])
   const history = useHistory()
@@ -24,9 +25,9 @@ export const MovieDetails = () => {
     // @ts-ignore
     if (history.location.state) {
       // @ts-ignore
-      setMovie(history.location.state.movie)
-      // @ts-ignore
       setType(history.location.state.type)
+      // @ts-ignore
+      setMovie(history.location.state.movie)
     } else {
       fetchMovie()
     }
@@ -183,11 +184,11 @@ export const MovieDetails = () => {
             <Row style={{ marginTop: 32 }}>
               <Col xs={24} md={22} lg={20} mdOffset={1} lgOffset={2}>
                 <h3 className='text-center'>{type === 'movies' ? 'Directors' : 'Casting'}</h3>
-                <Row style={{display: 'flex', justifyContent: 'center'}}>
+                <Row style={{ display: 'flex', justifyContent: 'center' }}>
                   {directors.map((actor, idx) => (
                     <Col xs={24} sm={12} md={8} lg={6} key={idx}>
                       <Panel shaded bordered className='text-center'>
-                        <ActorAvatar actor={actor} size={100} style={{ marginLeft: 'auto', marginRight: 'auto'}} />
+                        <ActorAvatar actor={actor} size={100} style={{ marginLeft: 'auto', marginRight: 'auto' }} />
                         <Panel bodyFill className='mt-3'>
                           <h6>{actor.firstname} {actor.lastname}</h6>
                           <small>{actor.role}</small>
@@ -203,11 +204,11 @@ export const MovieDetails = () => {
             <Row style={{ marginTop: 32 }}>
               <Col xs={24} md={22} lg={20} mdOffset={1} lgOffset={2}>
                 <h3 className='text-center'>Casting</h3>
-                <Row style={{display: 'flex', justifyContent: 'center'}}>
+                <Row style={{ display: 'flex', justifyContent: 'center' }}>
                   {casting.map((actor, idx) => (
                     <Col xs={24} sm={12} md={8} lg={6} key={idx}>
                       <Panel shaded bordered className='text-center'>
-                        <ActorAvatar actor={actor} size={100} style={{ marginLeft: 'auto', marginRight: 'auto'}} />
+                        <ActorAvatar actor={actor} size={100} style={{ marginLeft: 'auto', marginRight: 'auto' }} />
                         <Panel bodyFill className='mt-3'>
                           <h6>{actor.firstname} {actor.lastname}</h6>
                           <small>{actor.role}</small>

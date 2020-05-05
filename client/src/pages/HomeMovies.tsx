@@ -40,6 +40,14 @@ export const HomeMovies: FunctionComponent<HomeMoviesProps> = ({ filters }) => {
             .catch(moviesFetch.setError)
     }
 
+    const displaySearchingText = () => {
+        if (!moviesFetch.data) return 'Searching...'
+        if (tab === 'movies') {
+            return `${moviesFetch.data.totalMovies} results, ${moviesFetch.data.time}ms`
+        }
+        return `${moviesFetch.data.totalSeries} results, ${moviesFetch.data.time}ms`
+    }
+
     let movies: Movie[] = [];
     let series: Serie[] = [];
     if (moviesFetch.data && moviesFetch.data.results) {
@@ -56,16 +64,16 @@ export const HomeMovies: FunctionComponent<HomeMoviesProps> = ({ filters }) => {
             <h1 className="ml-4">
                 <MovieTVShowSwitch type={tab} onSwitch={setTab} />
             </h1>
-            <span style={{ color: 'gray', fontSize: 15, marginLeft: '1.2em' }}>{tab === 'movies' ?
-              (moviesFetch.data ? `${moviesFetch.data.totalMovies} results, ${moviesFetch.data.time}ms` : 'searching...')
-              :(moviesFetch.data ? `${moviesFetch.data.totalSeries} results, ${moviesFetch.data.time}ms` : 'searching...')}</span>
+            <span style={{ color: 'gray', fontSize: 15, marginLeft: '1.2em' }}>
+                {displaySearchingText()}
+            </span>
             <Grid fluid >
                 {moviesFetch.isLoading
                     ? <LoaderRowCenter />
                     : <Row>
                         {(tab === 'movies' ? movies : series).map((item) => (
                             <Col key={item.id} xs={24} sm={12} md={6} lg={4} >
-                                <MovieCard movie={item} type={tab}/>
+                                <MovieCard movie={item} type={tab} />
                             </Col>
                         ))}
                     </Row>

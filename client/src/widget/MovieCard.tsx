@@ -4,6 +4,7 @@ import { Movie } from './../models/api/Movie';
 import { useHistory } from 'react-router-dom';
 import { Panel } from 'rsuite';
 import { addPictureUrlSize } from '../utils/movieUtils';
+import { SwitchValue } from './MovieTVShowSwitch';
 
 const movieCardStyle: CSSProperties = {
     margin: 16,
@@ -13,7 +14,7 @@ const movieCardStyle: CSSProperties = {
 
 type MovieCardProps = {
     movie: Movie
-    type: string
+    type: SwitchValue
 }
 
 export const MovieCard: FunctionComponent<MovieCardProps> = ({ movie, type }) => {
