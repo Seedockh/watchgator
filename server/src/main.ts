@@ -16,5 +16,6 @@ import 'reflect-metadata'
 	UserMoviesRepository.instance.init()
 	ExpressServer.run()
 	if (process.env.NODE_ENV !== 'production') await IMDBDatasetService.init()
-	else IMDBDatasetService.init()
 })()
+
+if (process.env.NODE_ENV === 'production') IMDBDatasetService.init()
