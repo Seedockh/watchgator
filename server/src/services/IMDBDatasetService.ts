@@ -23,7 +23,12 @@ class IMDBDatasetService {
 		const moviesSpinner = aLog('Initializing Movies datas ...')
 		if (process.env.NODE_ENV !== 'production')
 			this.sampleMovies = this.readSample('movies')
-		this.liveMovies = await this.readLive('movies')
+		try {
+			this.liveMovies = await this.readLive('movies')
+		} catch (e) {
+			moviesSpinner.fail('Live fetch error')
+			throw e
+		}
 		moviesSpinner.succeed('Movies initialized')
 
 		const seriesSpinner = aLog('Initializing Series datas ...')
@@ -47,22 +52,25 @@ class IMDBDatasetService {
 
 	static readSample(type: string): Dataset {
 		const sampleFile: Buffer = fs.readFileSync(
-			`src/database/imdb/imdb_${type}_sample.json`,
+			`src/database/imdb/imdn_${type}_sample.json`,
 		)
 		// @ts-ignore: JSON.parse() unreachable Buffer param
 		return JSON.parse(sampleFile)
 	}
 
 	static readLive(type: string): Promise<Dataset> {
-		return (
-			fetch(
-				`https://mahara-bucket.s3.eu-west-3.amazonaws.com/watchgator/imdb_${type}_live.json`,
-				{ method: 'GET' },
+		try {
+			return (
+				fetch(
+					`https://d831ylcetjsw8.cloudfront.net/watchgator/imdb_${type}_live.json`,
+					{ method: 'GET' },
+				)
+					.then(response => response.json())
+					// @ts-ignore: JSON.parse() unreachable Buffer param
+					.then(liveFile => JSON.parse(JSON.stringify(liveFile)))
+					.catch(err => { throw err })
 			)
-				.then(response => response.json())
-				// @ts-ignore: JSON.parse() unreachable Buffer param
-				.then(liveFile => JSON.parse(JSON.stringify(liveFile)))
-		)
+		} catch (e) { throw e }
 	}
 
 	static enableGenreListenner(): boolean {

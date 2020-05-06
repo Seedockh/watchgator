@@ -1,6 +1,7 @@
 /** ****** INTERNALS ****** **/
 import './prelude'
 import './postlude'
+import { sLog } from './core/Log'
 import Scraper from './core/Scraper'
 import IMDBDatasetService from './services/IMDBDatasetService'
 import Database from './database/Database'
@@ -18,4 +19,9 @@ import 'reflect-metadata'
 	if (process.env.NODE_ENV !== 'production') await IMDBDatasetService.init()
 })()
 
-if (process.env.NODE_ENV === 'production') IMDBDatasetService.init()
+if (process.env.NODE_ENV === 'production')
+try {
+	IMDBDatasetService.init()
+} catch (err) {
+	sLog(err, '#FF0000')
+}
