@@ -35,7 +35,7 @@ class Database {
 			return await createConnection(options)
 				.then(createdConnection => {
 					this.connection = createdConnection
-					this.spinner.succeed('Database connected successfully')
+					this.spinner.succeed('User database connected successfully')
 				})
 				.catch(e => {
 					this.spinner.fail(`Connection error : ${e.message}`)

@@ -6,9 +6,9 @@ import { sLog, aLog } from './Log'
 
 class Scraper {
 	private moviesEndpoint =
-		'https://www.imdb.com/search/title/?title_type=feature,tv_movie'
+		'https://www.imdb.com/search/title/?title_type=feature,tv_movie,documentary&languages=en'
 	private seriesEndpoint =
-		'https://www.imdb.com/search/title/?title_type=tv_series'
+		'https://www.imdb.com/search/title/?title_type=tv_series&languages=en'
 	private peoplesEndpoint =
 		'https://www.imdb.com/search/name/?gender=male,female'
 	private sampleItemsPerPage = 50

@@ -3,8 +3,7 @@ import MoviesController from '../controllers/rest/MoviesController'
 
 const router = Router()
 
-router.get('/all', MoviesController.getAll)
-router.get('/all/:page', MoviesController.getAllByPage)
+router.get('/all/:page?', MoviesController.getAll)
 router.get('/:id', MoviesController.getById)
 router.post('/find', MoviesController.findByKeys)
 
