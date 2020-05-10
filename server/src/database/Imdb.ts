@@ -38,32 +38,38 @@ class Imdb {
     }
   }
 
-  static validateMediaFindFilters(body: any) {
-    const paths = { ...Imdb.Movies.schema.paths }
+  static validateMediaFindFilters(body: any, type = 'movies') {
+    const paths = type === 'movies' ? { ...Imdb.Movies.schema.paths } : { ...Imdb.Series.schema.paths }
     const matchCase = body.matchCase ? '' : 'i'
-    const page = parseInt(body.page) > 0 ? parseInt(body.page - 1) : 0
+    const page = parseInt(body.page) > 0 ? parseInt(body.page) - 1 : 0
     let types = {}
     let filters = {} //{ metaScore: { $ne: null } }
 
     Object.entries(paths).forEach(path => {
-        return types[path[0]] = path[1].instance.toLowerCase()
+      // @ts-ignore: unreachable key
+      return types[path[0]] = path[1].instance.toLowerCase()
     })
 
-    Object.entries(body).forEach((key: string[]) => {
+    Object.entries(body).forEach((key: any[]) => {
       if (key[0] !== 'matchCase' && key[0] !== 'page') {
+        // @ts-ignore: unreachable key
         if (!types[key[0]])
           return filters = { error: `${key[0]} is not a known property` }
 
+        // @ts-ignore: unreachable key
         if (types[key[0]] === 'string') {
           if (!isNaN(key[1]))
             return filters = { error: `Wrong type value for ${key[0]}` }
 
+          // @ts-ignore: unreachable key
           if (types[key[0]] === 'string' && key[1].length < 3)
             return filters = { error: `${key[0]} field must be at least 3 characters long` }
 
+          // @ts-ignore: unreachable key
           return filters[key[0]] = { $regex: new RegExp(key[1]), $options: matchCase }
         }
 
+        // @ts-ignore: unreachable key
         if (types[key[0]] === 'number') {
           if (isNaN(key[1]))
             return filters = { error: `Wrong type value for ${key[0]}` }
@@ -72,6 +78,7 @@ class Imdb {
             return filters = { error: `${key[0]} field must be at least 0` }
 
           const number = Number.isInteger(key[1]) ? parseInt(key[1]) : parseFloat(key[1])
+          // @ts-ignore: unreachable key
           return filters[key[0]] = { $gte: number }
         }
       }

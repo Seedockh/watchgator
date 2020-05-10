@@ -66,6 +66,9 @@ components:
    MoviesResponse:
      type: object
      properties:
+       time:
+         type: int
+         description: time (in ms) taken by the request
        total:
          type: int
          description: total items number
@@ -75,7 +78,7 @@ components:
        page:
          type: int
          description: current page returned
-       totalResults:
+       pageResults:
          type: int
          description: total of result in the current page
        results:

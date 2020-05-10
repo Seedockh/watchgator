@@ -8,6 +8,7 @@ import { sLog } from '../../core/Log'
 
 class MoviesController {
 	static async getAll(req: Request, res: Response) {
+		const t0: number = new Date().getTime()
 		const page = parseInt(req.params.page) > 0 ? parseInt(req.params.page) : 1
 		const total = await Imdb.Movies.countDocuments()
 		const totalPages = (total / Imdb.limit)
@@ -19,6 +20,7 @@ class MoviesController {
       .exec((err: NativeError, docs: Document[]) => {
         if (err) res.send(`Error: ${err}`)
 				else res.json({
+					time: new Date().getTime() - t0,
 					total: total,
 					totalPages: totalPages,
 					page: page,
@@ -38,7 +40,8 @@ class MoviesController {
 	}
 
 	static async findByKeys(req: Request, res: Response) {
-		const filters: any = Imdb.validateMediaFindFilters(req.body)
+		const t0: number = new Date().getTime()
+		const filters: any = Imdb.validateMediaFindFilters(req.body, 'movies')
 		if (filters.error) return res.send(filters)
 
 		Imdb.Movies
@@ -61,10 +64,15 @@ class MoviesController {
 			.exec((err: NativeError, docs: Document[]) => {
 				if (err) return res.send({ error: `${err}` })
 				res.json({
+					time: new Date().getTime() - t0,
+					// @ts-ignore: unreachable aggregation key
 					total: docs[0].count,
-					totalPages: docs[0].count > Imdb.limit ? (parseInt(docs[0].count / Imdb.limit)) : 1,
+					// @ts-ignore: unreachable aggregation key
+					totalPages: docs[0].count > Imdb.limit ? (parseInt(docs[0].count / Imdb.limit) + 1) : 1,
 					page: filters.page + 1,
-					pageResults: Imdb.limit,
+					// @ts-ignore: unreachable aggregation key
+					pageResults: docs[0].results.length,
+					// @ts-ignore: unreachable aggregation key
 					results: docs[0].results
 				})
 			})
