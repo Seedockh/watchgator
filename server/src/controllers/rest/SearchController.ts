@@ -1,236 +1,96 @@
 /** ****** SERVER ****** **/
 import { Request, Response, RequestHandler } from 'express'
-/** ****** NODE ****** **/
-import _ from 'lodash'
+/** ****** DATABASE ******* **/
+import { NativeError, Document } from 'mongoose'
 /** ****** INTERNALS ****** **/
-import IMDBDatasetService from '../../services/IMDBDatasetService'
+import Imdb from '../../database/Imdb'
 import { sLog } from '../../core/Log'
 
 class SearchController {
-	/** * @TODO: Refactoring for filters * **/
-	static search(req: Request, res: Response) {
+	static async search(req: Request, res: Response) {
 		const t0: number = new Date().getTime()
-		const level: string =
-			process.env.NODE_ENV === 'production' ? 'live' : 'sample'
-		const { names, filters, pageMovies, pageSeries, type } = req.body as SearchPayload
-		let namesParam: SearchNamesPayload = names
-		let filtersParam: SearchFiltersPayload = filters
-		let movies: IMDBMedia[]
-		let series: IMDBMedia[]
-		const pagination = 50
-		const pageMoviesSelected = pageMovies ? pageMovies - 1 : 0
-		const pageSeriesSelected = pageSeries ? pageSeries - 1 : 0
-		const typeSelected = type === 'movies' ? 0 : (type === 'series' ? 2 : 1)
+		const search = await Imdb.validateSearchFilters(req.body)
+		const typeSelected = req.body.type === 'movies' ? 0 : (req.body.type === 'series' ? 2 : 1)
 
-		try {
-			if (names) {
-				if (namesParam.title) {
-					if (typeSelected <= 1) {
-						movies = _.filter(
-							// @ts-ignore: unreachable key
-							IMDBDatasetService[`${level}Movies`].data,
-							movie => new RegExp(namesParam.title, 'i').test(movie.title),
-						)
+		if (search.error) return res.send(search.fields)
+
+		await Imdb.Movies
+			.aggregate([
+				{ $match: typeSelected <= 1 ? search.fields : { _id: null } },
+				{ $facet: {
+						'stage1': [ { '$group': { _id: null, count: { $sum: 1 } } } ],
+						'stage2': [ { '$skip': (Imdb.limit * search.pageMovies) }, { '$limit': Imdb.limit } ]
 					}
-					if (typeSelected >= 1) {
-						series = _.filter(
-							// @ts-ignore: unreachable key
-							IMDBDatasetService[`${level}Series`].data,
-							serie => new RegExp(namesParam.title, 'i').test(serie.title),
-						)
-					}
-				}
-
-				if (namesParam.actors) {
-					namesParam.actors.forEach((actor: IMDBPerson) => {
-						if (typeSelected <= 1) {
-							movies = _.filter(
-								// @ts-ignore: unreachable key
-								movies ? movies : IMDBDatasetService[`${level}Movies`].data,
-								movie => _.some(movie.actors, { id: actor.id }),
-							)
-						}
-						if (typeSelected >= 1) {
-							series = _.filter(
-								// @ts-ignore: unreachable key
-								series ? series : IMDBDatasetService[`${level}Series`].data,
-								serie => _.some(serie.directors, { id: actor.id }),
-							)
-						}
-					})
-				}
-
-				if (namesParam.directors) {
-					namesParam.directors.forEach((director: IMDBPerson) => {
-						if (typeSelected <= 1) {
-							movies = _.filter(
-								// @ts-ignore: unreachable key
-								movies ? movies : IMDBDatasetService[`${level}Movies`].data,
-								movie => _.some(movie.directors, { id: director.id }),
-							)
-						}
-					})
-				}
-
-				if (namesParam.genres) {
-					namesParam.genres.forEach((genre: IMDBCategory) => {
-						if (typeSelected <= 1) {
-							movies = _.filter(
-								// @ts-ignore: unreachable key
-								movies ? movies : IMDBDatasetService[`${level}Movies`].data,
-								movie => _.some(movie.genres, { name: genre.name }),
-							)
-						}
-						if (typeSelected >= 1) {
-							series = _.filter(
-								// @ts-ignore: unreachable key
-								series ? series : IMDBDatasetService[`${level}Series`].data,
-								serie => _.some(serie.genres, { name: genre.name }),
-							)
-						}
-					})
-				}
-			}
-
-			if (filters) {
-				if (filtersParam.year) {
-					if (typeSelected <= 1) {
-						movies = _.filter(
-							// @ts-ignore: unreachable key
-							movies ? movies : IMDBDatasetService[`${level}Movies`].data,
-							movie =>
-								movie.year >= filtersParam.year.min &&
-								movie.year <= filtersParam.year.max,
-						)
-					}
-					if (typeSelected >= 1) {
-						series = _.filter(
-							// @ts-ignore: unreachable key
-							series ? series : IMDBDatasetService[`${level}Series`].data,
-							serie =>
-								serie.year >= filtersParam.year.min! &&
-								serie.year <= filtersParam.year.max,
-						)
-					}
-				}
-
-				if (filtersParam.rating) {
-					if (typeSelected <= 1) {
-						movies = _.filter(
-							// @ts-ignore: unreachable key
-							movies ? movies : IMDBDatasetService[`${level}Movies`].data,
-							movie =>
-								movie.rating >= filtersParam.rating.min &&
-								movie.rating <= filtersParam.rating.max,
-						)
-					}
-					if (typeSelected >= 1) {
-						series = _.filter(
-							// @ts-ignore: unreachable key
-							series ? series : IMDBDatasetService[`${level}Series`].data,
-							serie =>
-								serie.rating >= filtersParam.rating.min &&
-								serie.rating <= filtersParam.rating.max,
-						)
-					}
-				}
-
-				if (filtersParam.metaScore) {
-					if (typeSelected <= 1) {
-						movies = _.filter(
-							// @ts-ignore: unreachable key
-							movies ? movies : IMDBDatasetService[`${level}Movies`].data,
-							movie =>
-								movie.metaScore >= filtersParam.metaScore.min &&
-								movie.metaScore <= filtersParam.metaScore.max,
-						)
-					}
-					if (typeSelected >= 1) {
-						series = _.filter(
-							// @ts-ignore: unreachable key
-							series ? series : IMDBDatasetService[`${level}Series`].data,
-							serie =>
-								serie.metaScore >= filtersParam.metaScore.min &&
-								serie.metaScore <= filtersParam.metaScore.max,
-						)
-					}
-				}
-
-				if (filtersParam.nbRatings) {
-					// nbRatings: {min: 0, max: 1000000},
-					/** @TODO */
-				}
-
-				if (filtersParam.certificate) {
-					// certificate: ["Tous Publics", "Tous Publics (avec avertissement)", "0+", "6+", "9+", "10", "12", "14+", "16", "18", "X"],
-					/** @TODO */
-				}
-
-				if (filtersParam.runtime) {
-					if (typeSelected <= 1) {
-						movies = _.filter(
-							// @ts-ignore: unreachable key
-							movies ? movies : IMDBDatasetService[`${level}Movies`].data,
-							movie =>
-								movie.runtime >= filtersParam.runtime.min &&
-								movie.runtime <= filtersParam.runtime.max,
-						)
-					}
-					if (typeSelected >= 1) {
-						series = _.filter(
-							// @ts-ignore: unreachable key
-							series ? series : IMDBDatasetService[`${level}Series`].data,
-							serie =>
-								serie.runtime >= filtersParam.runtime.min &&
-								serie.runtime <= filtersParam.runtime.max,
-						)
-					}
-				}
-
-				if (filtersParam.gross) {
-					// gross: { min: 0, max: ""$1000M" }
-					/** @TODO */
-				}
-			}
-
-			// @ts-ignore: unreachable key
-			const totalMovies = typeSelected <= 1 ?	(movies ? movies.length : IMDBDatasetService[`${level}Movies`].data.length) : 0
-			// @ts-ignore: unreachable key
-			const totalSeries = typeSelected >= 1 ?	(series ? series.length : IMDBDatasetService[`${level}Series`].data.length) : 0
-			const resultMovies = typeSelected <= 1 ?
-				// @ts-ignore: unreachable key
-				_.chunk(movies ? _.orderBy(movies, [( o ) => o.rating || 0], ['desc']) : IMDBDatasetService[`${level}Movies`].data,	pagination) :
-				[]
-			const resultSeries = typeSelected >= 1 ?
-				// @ts-ignore: unreachable key
-				_.chunk(series ? _.orderBy(series, [( o ) => o.rating || 0], ['desc']) : IMDBDatasetService[`${level}Series`].data,	pagination) :
-				[]
-
-			const time: number = new Date().getTime() - t0
-			sLog(
-				`[${new Date().toLocaleDateString()}-${new Date().toLocaleTimeString()}] Search reached ${totalMovies +
-					totalSeries} results in ${time}ms`,
-				'FFA500',
-			)
-			res.json({
-				total: totalMovies + totalSeries,
-				time: time,
-				totalMovies: totalMovies,
-				totalSeries: totalSeries,
-				moviesPages: resultMovies.length,
-				seriesPages: resultSeries.length,
-				results: {
-					movies: resultMovies.length > 0 ? resultMovies[pageMoviesSelected] : [],
-					series: resultSeries.length > 0 ? resultSeries[pageSeriesSelected] : [],
 				},
+				{ $unwind: "$stage1" },
+				{ $project: {
+						count: '$stage1.count',
+						results: '$stage2'
+					}
+				}
+			])
+			.allowDiskUse(true)
+			.exec(async (err: NativeError, moviesDocs: Document[]) => {
+				if (err) return res.send({ error: `${err}` })
+				else await Imdb.Series
+					.aggregate([
+						{ $match: typeSelected >= 1 ? search.fields : { _id: null } },
+						{ $facet: {
+								'stage1': [ { '$group': { _id: null, count: { $sum: 1 } } } ],
+								'stage2': [ { '$skip': (Imdb.limit * search.pageSeries) }, { '$limit': Imdb.limit } ]
+							}
+						},
+						{ $unwind: "$stage1" },
+						{ $project: {
+								count: '$stage1.count',
+								results: '$stage2'
+							}
+						}
+					])
+					.allowDiskUse(true)
+					.exec((err: NativeError, seriesDocs: Document[]) => {
+						if (err) return res.send({ error: `${err}` })
+						else {
+							try {
+								const time = new Date().getTime() - t0
+								// @ts-ignore: unreachable key
+								sLog(`[${new Date().toLocaleDateString()}-${new Date().toLocaleTimeString()}] Search reached ${(moviesDocs.length > 0 ? moviesDocs[0].count : 0) + (seriesDocs.length > 0 ? seriesDocs[0].count : 0)} results in ${time}ms`,
+									'FFA500',
+								)
+
+								return res.json({
+									time: time,
+									// @ts-ignore: unreachable key
+									totalMovies: moviesDocs.length > 0 ? moviesDocs[0].count : 0,
+									// @ts-ignore: unreachable key
+									totalSeries: seriesDocs.length > 0 ? seriesDocs[0].count : 0,
+									totalMoviesPages: moviesDocs.length > 0 ?
+										// @ts-ignore: unreachable key
+										(moviesDocs[0].count > Imdb.limit ? (parseInt(moviesDocs[0].count / Imdb.limit) + 1) : 1) :
+										0,
+									totalSeriesPages: seriesDocs.length > 0 ?
+										// @ts-ignore: unreachable key
+										(seriesDocs[0].count > Imdb.limit ? (parseInt(seriesDocs[0].count / Imdb.limit) + 1) : 1) :
+										0,
+									pageMovies: search.pageMovies + 1,
+									pageSeries: search.pageSeries + 1,
+									// @ts-ignore: unreachable key
+									pageMoviesResults: moviesDocs.length > 0 ? moviesDocs[0].results.length : 0,
+									// @ts-ignore: unreachable key
+									pageSeriesResults: seriesDocs.length > 0 ? seriesDocs[0].results.length : 0,
+									results: {
+										// @ts-ignore: unreachable key
+										movies: moviesDocs.length > 0 ? moviesDocs[0].results : [],
+										// @ts-ignore: unreachable key
+										series: seriesDocs.length > 0 ? seriesDocs[0].results : [],
+									}
+								})
+							} catch (e) {
+								res.send(`Response error : ${e}`)
+							}
+						}
+					})
 			})
-		} catch (error) {
-			sLog(
-				`[${new Date().toLocaleDateString()}-${new Date().toLocaleTimeString()}] Search error: ${error}`,
-				'FF0000',
-			)
-			res.json({ error: true, message: `${error}` })
-		}
 	}
 }
 

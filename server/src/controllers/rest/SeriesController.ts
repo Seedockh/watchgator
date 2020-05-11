@@ -18,7 +18,7 @@ class SeriesController {
 			.limit(Imdb.limit)
 			.skip(Imdb.limit * (page - 1))
       .exec((err: NativeError, docs: Document[]) => {
-        if (err) res.send(`Error: ${err}`)
+        if (err) return res.send({ error: `${err}` })
 				else res.json({
 					time: new Date().getTime() - t0,
 					total: total,
@@ -34,7 +34,7 @@ class SeriesController {
 		await Imdb.Series
 			.findById(req.params.id)
 			.exec((err: NativeError, doc: Document[]) => {
-				if (err) return res.send(`Error: ${err}`)
+				if (err) return res.send({ error: `${err}` })
 				res.json({ results: doc })
 			})
 	}
@@ -69,6 +69,7 @@ class SeriesController {
 					total: docs[0] ? docs[0].count : null,
 					// @ts-ignore: unreachable aggregation key
 					totalPages: docs[0] ?
+						// @ts-ignore: unreachable aggregation key
 						(docs[0].count > Imdb.limit ? (parseInt(docs[0].count / Imdb.limit) + 1) : 1) :
 						null,
 					page: filters.page + 1,

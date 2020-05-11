@@ -55,7 +55,9 @@ class Imdb {
       if (key[0] !== 'matchCase' && key[0] !== 'page') {
         if (key[0] === 'fullname') {
   				const names = key[1].split(' ')
+          // @ts-ignore: unreachable key
   				filters.firstname = { $regex: new RegExp(names[0]), $options: matchCase }
+          // @ts-ignore: unreachable key
   				filters.lastname  = { $regex: new RegExp(names[1]), $options: matchCase }
         }
 
@@ -92,6 +94,68 @@ class Imdb {
     })
 
     return { page: page, fields: filters }
+  }
+
+  static async validateSearchFilters(body: SearchPayload) {
+    const { names, filters, pageMovies, pageSeries } = body
+    const errors: any[] = []
+    let fields = { $and: [] }
+
+    await Object.entries(names).forEach(name => {
+      // @ts-ignore: unreachable key
+      if (name[0] === 'actors') {
+        let actorsFields = { actors: { $elemMatch: { $or: [] } } }
+        // @ts-ignore: unreachable key
+        name[1].map(fieldId => actorsFields.actors.$elemMatch.$or.push({ id: fieldId.id }) )
+        // @ts-ignore: unreachable key
+        return fields.$and.push(actorsFields)
+      }
+
+      // @ts-ignore: unreachable key
+      else if (name[0] === 'directors') {
+        let directorsFields = { directors: { $elemMatch: { $or: [] } } }
+        // @ts-ignore: unreachable key
+        name[1].map(fieldId => directorsFields.directors.$elemMatch.$or.push({ id: fieldId.id }) )
+        // @ts-ignore: unreachable key
+        return fields.$and.push(directorsFields)
+      }
+
+      // @ts-ignore: unreachable key
+      else if (name[0] === 'genres') {
+        let genresFields = { genres: { $elemMatch: { $or: [] } } }
+        // @ts-ignore: unreachable key
+        name[1].map(fieldId => genresFields.genres.$elemMatch.$or.push({ name: fieldId.name }) )
+        // @ts-ignore: unreachable key
+        return fields.$and.push(genresFields)
+      }
+
+      // @ts-ignore: unreachable key
+      else return errors[name[0]] = `${name[0]} is not a valid name field.`
+    })
+
+    await Object.entries(filters).forEach(filter => {
+      if (!isNaN(filter[1].min) &&
+          !isNaN(filter[1].max) &&
+          (filter[0] === 'year' ||
+           filter[0] === 'rating' ||
+           filter[0] === 'nbRatings' ||
+           filter[0] === 'metaScore' ||
+           filter[0] === 'runtime')
+         ) {
+        let filterField = {}
+        // @ts-ignore: unreachable key
+        filterField[filter[0]] = { $gte: filter[1].min, $lte: filter[1].max }
+        // @ts-ignore: unreachable key
+        return fields.$and.push(filterField)
+      } else return errors[name[0]] = `${filter[0]} is not a valid filter field.`
+    })
+
+    return {
+      fields: fields,
+      error: errors.length > 0 ? errors : null,
+      pageMovies: pageMovies ? pageMovies - 1 : 0,
+      pageSeries: pageSeries ? pageSeries - 1 : 0
+    }
   }
 }
 
