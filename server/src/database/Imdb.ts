@@ -53,8 +53,14 @@ class Imdb {
 
     Object.entries(body).forEach((key: any[]) => {
       if (key[0] !== 'matchCase' && key[0] !== 'page') {
+        if (key[0] === 'fullname') {
+  				const names = key[1].split(' ')
+  				filters.firstname = { $regex: new RegExp(names[0]), $options: matchCase }
+  				filters.lastname  = { $regex: new RegExp(names[1]), $options: matchCase }
+        }
+
         // @ts-ignore: unreachable key
-        if (!types[key[0]])
+        if (!types[key[0]] && key[0] !== 'fullname')
           return filters = { error: `${key[0]} is not a known property` }
 
         // @ts-ignore: unreachable key

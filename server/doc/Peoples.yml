@@ -10,7 +10,7 @@ servers:
 path:
   /peoples/all/:
     get:
-      summary: Get all Peoples, chunked by arrays of 20 Peoples. For example, 100 Peoples return 5 arrays
+      summary: Get the {page} (default 1) chunk containing 20 Peoples
       tags: [Peoples]
       responses:
         "200":
@@ -19,23 +19,6 @@ path:
             array:
               schema:
                 $ref: '#/components/schemas/PeoplesList'
-  /peoples/all/{page}:
-    parameters:
-      - in: path
-        name: page
-        schema:
-          type: integer
-        description: The chunk index to display
-    get:
-      summary: Get the {page} chunk containing 20 Peoples
-      tags: [Peoples]
-      responses:
-        "200":
-          description: List of all Peoples for page n.{page}
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PeoplesChunk'
   /peoples/{id}:
     parameters:
       - in: path
@@ -70,10 +53,48 @@ path:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PeoplesChunk'
+                $ref: '#/components/schemas/PeoplesResponse'
 
 components:
  schemas:
+   PeoplesResponse:
+     type: object
+     properties:
+        time: 375,
+        total: 1614,
+        totalPages: 81,
+        page: 1,
+        pageResults: 20,
+        results:
+          type: array
+          description: results
+          items:
+            $ref: '#/components/schemas/People'
+            minItems: 1
+            maxItems: 20
+     example:
+       time: 375,
+       total: 1614,
+       totalPages: 81,
+       page: 1,
+       pageResults: 20,
+       results: [
+        {
+            _id: "nm0000197",
+            firstname: "Jack",
+            lastname: "Nicholson",
+            picture: "https://m.media-amazon.com/images/M/MV5BMTQ3OTY0ODk0M15BMl5BanBnXkFtZTYwNzE4Njc4._V1_UY209_CR5,0,140,209_AL_.jpg",
+            role: "Actor"
+        },
+        {
+            _id: "nm0000329",
+            firstname: "Jackie",
+            lastname: "Chan",
+            picture: "https://m.media-amazon.com/images/M/MV5BMTk4MDM0MDUzM15BMl5BanBnXkFtZTcwOTI4MzU1Mw@@.jpg",
+            role: "Actor"
+        }
+       ]
+
    PeoplesList:
      type: array
      items:

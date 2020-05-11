@@ -1,25 +1,14 @@
 openapi: 3.0.0
 info:
   title: WatchGator API
-  description: Movies / Series fast and reliable search engine
+  description: Series / Series fast and reliable search engine
   version: 1.0.0
 servers:
   - url: https://watchgator-server.herokuapp.com/api
     description: Main endpoint
 
 path:
-  /series/all/:
-    get:
-      summary: Get all Series, chunked by arrays of 20 movies. For example, 100 Series return 5 arrays
-      tags: [Series]
-      responses:
-        "200":
-          description: List of all Series, chunked by pages of 20 movies.
-          content:
-            array:
-              schema:
-                $ref: '#/components/schemas/SeriesList'
-  /series/all/{page}:
+  /series/all/{page?}:
     parameters:
       - in: path
         name: page
@@ -27,7 +16,7 @@ path:
           type: integer
         description: The chunk index to display
     get:
-      summary: Get the {page} chunk containing 20 Series
+      summary: Get the {page} (default 1) chunk containing 20 Series
       tags: [Series]
       responses:
         "200":
@@ -35,7 +24,7 @@ path:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SeriesChunk'
+                $ref: '#/components/schemas/SeriesResponse'
   /series/{id}:
     parameters:
       - in: path
@@ -58,7 +47,7 @@ path:
       summary: Find Series by key
       tags: [Series]
       requestBody:
-        description: Any Serie key to search on
+        description: Any Serie key to search on, except arrays (actors, genres, directors)
         required: false
         content:
           application/json:
@@ -70,10 +59,81 @@ path:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SeriesChunk'
+                $ref: '#/components/schemas/SeriesResponse'
 
 components:
  schemas:
+   SeriesResponse:
+     type: object
+     properties:
+       time:
+         type: int
+         description: time (in ms) taken by the request
+       total:
+         type: int
+         description: total items number
+       totalPages:
+         type: int
+         description: total of pages
+       page:
+         type: int
+         description: current page returned
+       pageResults:
+         type: int
+         description: total of result in the current page
+       results:
+         type: array
+         description: results
+         items:
+           $ref: '#/components/schemas/SeriesChunk'
+         minItems: 1
+         maxItems: 20
+     example:
+       total: 274500,
+       totalPages: 13725,
+       page: 1,
+       totalResults: 20,
+       results: [
+        {
+            _id: "tt8936646",
+            title: "Tyler Rake",
+            year: 2020,
+            rating: 6,
+            nbRatings: 84858,
+            metaScore: 56,
+            runtime: 116,
+            genres: [
+                {
+                    name: "Action"
+                },
+                {
+                    name: "Thriller"
+                }
+            ],
+            directors: [
+              {
+                  id: "nm1165110",
+                  name: "Chris Hemsworth"
+              },
+              {
+                  id: "nm11523062",
+                  name: "Bryon Lerum"
+              },
+              {
+                  id: "nm11523063",
+                  name: "Ryder Lerum"
+              },
+              {
+                  id: "nm7287299",
+                  name: "Rudhraksh Jaiswal"
+              }
+            ],
+            actors: [],
+            gross: null
+        }
+      ]
+
+
    SeriesList:
      type: array
      items:
@@ -96,18 +156,18 @@ components:
        matchCase:
          type: bool
      example:
-       title: "casa"
+       title: "paras"
        matchCase: false
 
    Serie:
      type: object
      properties:
-       id:
+       _id:
          type: string
          description: Serie's ID
        title:
          type: string
-         description: title of the movie
+         description: title of the Serie
        year:
          type: int
          description: year of release
@@ -116,19 +176,19 @@ components:
          description: IMDB rating
        nbRatings:
          type: int
-         description: number of ppl that rated the movie
+         description: number of ppl that rated the Serie
        metaScore:
          type: int
          description: IMDB popularity score
        certificate:
          type: string
-         description: for which public is addressed the movie
+         description: for which public is addressed the Serie
        runtime:
          type: int
-         description: duration of the movie
+         description: duration of the Serie
        genre:
          type: array
-         description: category(ies) of the movie
+         description: category(ies) of the Serie
        description:
          type: string
          description: short synopsis
@@ -137,49 +197,54 @@ components:
          description: picture URL
        directors:
          type: array
-         description: for now, it's the current "actors" list !
+         description: main director name
+       actors:
+         type: array
+         description: list of the actors
        gross:
          type: string
-         description: total budget of the movie
+         description: total budget of the Serie
      example:
-         id: "tt0944947"
-         title: "Game of Thrones"
-         year: 2011
-         rating: 9.3
-         nbRatings: 1666
-         metaScore: null
-         certificate: "TV-MA"
-         runtime: 57
-         genres: [
-             {
-                 name: "Action"
-             },
-             {
-                 name: "Adventure"
-             },
-             {
-                 name: "Drama"
-             }
-         ]
-         description: "Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia."
-         picture: "https://m.media-amazon.com/images/M/MV5BYTRiNDQwYzAtMzVlZS00NTI5LWJjYjUtMzkwNTUzMWMxZTllXkEyXkFqcGdeQXVyNDIzMzcwNjc@.jpg"
-         directors: [
-             {
-                 id: "nm3592338",
-                 name: "Emilia Clarke"
-             },
-             {
-                 id: "nm0227759",
-                 name: "Peter Dinklage"
-             },
-             {
-                 id: "nm3229685",
-                 name: "Kit Harington"
-             },
-             {
-                 id: "nm0372176",
-                 name: "Lena Headey"
-             }
-         ]
-         actors: []
-         gross: null
+       _id: "tt6751668"
+       title: "Parasite"
+       year: 2019
+       rating: 8.6
+       nbRatings: 382763
+       metaScore: 96
+       certificate: "R"
+       runtime: 132
+       genre: [
+        {
+          name: "Action"
+        },
+        {
+          name: "Thriller"
+        }
+       ]
+       description: "Greed and class discrimination threaten the newly formed symbiotic relationship between the wealthy Park family and the destitute Kim clan."
+       picture: "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@.jpg"
+       directors: [
+        {
+          id: "nm1092087",
+          name: "Sam Hargrave"
+        }
+       ]
+       actors": [
+        {
+          id: "nm1165110",
+          name: "Chris Hemsworth"
+        },
+        {
+          id: "nm0267042",
+          name: "Golshifteh Farahani"
+        },
+        {
+          id: "nm7287299",
+          name: "Rudhraksh Jaiswal"
+        },
+        {
+          id: "nm2534972",
+          name: "Shivam Vichare"
+        }
+       ]
+       gross: "$53.37M"
