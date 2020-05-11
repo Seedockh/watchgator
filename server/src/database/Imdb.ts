@@ -38,8 +38,9 @@ class Imdb {
     }
   }
 
-  static validateMediaFindFilters(body: any, type = 'movies') {
-    const paths = type === 'movies' ? { ...Imdb.Movies.schema.paths } : { ...Imdb.Series.schema.paths }
+  static validateFindFilters(body: any, type = 'Movies') {
+    // @ts-ignore: unreachable key
+    const paths = { ...Imdb[`${type}`].schema.paths }
     const matchCase = body.matchCase ? '' : 'i'
     const page = parseInt(body.page) > 0 ? parseInt(body.page) - 1 : 0
     let types = {}

@@ -6,9 +6,9 @@ import { sLog, aLog } from './Log'
 
 class Scraper {
 	private moviesEndpoint =
-		'https://www.imdb.com/search/title/?title_type=feature,tv_movie,documentary&languages=en'
+		'https://www.imdb.com/search/title/?title_type=feature,tv_movie,documentary'
 	private seriesEndpoint =
-		'https://www.imdb.com/search/title/?title_type=tv_series&languages=en'
+		'https://www.imdb.com/search/title/?title_type=tv_series'
 	private peoplesEndpoint =
 		'https://www.imdb.com/search/name/?gender=male,female'
 	private sampleItemsPerPage = 50
@@ -134,9 +134,14 @@ class Scraper {
 						const directors: Array<IMDBPerson | null> = []
 						const genres: Array<IMDBCategory | null> = []
 
-						const actorsList: ArrayLike<MediaElement> = item.querySelectorAll(
-							'div.ratings-bar + p.text-muted + p > .ghost ~ a',
-						)
+						const actorsList: ArrayLike<MediaElement> = type === 'movies' ?
+							item.querySelectorAll(
+								'div.ratings-bar + p.text-muted + p > .ghost ~ a',
+							) :
+							item.querySelectorAll(
+								'div.ratings-bar + p.text-muted + p > *',
+							)
+
 						Array.from(actorsList, (actor: MediaElement) =>
 							actorsList
 								? actors.push({
@@ -146,20 +151,22 @@ class Scraper {
 								: null,
 						)
 
-						let isDirector = true
-						const directorsList: ArrayLike<MediaElement> = item.querySelectorAll(
-							'div.ratings-bar + p.text-muted + p > *',
-						)
-						Array.from(directorsList, (director: MediaElement) => {
-							if (director.localName === 'span') isDirector = false
+						if (type === 'movies') {
+							let isDirector = true
+							const directorsList: ArrayLike<MediaElement> = item.querySelectorAll(
+								'div.ratings-bar + p.text-muted + p > *',
+							)
+							Array.from(directorsList, (director: MediaElement) => {
+								if (director.localName === 'span') isDirector = false
 
-							if (isDirector && directorsList) {
-								directors.push({
-									id: director.getAttribute('href')!.split('/')[2],
-									name: director.innerText,
-								})
-							}
-						})
+								if (isDirector && directorsList) {
+									directors.push({
+										id: director.getAttribute('href')!.split('/')[2],
+										name: director.innerText,
+									})
+								}
+							})	
+						}
 
 						const genresList: MediaElement | null = item.querySelector(
 							'p.text-muted > span.genre',
@@ -211,7 +218,7 @@ class Scraper {
 							year: year
 								? parseInt(year.innerText.replace(/\(|\)/g, ''))
 								: null,
-							rating: rating ? parseFloat(rating.innerText) : null,
+							rating: rating ? parseFloat(rating.innerText.replace(',','.')) : null,
 							nbRatings: nbRatings
 								? parseInt(nbRatings.getAttribute('data-value') ?? '0')
 								: null,

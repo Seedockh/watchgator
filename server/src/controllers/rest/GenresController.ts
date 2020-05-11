@@ -1,17 +1,19 @@
 /** ****** SERVER ****** **/
-import { Request, Response } from 'express'
-/** ****** NODE ****** **/
-import _ from 'lodash'
+import { Request, Response, RequestHandler } from 'express'
+/** ****** DATABASE ******* **/
+import { NativeError, Document } from 'mongoose'
 /** ****** INTERNALS ****** **/
-import IMDBDatasetService from '../../services/IMDBDatasetService'
+import Imdb from '../../database/Imdb'
+import { sLog } from '../../core/Log'
 
 class PeoplesController {
-	static getAll(req: Request, res: Response) {
-		res.json(
-			process.env.NODE_ENV === 'production'
-				? IMDBDatasetService.liveGenres.data
-				: IMDBDatasetService.sampleGenres.data,
-		)
+	static async getAll(req: Request, res: Response) {
+		const total = await Imdb.Genres.countDocuments()
+
+		await Imdb.Genres.find().exec((err: NativeError, docs: Document[]) => {
+      if (err) res.send(`Error: ${err}`)
+			else res.json({	total: total,	results: docs	})
+    })
 	}
 }
 

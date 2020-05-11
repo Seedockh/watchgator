@@ -41,8 +41,8 @@ class MoviesController {
 
 	static async findByKeys(req: Request, res: Response) {
 		const t0: number = new Date().getTime()
-		const filters: any = Imdb.validateMediaFindFilters(req.body, 'movies')
-		if (filters.error) return res.send(filters)
+		const filters: any = Imdb.validateFindFilters(req.body, 'Movies')
+		if (filters.fields.error) return res.send(filters.fields)
 
 		Imdb.Movies
 			.aggregate([
@@ -66,14 +66,16 @@ class MoviesController {
 				res.json({
 					time: new Date().getTime() - t0,
 					// @ts-ignore: unreachable aggregation key
-					total: docs[0].count,
+					total: docs[0] ? docs[0].count : null,
 					// @ts-ignore: unreachable aggregation key
-					totalPages: docs[0].count > Imdb.limit ? (parseInt(docs[0].count / Imdb.limit) + 1) : 1,
+					totalPages: docs[0] ?
+						(docs[0].count > Imdb.limit ? (parseInt(docs[0].count / Imdb.limit) + 1) : 1) :
+						null,
 					page: filters.page + 1,
 					// @ts-ignore: unreachable aggregation key
-					pageResults: docs[0].results.length,
+					pageResults: docs[0] ? docs[0].results.length : null,
 					// @ts-ignore: unreachable aggregation key
-					results: docs[0].results
+					results: docs[0] ? docs[0].results : null,
 				})
 			})
 	}
