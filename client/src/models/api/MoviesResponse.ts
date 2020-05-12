@@ -3,12 +3,15 @@ import { Serie } from './Serie';
 import { Movie } from './Movie';
 
 export interface MovieResponse {
-    total: number
-    time: number
-    totalMovies: number
-    totalSeries: number
-    moviesPages: number
-    seriesPages: number
+    time: number,
+    totalMovies: number,
+    totalSeries: number,
+    totalMoviesPages: number,
+    totalSeriesPages: number,
+    pageMovies: number,
+    pageSeries: number,
+    pageMoviesResults: number,
+    pageSeriesResults: number,
     results: {
         movies: Movie[],
         series: Serie[]

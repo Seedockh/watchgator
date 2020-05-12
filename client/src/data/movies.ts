@@ -2,7 +2,7 @@ import { Movie } from '../models/api/Movie';
 
 export const moviesList: Movie[] = [
     {
-        "id": "tt8936646",
+        "_id": "tt8936646",
         "title": "Extraction",
         "year": 2020,
         "rating": 6.8,
@@ -47,7 +47,7 @@ export const moviesList: Movie[] = [
         "gross": null
     },
     {
-        "id": "tt10886166",
+        "_id": "tt10886166",
         "title": "365 Days",
         "year": 2020,
         "rating": 3.5,
@@ -93,7 +93,7 @@ export const moviesList: Movie[] = [
         "gross": null
     },
     {
-        "id": "tt8367814",
+        "_id": "tt8367814",
         "title": "The Gentlemen",
         "year": 2019,
         "rating": 7.9,
@@ -141,7 +141,7 @@ export const moviesList: Movie[] = [
         "gross": null
     },
     {
-        "id": "tt8228288",
+        "_id": "tt8228288",
         "title": "The Platform",
         "year": 2019,
         "rating": 7,
@@ -189,7 +189,7 @@ export const moviesList: Movie[] = [
         "gross": null
     },
     {
-        "id": "tt7131622",
+        "_id": "tt7131622",
         "title": "Once Upon a Time... in Hollywood",
         "year": 2019,
         "rating": 7.7,
@@ -234,7 +234,7 @@ export const moviesList: Movie[] = [
         "gross": "$142.50M"
     },
     {
-        "id": "tt1160419",
+        "_id": "tt1160419",
         "title": "Dune",
         "year": 2020,
         "rating": null,
@@ -260,7 +260,7 @@ export const moviesList: Movie[] = [
         "gross": null
     },
     {
-        "id": "tt6751668",
+        "_id": "tt6751668",
         "title": "Parasite",
         "year": 2019,
         "rating": 8.6,
@@ -308,7 +308,7 @@ export const moviesList: Movie[] = [
         "gross": "$53.37M"
     },
     {
-        "id": "tt6259380",
+        "_id": "tt6259380",
         "title": "Code 8",
         "year": 2019,
         "rating": 6.1,
@@ -356,7 +356,7 @@ export const moviesList: Movie[] = [
         "gross": null
     },
     {
-        "id": "tt6587640",
+        "_id": "tt6587640",
         "title": "Trolls World Tour",
         "year": 2020,
         "rating": 6.1,
@@ -408,7 +408,7 @@ export const moviesList: Movie[] = [
         "gross": null
     },
     {
-        "id": "tt1266036",
+        "_id": "tt1266036",
         "title": "Valley Girl",
         "year": 2020,
         "rating": null,
@@ -434,7 +434,7 @@ export const moviesList: Movie[] = [
         "gross": null
     },
     {
-        "id": "tt8946378",
+        "_id": "tt8946378",
         "title": "Knives Out",
         "year": 2019,
         "rating": 7.9,
@@ -482,7 +482,7 @@ export const moviesList: Movie[] = [
         "gross": "$165.36M"
     },
     {
-        "id": "tt1502397",
+        "_id": "tt1502397",
         "title": "Bad Boys for Life",
         "year": 2020,
         "rating": 6.8,
@@ -534,7 +534,7 @@ export const moviesList: Movie[] = [
         "gross": null
     },
     {
-        "id": "tt8750570",
+        "_id": "tt8750570",
         "title": "Sergio",
         "year": 2020,
         "rating": 6.2,

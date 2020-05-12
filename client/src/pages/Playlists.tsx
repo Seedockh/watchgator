@@ -14,7 +14,7 @@ export const Playlists = () => {
     if(!user) {
         history.push('/')
     }
-    
+
     return (
         <Container>
             <Sidebar items={[{
@@ -36,7 +36,7 @@ export const Playlists = () => {
                                     enableScroll={false}
                                 >
                                     {playlist.movies.map(movie => (
-                                        <img src={addPictureUrlSize(movie.picture, 700)} alt={movie.title} onClick={() => history.push(`/movies/${movie.id}`)} />
+                                        <img src={addPictureUrlSize(movie.picture, 700)} alt={movie.title} onClick={() => history.push(`/movies/${movie._id}`)} />
                                     ))}
                                 </Coverflow>
                             </Content>

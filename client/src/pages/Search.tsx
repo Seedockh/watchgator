@@ -53,7 +53,7 @@ export const Search: FunctionComponent<SearchProps> = ({ query }) => {
         ? <LoaderRowCenter />
         : <Row>
           {(tab === 'movies' ? movies : series).map((item) => (
-            <Col key={item.id} xs={24} sm={12} md={6} lg={4} >
+            <Col key={item._id} xs={24} sm={12} md={6} lg={4} >
               <MovieCard movie={item} type={tab} />
             </Col>
           ))}

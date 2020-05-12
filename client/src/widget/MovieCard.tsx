@@ -21,7 +21,7 @@ export const MovieCard: FunctionComponent<MovieCardProps> = ({ movie, type }) =>
     const history = useHistory()
     const goToDetails = () => {
       history.push({
-        pathname: `/movies/${movie.id}`,
+        pathname: `/movies/${movie._id}`,
         state: { movie: movie, type: type }
       })
     }

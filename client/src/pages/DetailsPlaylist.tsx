@@ -31,7 +31,7 @@ export const DetailsPlaylists = () => {
                                         <Divider />
                                         <p className="mb-6" >{movie.description}</p>
                                         <div className="flex flex-content-center">
-                                            <Button onClick={() => history.push(`/movies/${movie.id}`)}>View more</Button>
+                                            <Button onClick={() => history.push(`/movies/${movie._id}`)}>View more</Button>
                                         </div>
                                     </FlexboxGrid.Item>
                                 </FlexboxGrid>

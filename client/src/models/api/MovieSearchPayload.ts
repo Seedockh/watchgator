@@ -1,6 +1,6 @@
 import { MinMax } from './MinMax';
 
-type ActorPayload = {
+export type ActorPayload = {
     id: string;
 }
 

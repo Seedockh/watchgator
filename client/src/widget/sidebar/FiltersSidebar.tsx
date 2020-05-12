@@ -1,6 +1,7 @@
 import React, { useState, useEffect, FunctionComponent } from 'react'
 import { useApiFetch, useApiFetchSearch } from '../../hooks/api/useApiFetch';
 import { Actor } from '../../models/api/Actor';
+import { Category } from '../../models/api/Genre';
 import { MovieFilter } from '../../models/MovieFilter';
 import { getCategories, searchActor } from '../../core/api/Api';
 import { ItemDataType } from 'rsuite/lib/@types/common';
@@ -53,7 +54,8 @@ export const FiltersSidebar: FunctionComponent<FiltersSidebarProps> = ({ initFil
 
     const categoriesToInputData = (): ItemDataType[] => {
         if (!categoriesFetch.data) return []
-        return categoriesFetch.data.map((cat) => ({ value: cat, label: cat }))
+        // @ts-ignore
+        return categoriesFetch.data.results.map((cat) => ({ value: cat, label: cat }))
     }
 
     const onReset = () => {

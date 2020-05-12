@@ -101,54 +101,58 @@ class Imdb {
     const errors: any[] = []
     let fields = { $and: [] }
 
-    await Object.entries(names).forEach(name => {
-      // @ts-ignore: unreachable key
-      if (name[0] === 'actors') {
-        let actorsFields = { actors: { $elemMatch: { $or: [] } } }
+    if (names) {
+      await Object.entries(names).forEach(name => {
         // @ts-ignore: unreachable key
-        name[1].map(fieldId => actorsFields.actors.$elemMatch.$or.push({ id: fieldId.id }) )
-        // @ts-ignore: unreachable key
-        return fields.$and.push(actorsFields)
-      }
+        if (name[0] === 'actors') {
+          let actorsFields = { actors: { $elemMatch: { $or: [] } } }
+          // @ts-ignore: unreachable key
+          name[1].map(fieldId => actorsFields.actors.$elemMatch.$or.push({ id: fieldId.id }) )
+          // @ts-ignore: unreachable key
+          return fields.$and.push(actorsFields)
+        }
 
-      // @ts-ignore: unreachable key
-      else if (name[0] === 'directors') {
-        let directorsFields = { directors: { $elemMatch: { $or: [] } } }
         // @ts-ignore: unreachable key
-        name[1].map(fieldId => directorsFields.directors.$elemMatch.$or.push({ id: fieldId.id }) )
-        // @ts-ignore: unreachable key
-        return fields.$and.push(directorsFields)
-      }
+        else if (name[0] === 'directors') {
+          let directorsFields = { directors: { $elemMatch: { $or: [] } } }
+          // @ts-ignore: unreachable key
+          name[1].map(fieldId => directorsFields.directors.$elemMatch.$or.push({ id: fieldId.id }) )
+          // @ts-ignore: unreachable key
+          return fields.$and.push(directorsFields)
+        }
 
-      // @ts-ignore: unreachable key
-      else if (name[0] === 'genres') {
-        let genresFields = { genres: { $elemMatch: { $or: [] } } }
         // @ts-ignore: unreachable key
-        name[1].map(fieldId => genresFields.genres.$elemMatch.$or.push({ name: fieldId.name }) )
-        // @ts-ignore: unreachable key
-        return fields.$and.push(genresFields)
-      }
+        else if (name[0] === 'genres') {
+          let genresFields = { genres: { $elemMatch: { $or: [] } } }
+          // @ts-ignore: unreachable key
+          name[1].map(fieldId => genresFields.genres.$elemMatch.$or.push({ name: fieldId.name }) )
+          // @ts-ignore: unreachable key
+          return fields.$and.push(genresFields)
+        }
 
-      // @ts-ignore: unreachable key
-      else return errors[name[0]] = `${name[0]} is not a valid name field.`
-    })
+        // @ts-ignore: unreachable key
+        else return errors[name[0]] = `${name[0]} is not a valid name field.`
+      })
+    } else fields.$and.push({})
 
-    await Object.entries(filters).forEach(filter => {
-      if (!isNaN(filter[1].min) &&
-          !isNaN(filter[1].max) &&
-          (filter[0] === 'year' ||
-           filter[0] === 'rating' ||
-           filter[0] === 'nbRatings' ||
-           filter[0] === 'metaScore' ||
-           filter[0] === 'runtime')
-         ) {
-        let filterField = {}
-        // @ts-ignore: unreachable key
-        filterField[filter[0]] = { $gte: filter[1].min, $lte: filter[1].max }
-        // @ts-ignore: unreachable key
-        return fields.$and.push(filterField)
-      } else return errors[name[0]] = `${filter[0]} is not a valid filter field.`
-    })
+    if (filters) {
+      await Object.entries(filters).forEach(filter => {
+        if (!isNaN(filter[1].min) &&
+        !isNaN(filter[1].max) &&
+        (filter[0] === 'year' ||
+        filter[0] === 'rating' ||
+        filter[0] === 'nbRatings' ||
+        filter[0] === 'metaScore' ||
+        filter[0] === 'runtime')
+      ) {
+          let filterField = {}
+          // @ts-ignore: unreachable key
+          filterField[filter[0]] = { $gte: filter[1].min, $lte: filter[1].max }
+          // @ts-ignore: unreachable key
+          return fields.$and.push(filterField)
+        } else return errors[name[0]] = `${filter[0]} is not a valid filter field.`
+      })
+    } else fields.$and.push({})
 
     return {
       fields: fields,

@@ -53,6 +53,7 @@ export const HomeMovies: FunctionComponent<HomeMoviesProps> = ({ filters }) => {
         // Fetch movies
         searchMovies({ ...getSearchPayload(), pageMovies: page, type: 'movies' })
             .then((response) => {
+                console.log(response)
                 if (!reset) {
                     const currentMovies = moviesFetch.data?.results?.movies ?? [];
                     response.results.movies = [...currentMovies, ...response.results.movies]
@@ -112,16 +113,16 @@ export const HomeMovies: FunctionComponent<HomeMoviesProps> = ({ filters }) => {
                     ? <LoaderRowCenter />
                     : <InfiniteScroll
                         key={tab}
-                        loadMore={(page) => {                            
+                        loadMore={(page) => {
                             if (tab === 'movies') fetchMovies(page + 1, false)
                             else fetchSeries(page + 1, false)
                         }}
-                        hasMore={(tab === 'movies' && moviesPage < (moviesFetch.data?.moviesPages ?? 0)) || (tab === 'tvshows' && seriesPage < (seriesFetch.data?.seriesPages ?? 0))}
+                        hasMore={(tab === 'movies' && moviesPage < (moviesFetch.data?.totalMoviesPages ?? 0)) || (tab === 'tvshows' && seriesPage < (seriesFetch.data?.totalSeriesPages ?? 0))}
                         loader={<Loader size="lg" />}
                     >
                         <Row>
                             {(tab === 'movies' ? movies : series).map((item) => (
-                                <Col key={item.id} xs={24} sm={12} md={6} lg={4} >
+                                <Col key={item._id} xs={24} sm={12} md={6} lg={4} >
                                     <MovieCard movie={item} type={tab} />
                                 </Col>
                             ))}

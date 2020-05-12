@@ -2,7 +2,7 @@ import { Genre } from "./Genre";
 import { People } from "./People";
 
 export interface Movie {
-    id: string
+    _id: string
     title: string
     year: number
     rating: number | null
