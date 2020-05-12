@@ -99,7 +99,7 @@ class Imdb {
   static async validateSearchFilters(body: SearchPayload) {
     const { names, filters, pageMovies, pageSeries } = body
     const errors: any[] = []
-    let fields = { $and: [] }
+    let fields: Record<string, any> = { $and: [] }
 
     if (names) {
       await Object.entries(names).forEach(name => {
