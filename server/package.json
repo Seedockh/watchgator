@@ -31,7 +31,7 @@
 		"@mhirba/eslint-config-base": "^1.2.0",
 		"@typescript-eslint/eslint-plugin": "^2.29.0",
 		"@typescript-eslint/parser": "^2.29.0",
-		"apollo-server-express": "^2.11.0",
+		"apollo-server-express": "^2.14.2",
 		"aws-sdk": "^2.666.0",
 		"bcryptjs": "^2.4.3",
 		"body-parser": "^1.19.0",
